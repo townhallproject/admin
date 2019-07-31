@@ -139,6 +139,7 @@ const approveEventLogic = createLogic({
       ...townHall,
       userEmail: null,
     }
+    dispatch(setLoading(true));
     firebasedb.ref(`${livePath}/${townHall.eventId}`).update(cleanTownHall)
       .then(() => {
         const approvedTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
@@ -157,6 +158,7 @@ const approveEventLogic = createLogic({
               if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
                 dispatch(decrementTotalEvents('pending'));
               }
+              dispatch(setLoading(false));
               done();
             })
           })
@@ -187,6 +189,7 @@ const archiveEventLogic = createLogic({
       const oldTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
       const oldTownHallID = firebasedb.ref(`/townHallIds/${cleanTownHall.eventId}`);
       const dateKey = cleanTownHall.dateObj ? moment(cleanTownHall.dateObj).format('YYYY-MM') : 'no_date';
+      dispatch(setLoading(true));
       console.log(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`)
       firebasedb.ref(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`).update(cleanTownHall)
         .then(() => {
@@ -206,6 +209,7 @@ const archiveEventLogic = createLogic({
                 if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
                   dispatch(decrementTotalEvents('pending'));
                 }
+                dispatch(setLoading(false));
                 done();
               })
             }
@@ -227,7 +231,7 @@ const deleteEvent = createLogic({
       firebasedb,
     } = deps;
     const { townHall, path } = action.payload;
-    console.log(path, townHall.eventId)
+    dispatch(setLoading(true));
     const oldTownHall = firebasedb.ref(`${path}/${townHall.eventId}`);
     if (path === 'townHalls') {
       firebasedb.ref(`/townHallIds/${townHall.eventId}`).update({
@@ -247,6 +251,7 @@ const deleteEvent = createLogic({
         if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
           dispatch(decrementTotalEvents('pending'));
         }
+        dispatch(setLoading(false));
         done();
       });
   }

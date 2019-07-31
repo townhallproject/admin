@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   Row,
+  Spin,
 } from 'antd';
 
 import eventsStateBranch from '../../state/events';
@@ -76,6 +77,7 @@ class EventsDashBoard extends React.Component {
             radioButtonValue,
             currentUserId,
             currentUserEmail,
+            loading,
         } = this.props;
         return (
             <React.Fragment>
@@ -90,23 +92,26 @@ class EventsDashBoard extends React.Component {
                     defaultValue={radioButtonValue}
                 />
                 </Row>
-                {pendingOrLive === ARCHIVED_EVENTS_TAB ?
-                <LookupOldEvents /> :
-                <EventList  
-                    pending={pendingOrLive === PENDING_EVENTS_TAB}
-                    eventsForList={eventsForList}
-                    pathForEvents={pathForEvents}
-                    deleteEvent={deleteEvent}
-                    approveEvent={approveEvent}
-                    archiveEvent={archiveEvent}
-                    isAdmin={!isModerator}
-                    pathForArchive={pathForArchive}
-                    pathForPublishing={pathForPublishing}
-                    userSubmissionPath={userSubmissionPath}
-                    updateEvent={updateEvent}
-                    currentUserId={currentUserId}
-                    currentUserEmail={currentUserEmail}
-                />}
+                <Spin spinning={loading} tip="Working...">
+                    {pendingOrLive === ARCHIVED_EVENTS_TAB ?
+                    <LookupOldEvents /> :
+                    <EventList  
+                        pending={pendingOrLive === PENDING_EVENTS_TAB}
+                        eventsForList={eventsForList}
+                        pathForEvents={pathForEvents}
+                        deleteEvent={deleteEvent}
+                        approveEvent={approveEvent}
+                        archiveEvent={archiveEvent}
+                        isAdmin={!isModerator}
+                        pathForArchive={pathForArchive}
+                        pathForPublishing={pathForPublishing}
+                        userSubmissionPath={userSubmissionPath}
+                        updateEvent={updateEvent}
+                        currentUserId={currentUserId}
+                        currentUserEmail={currentUserEmail}
+                        loading={loading}
+                    />}
+                </Spin>
             </React.Fragment>
         )
     }
@@ -125,6 +130,7 @@ const mapStateToProps = state => ({
     userSubmissionPath: selectionStateBranch.selectors.getSubmissionUrl(state),
     eventsCounts: eventsStateBranch.selectors.getEventsCounts(state),
     federalEventCount : eventsStateBranch.selectors.getFederalEventCount(state),
+    loading: eventsStateBranch.selectors.getLoading(state),
 });
 
 const mapDispatchToProps = dispatch => ({
