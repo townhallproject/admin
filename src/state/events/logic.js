@@ -33,6 +33,8 @@ import {
   storeEventsInState,
   clearEventsCounts,
   requestEventsCountsSuccess,
+  requestFederalEventsCountsSuccess,
+  requestStateEventsCountsSuccess,
   approveEventSuccess,
   decrementEvents,
   decrementTotalEvents,
@@ -293,21 +295,27 @@ const requestEventsCounts = createLogic({
     if (path === 'archive') {
       done();
     } else {
-      const eventCounts = {};
-      const p1 = firebasedb.ref(`${EVENTS_PATHS[path].STATE}`).once('value', (snapshot) => {
+      // const eventCounts = {};
+      firebasedb.ref(`${EVENTS_PATHS[path].STATE}`).on('value', (snapshot) => {
+        const eventCounts = {};
         if (snapshot.numChildren() > 0) {
           for (let [key, val] of Object.entries(snapshot.val())) {
             eventCounts[key] = Object.keys(val).length;
           }
         }
+        dispatch(requestStateEventsCountsSuccess(eventCounts));
       });
-      const p2 = firebasedb.ref(`${EVENTS_PATHS[path].FEDERAL}`).once('value', (snapshot) => {
+      firebasedb.ref(`${EVENTS_PATHS[path].FEDERAL}`).on('value', (snapshot) => {
+        const eventCounts = {};
         eventCounts.federal = snapshot.numChildren();
+        dispatch(requestFederalEventsCountsSuccess(eventCounts));
       });
-      Promise.all([p1, p2]).then(() => {
-        dispatch(requestEventsCountsSuccess(eventCounts))
-        done();
-      });
+      // console.log(JSON.stringify(eventCounts));
+      // Promise.all([p1, p2]).then(() => {
+      //   console.log(JSON.stringify(eventCounts));
+      //   dispatch(requestEventsCountsSuccess(eventCounts))
+      //   done();
+      // });
     }
   }
 })
@@ -333,12 +341,6 @@ const requestTotalEventsCounts = createLogic({
     const p2 = firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].FEDERAL}`).once('value', (snapshot) => {
       totalEvents.pending += snapshot.numChildren();
     });
-    // const p3 = firebasedb.ref(`${EVENTS_PATHS[LIVE_EVENTS_TAB].STATE}`).once('value', (snapshot) => {
-    //   totalEvents.live += snapshot.numChildren();
-    // });
-    // const p4 = firebasedb.ref(`${EVENTS_PATHS[LIVE_EVENTS_TAB].FEDERAL}`).once('value', (snapshot) => {
-    //   totalEvents.live += snapshot.numChildren();
-    // });
     Promise.all([p1, p2]).then(() => {
       dispatch(requestTotalEventsCountsSuccess(totalEvents))
       done();

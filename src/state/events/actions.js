@@ -19,6 +19,8 @@ import {
   REQUEST_EVENTS_SUCCESS,
   REQUEST_EVENTS_COUNTS,
   REQUEST_EVENTS_COUNTS_SUCCESS,
+  REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
   CLEAR_EVENTS_COUNTS,
   DECREMENT_EVENTS,
   DECREMENT_TOTAL_EVENTS,
@@ -139,6 +141,16 @@ export const requestEventsCounts = (path) => ({
 
 export const requestEventsCountsSuccess = (payload) => ({
   type: REQUEST_EVENTS_COUNTS_SUCCESS,
+  payload: payload,
+});
+
+export const requestFederalEventsCountsSuccess = (payload) => ({
+  type: REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
+  payload: payload,
+});
+
+export const requestStateEventsCountsSuccess = (payload) => ({
+  type: REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
   payload: payload,
 });
 

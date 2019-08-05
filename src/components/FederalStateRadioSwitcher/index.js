@@ -19,6 +19,7 @@ class FederalStateRadioSwitcher extends React.Component {
             defaultValue,
             eventsCounts
         } = this.props;
+        console.log(JSON.stringify(eventsCounts));
         return (
             <React.Fragment>
                 <Row
@@ -32,6 +33,7 @@ class FederalStateRadioSwitcher extends React.Component {
                         className="federal-state-radio-group"
                         >
                         {map(FEDERAL_STATE_RADIO_BUTTONS, (key) => {
+                            // console.log(`${key}, ${eventsCounts[key]}`);
                             return (
                                 <RadioButton key={key} value={key}>
                                     <Badge key={key} count={eventsCounts[key]}>

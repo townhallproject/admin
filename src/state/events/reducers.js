@@ -17,6 +17,8 @@ import {
   DECREMENT_EVENTS,
   DECREMENT_TOTAL_EVENTS,
   REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
 } from "./constants";
 import { filter, map } from "lodash";
 
@@ -107,9 +109,26 @@ const eventReducer = (state = initialState, action) => {
         })
       }
     case REQUEST_EVENTS_COUNTS_SUCCESS:
+      console.log(JSON.stringify(action.payload));
       return {
         ...state,
         eventsCounts: action.payload,
+      }
+    case REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS:
+      return {
+        ...state,
+        eventsCounts: {
+          ...action.payload,
+          ...state.eventsCounts,
+        }
+      }
+    case REQUEST_STATE_EVENTS_COUNTS_SUCCESS:
+      return {
+        ...state,
+        eventsCounts: {
+          federal: state.eventsCounts.federal,
+          ...action.payload,
+        }
       }
     case REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS:
       return {

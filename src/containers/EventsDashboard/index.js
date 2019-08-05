@@ -43,7 +43,9 @@ class EventsDashBoard extends React.Component {
             pathForEvents,
             requestEventsCounts,
             pendingOrLive,
+            eventsCounts,
         } = this.props;
+        console.log(JSON.stringify(eventsCounts));
         if (prevProps.pathForEvents !== pathForEvents && pathForEvents) {
             requestEvents(pathForEvents);
         }
@@ -73,7 +75,6 @@ class EventsDashBoard extends React.Component {
             userSubmissionPath,
             updateEvent,
             eventsCounts,
-            federalEventCount,
             radioButtonValue,
             currentUserId,
             currentUserEmail,
@@ -88,7 +89,6 @@ class EventsDashBoard extends React.Component {
                 <FederalStateRadioSwitcher 
                     onRadioChange={this.onRadioChange}
                     eventsCounts={eventsCounts}
-                    federalEventCount={federalEventCount}
                     defaultValue={radioButtonValue}
                 />
                 </Row>
@@ -129,7 +129,6 @@ const mapStateToProps = state => ({
     pathForPublishing: selectionStateBranch.selectors.getLiveEventUrl(state),
     userSubmissionPath: selectionStateBranch.selectors.getSubmissionUrl(state),
     eventsCounts: eventsStateBranch.selectors.getEventsCounts(state),
-    federalEventCount : eventsStateBranch.selectors.getFederalEventCount(state),
     loading: eventsStateBranch.selectors.getLoading(state),
 });
 
