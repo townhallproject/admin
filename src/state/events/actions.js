@@ -139,11 +139,6 @@ export const requestEventsCounts = (path) => ({
   payload: path,
 });
 
-export const requestEventsCountsSuccess = (payload) => ({
-  type: REQUEST_EVENTS_COUNTS_SUCCESS,
-  payload: payload,
-});
-
 export const requestFederalEventsCountsSuccess = (payload) => ({
   type: REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
   payload: payload,

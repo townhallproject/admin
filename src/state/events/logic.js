@@ -32,12 +32,9 @@ import {
   setLoading,
   storeEventsInState,
   clearEventsCounts,
-  requestEventsCountsSuccess,
   requestFederalEventsCountsSuccess,
   requestStateEventsCountsSuccess,
   approveEventSuccess,
-  decrementEvents,
-  decrementTotalEvents,
   requestTotalEventsCountsSuccess,
   deleteEventSuccess,
   archiveEventSuccess,
@@ -152,14 +149,6 @@ const approveEventLogic = createLogic({
             })
             .then(() => {
               dispatch(approveEventSuccess(cleanTownHall.eventId));
-              if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-                dispatch(decrementEvents('federal'));
-              } else {
-                dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-              }
-              if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-                dispatch(decrementTotalEvents('pending'));
-              }
               dispatch(setLoading(false));
               done();
             })
@@ -170,9 +159,6 @@ const approveEventLogic = createLogic({
 
 const archiveEventLogic = createLogic({
   type: ARCHIVE_EVENT,
-  processOptions: {
-    // successType: ARCHIVE_EVENT_SUCCESS,
-  },
   process(deps, dispatch, done) {
       const {
         action,
@@ -203,14 +189,6 @@ const archiveEventLogic = createLogic({
               })
               .then(() => {
                 dispatch(archiveEventSuccess(cleanTownHall.eventId));
-                if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-                  dispatch(decrementEvents('federal'));
-                } else {
-                  dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-                }
-                if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-                  dispatch(decrementTotalEvents('pending'));
-                }
                 dispatch(setLoading(false));
                 done();
               })
@@ -245,14 +223,6 @@ const deleteEvent = createLogic({
     oldTownHall.remove()
       .then(() => {
         dispatch(deleteEventSuccess(townHall.eventId));
-        if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-          dispatch(decrementEvents('federal'));
-        } else {
-          dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-        }
-        if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-          dispatch(decrementTotalEvents('pending'));
-        }
         dispatch(setLoading(false));
         done();
       });
@@ -285,6 +255,7 @@ const requestEventsCounts = createLogic({
   processOptions: {
     failType: REQUEST_EVENTS_COUNTS_FAIL,
   },
+  warnTimeout: 0,
   process(deps, dispatch, done) {
     const {
       action,
@@ -295,7 +266,6 @@ const requestEventsCounts = createLogic({
     if (path === 'archive') {
       done();
     } else {
-      // const eventCounts = {};
       firebasedb.ref(`${EVENTS_PATHS[path].STATE}`).on('value', (snapshot) => {
         const eventCounts = {};
         if (snapshot.numChildren() > 0) {
@@ -306,16 +276,8 @@ const requestEventsCounts = createLogic({
         dispatch(requestStateEventsCountsSuccess(eventCounts));
       });
       firebasedb.ref(`${EVENTS_PATHS[path].FEDERAL}`).on('value', (snapshot) => {
-        const eventCounts = {};
-        eventCounts.federal = snapshot.numChildren();
-        dispatch(requestFederalEventsCountsSuccess(eventCounts));
+        dispatch(requestFederalEventsCountsSuccess(snapshot.numChildren()));
       });
-      // console.log(JSON.stringify(eventCounts));
-      // Promise.all([p1, p2]).then(() => {
-      //   console.log(JSON.stringify(eventCounts));
-      //   dispatch(requestEventsCountsSuccess(eventCounts))
-      //   done();
-      // });
     }
   }
 })

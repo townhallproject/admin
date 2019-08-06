@@ -108,18 +108,12 @@ const eventReducer = (state = initialState, action) => {
           return ele
         })
       }
-    case REQUEST_EVENTS_COUNTS_SUCCESS:
-      console.log(JSON.stringify(action.payload));
-      return {
-        ...state,
-        eventsCounts: action.payload,
-      }
     case REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS:
       return {
         ...state,
         eventsCounts: {
-          ...action.payload,
           ...state.eventsCounts,
+          federal: action.payload,
         }
       }
     case REQUEST_STATE_EVENTS_COUNTS_SUCCESS:
@@ -140,14 +134,6 @@ const eventReducer = (state = initialState, action) => {
         ...state,
         eventsCounts: {},
         error: null,
-      }
-    case DECREMENT_EVENTS:
-      return {
-        ...state,
-        eventsCounts: {
-          ...state.eventsCounts,
-          [action.payload]: state.eventsCounts[action.payload] -= 1,
-        }
       }
     case DECREMENT_TOTAL_EVENTS:
       return {
