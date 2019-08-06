@@ -11,14 +11,12 @@ import {
   GET_USER_EMAIL_FOR_EVENT_SUCCESS,
   GET_USER_EMAIL_FOR_OLD_EVENT_SUCCESS,
   RESET_OLD_EVENTS,
-  REQUEST_EVENTS_COUNTS_SUCCESS,
   REQUEST_EVENTS_COUNTS_FAIL,
   CLEAR_EVENTS_COUNTS,
-  DECREMENT_EVENTS,
-  DECREMENT_TOTAL_EVENTS,
-  REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS,
   REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
   REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
+  REQUEST_FEDERAL_TOTAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
 } from "./constants";
 import { filter, map } from "lodash";
 
@@ -26,7 +24,8 @@ const initialState = {
   allEvents: {},
   allOldEvents: {},
   eventsCounts: {},
-  totalEventsCounts: {},
+  totalFederalEvents: 0,
+  totalStateEvents: 0,
   error: null,
   loading: false,
 };
@@ -124,24 +123,21 @@ const eventReducer = (state = initialState, action) => {
           ...action.payload,
         }
       }
-    case REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS:
+    case REQUEST_FEDERAL_TOTAL_EVENTS_COUNTS_SUCCESS:
       return {
         ...state,
-        totalEventsCounts: action.payload
+        totalFederalEvents: action.payload,
       }
+    case REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS:
+        return {
+          ...state,
+          totalStateEvents: action.payload,
+        }
     case CLEAR_EVENTS_COUNTS:
       return {
         ...state,
         eventsCounts: {},
         error: null,
-      }
-    case DECREMENT_TOTAL_EVENTS:
-      return {
-        ...state,
-        totalEventsCounts: {
-          ...state.totalEventsCounts,
-          [action.payload]: state.totalEventsCounts[action.payload] -= 1,
-        }
       }
     case REQUEST_EVENTS_COUNTS_FAIL:
       console.log(action);

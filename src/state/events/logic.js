@@ -34,8 +34,9 @@ import {
   clearEventsCounts,
   requestFederalEventsCountsSuccess,
   requestStateEventsCountsSuccess,
+  requestFederalTotalEventsCountsSuccess,
+  requestStateTotalEventsCountsSuccess,
   approveEventSuccess,
-  requestTotalEventsCountsSuccess,
   deleteEventSuccess,
   archiveEventSuccess,
 } from "./actions";
@@ -287,25 +288,20 @@ const requestTotalEventsCounts = createLogic({
   processOptions: {
     failType: REQUEST_EVENTS_COUNTS_FAIL,
   },
+  warnTimeout: 0,
   process(deps, dispatch, done) {
     const { firebasedb } = deps;
-    const totalEvents = {
-      pending: 0,
-      live: 0
-    };
-    const p1 = firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].STATE}`).once('value', (snapshot) => {
+    firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].STATE}`).on('value', (snapshot) => {
+      let stateEventsCounts = 0;
       if (snapshot.numChildren() > 0) {
         Object.values(snapshot.val()).forEach((state) => {
-          totalEvents.pending += Object.keys(state).length;
+          stateEventsCounts += Object.keys(state).length;
         });
       }
+      dispatch(requestStateTotalEventsCountsSuccess(stateEventsCounts));
     });
-    const p2 = firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].FEDERAL}`).once('value', (snapshot) => {
-      totalEvents.pending += snapshot.numChildren();
-    });
-    Promise.all([p1, p2]).then(() => {
-      dispatch(requestTotalEventsCountsSuccess(totalEvents))
-      done();
+    firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].FEDERAL}`).on('value', (snapshot) => {
+      dispatch(requestFederalTotalEventsCountsSuccess(snapshot.numChildren()));
     });
   }
 })
