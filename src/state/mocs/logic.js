@@ -11,9 +11,16 @@ import {
   GET_CONGRESS_BY_SESSION_FAILED,
   UPDATE_MISSING_MEMBER,
   UPDATE_MISSING_MEMBER_FAIL,
-  UPDATE_MISSING_MEMBER_SUCCESS
+  UPDATE_MISSING_MEMBER_SUCCESS,
+  UPDATE_IN_OFFICE,
+  UPDATE_IN_OFFICE_FAIL,
+  UPDATE_DISPLAY_NAME,
+  UPDATE_DISPLAY_NAME_FAIL,
 } from "./constants";
-
+import {
+  updateInOfficeSuccess,
+  updateDisplayNameSuccess,
+} from './actions';
 import Candidate from './candidate-model';
 import { map } from "lodash";
 
@@ -79,20 +86,64 @@ const addCandidateLogic = createLogic({
 });
 
 const updateMissingMemberLogic = createLogic({
-    type: UPDATE_MISSING_MEMBER,
-      processOptions: {
-        successType: UPDATE_MISSING_MEMBER_SUCCESS,
-        failType: UPDATE_MISSING_MEMBER_FAIL,
-      },
-      process(deps) {
-        const {
-          action,
-          firebasedb,
-        } = deps;
-        return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
-          116: action.payload.missingMember,
-        }).then(() => action)
-      }
+  type: UPDATE_MISSING_MEMBER,
+  processOptions: {
+    successType: UPDATE_MISSING_MEMBER_SUCCESS,
+    failType: UPDATE_MISSING_MEMBER_FAIL,
+  },
+  process(deps) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
+      116: action.payload.missingMember,
+    }).then(() => action)
+  }
+})
+
+const updateInOfficeLogic = createLogic({
+  type: UPDATE_IN_OFFICE,
+  processOptions: {
+    failType: UPDATE_IN_OFFICE_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    const id = action.payload.id;
+    const inOffice = action.payload.inOffice;
+    const p1 = firebasedb.ref(`mocData/${id}/in_office`).set(inOffice);
+    const p2 = firebasedb.ref(`mocData/${id}/last_updated`).update({
+      by: 'admin',
+      time: Date.now(),
+    });
+    Promise.all([p1, p2]).then(() => {
+      dispatch(updateInOfficeSuccess(id, inOffice));
+      done();
+    });
+  }
+})
+
+const updateDisplayNameLogic = createLogic({
+  type: UPDATE_DISPLAY_NAME,
+  processOptions: {
+    failType: UPDATE_DISPLAY_NAME_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    const id = action.payload.id;
+    const displayName = action.payload.displayName;
+    firebasedb.ref(`mocData/${id}/displayName`).set(displayName)
+      .then(() => {
+        dispatch(updateDisplayNameSuccess(id, displayName));
+        done();
+      });
+  }
 })
 
 export default [
@@ -100,4 +151,6 @@ export default [
   addCandidateLogic,
   requestCongressLogic,
   updateMissingMemberLogic,
+  updateInOfficeLogic,
+  updateDisplayNameLogic,
 ];

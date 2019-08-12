@@ -6,6 +6,10 @@ import {
   ADD_CANDIDATE_FAILURE,
   GET_CONGRESS_BY_SESSION,
   UPDATE_MISSING_MEMBER,
+  UPDATE_IN_OFFICE,
+  UPDATE_IN_OFFICE_SUCCESS,
+  UPDATE_DISPLAY_NAME,
+  UPDATE_DISPLAY_NAME_SUCCESS,
 } from './constants';
 
 export const requestMocIds = () => ({
@@ -42,8 +46,40 @@ export const getCongressBySession = (congressId) => ({
 
 export const updateMissingMember = (id, missingMember) => ({
   type: UPDATE_MISSING_MEMBER,
-    payload: {
-      id,
-      missingMember,
-    }
+  payload: {
+    id,
+    missingMember,
+  }
+})
+
+export const updateInOffice = (id, inOffice) => ({
+  type: UPDATE_IN_OFFICE,
+  payload: {
+    id,
+    inOffice,
+  }
+})
+
+export const updateInOfficeSuccess = (id, inOffice) => ({
+  type: UPDATE_IN_OFFICE_SUCCESS,
+  payload: {
+    id,
+    inOffice,
+  }
+})
+
+export const updateDisplayName = (id, displayName) => ({
+  type: UPDATE_DISPLAY_NAME,
+  payload: {
+    id,
+    displayName,
+  }
+})
+
+export const updateDisplayNameSuccess = (id, displayName) => ({
+  type: UPDATE_DISPLAY_NAME_SUCCESS,
+  payload: {
+    id,
+    displayName,
+  }
 })
