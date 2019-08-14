@@ -294,8 +294,8 @@ const requestTotalEventsCounts = createLogic({
     firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].STATE}`).on('value', (snapshot) => {
       let stateEventsCounts = 0;
       if (snapshot.numChildren() > 0) {
-        Object.values(snapshot.val()).forEach((state) => {
-          stateEventsCounts += Object.keys(state).length;
+        snapshot.forEach((stateSnapshot) => {
+          stateEventsCounts += stateSnapshot.numChildren();
         });
       }
       dispatch(requestStateTotalEventsCountsSuccess(stateEventsCounts));
