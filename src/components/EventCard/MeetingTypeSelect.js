@@ -26,6 +26,9 @@ export default class MeetingTypeSelect extends React.Component {
             <Option value="Town Hall">
             Town Hall
             </Option>
+            <Option value="Gun Safety Activist Event">
+            Gun Safety Activist Event
+            </Option>
             <Option value="H.R. 1 Town Hall">
             H.R. 1 Town Hall
             </Option>

@@ -145,8 +145,10 @@ This indicates that you are not a user who has permissions on Firebase. Make you
 
 - Now, you need to approve yourself as an admin
   - Go to the `firebase console` --> `develop` --> `Database` --> `realtime database`
-    - Note: you should see a `pending_access_request`, and a `users` group with yourself as a user. If not, something is wrong.
+  - Expand the database until you see 'users' and then find your user id
+  ![Firebase Users](public/assets/img/firebaseScreenshotUsers.png)
   - Hover over the long random ID number for your user entry
+  ![Firebase User](public/assets/img/firebaseScreenshotUser.png)
   - Click on the `+` icon
   - In the `Name` field enter (exactly): `isAdmin`
   - In the `Value` field enter (exactly): `true`
@@ -162,8 +164,8 @@ This step makes your testing database behave the same as the production database
 
 - Navigate to the firebase console (https://console.firebase.google.com)
 - `Left side nav` --> `develop` --> `database` --> `realtime database` --> `rules`
-- In your local files, the rules to use are saved here: `lib/dbconfig.txt`
-- Open `lib/dbconfig.txt` and copy the contents in to the Firebase rules window, replacing everything that is there already
+- In your local files, the rules to use are saved here: `lib/dbrules.txt`
+- Open `lib/dbrules.txt` and copy the contents in to the Firebase rules window, replacing everything that is there already
 - Don't forget to Scroll back to the top of the page and press `publish`
 - You're done
 ---

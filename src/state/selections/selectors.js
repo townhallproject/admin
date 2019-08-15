@@ -26,6 +26,7 @@ export const getOldEventsActiveFederalOrState = state => state.selections.federa
 export const getDateRange = state => state.selections.dateLookupRange;
 export const getStatesToFilterArchiveBy = state => state.selections.filterByState;
 export const includeLiveEventsInLookup = state => state.selections.includeLiveEvents;
+export const getTempAddress = state => state.selections.tempAddress;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (includes(STATES_LEGS, federalOrState)) {

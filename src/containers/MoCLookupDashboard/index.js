@@ -5,6 +5,7 @@ import { Tabs } from 'antd';
 
 import mocStateBranch from '../../state/mocs';
 import selectionStateBranch from '../../state/selections';
+import userStateBranch from '../../state/users';
 
 import AddPersonForm from '../../components/AddPersonForm';
 import MocLookUp from '../../components/MocLookup';
@@ -38,6 +39,7 @@ class MoCLookUpDashboard extends React.Component {
   render() {
     const {
       allMocNamesIds,
+      isModerator,
       saveCandidate,
       radioValue,
       candidateKeySavePath,
@@ -47,7 +49,7 @@ class MoCLookUpDashboard extends React.Component {
       updateDisplayNameValue,
     } = this.props;
     const { TabPane } = Tabs;
-    return (
+    return (!isModerator &&
       <div>
         <Tabs defaultActiveKey="congress">
           <TabPane tab="Current Congress" key="congress">
@@ -80,6 +82,7 @@ class MoCLookUpDashboard extends React.Component {
 
 const mapStateToProps = state => ({
   allMocNamesIds: mocStateBranch.selectors.getAllMocsIds(state),
+    isModerator: userStateBranch.selectors.getModeratorStatus(state),
   radioValue: selectionStateBranch.selectors.getActiveFederalOrState(state),
   candidateKeySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
   the116theCongress: mocStateBranch.selectors.get116thCongress(state),

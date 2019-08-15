@@ -7,6 +7,9 @@ import {
   TOGGLE_INCLUDE_LIVE_EVENTS,
   CHANGE_MODE, 
   CHANGE_MOC_END_POINT,
+  GENERAL_FAIL,
+  CLEAR_ADDRESS,
+  SET_TEMP_ADDRESS,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
@@ -22,6 +25,14 @@ const initialState = {
   filterByState: [],
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
+  tempAddress: {
+    usState: null,
+    lat: null,
+    lng: null,
+    address: null,
+    state: null,
+    stateName: null,
+  }
 };
 
 const selectionReducer = (state = initialState, action) => {
@@ -65,6 +76,25 @@ const selectionReducer = (state = initialState, action) => {
       return {
         ...state,
         mode: action.payload,
+      }
+    case SET_TEMP_ADDRESS:
+      return {
+        ...state,
+        tempAddress: {
+          lat: action.payload.lat,
+          lng: action.payload.lng,
+          address: action.payload.address,
+        }
+      };
+    case CLEAR_ADDRESS:
+      return {
+        ...state,
+        tempAddress: initialState.tempAddress
+      };
+    case GENERAL_FAIL:
+      console.error(action.payload)
+      return {
+        ...state,
       }
     default:
       return state;

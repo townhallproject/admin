@@ -14,18 +14,22 @@ class EventList extends React.Component {
 
   renderItem(townHall) {
     const {
-        archiveEvent,
-        approveEvent,
-        currentUserId,
-        currentUserEmail,
-        isAdmin,
-        pathForArchive,
-        pending,
-        deleteEvent,
-        pathForEvents,
-        pathForPublishing,
-        updateEvent,
-        loading,
+      archiveEvent,
+      approveEvent,
+      currentUserId,
+      currentUserEmail,
+      isAdmin,
+      pathForArchive,
+      pending,
+      deleteEvent,
+      pathForEvents,
+      pathForPublishing,
+      updateEvent,
+      loading,
+      setTempAddress,
+      tempAddress,
+      clearTempAddress,
+      setTimeZone,
     } = this.props;
     const sameUser = townHall.userEmail === currentUserEmail || townHall.enteredBy === currentUserId;
     return (
@@ -35,6 +39,11 @@ class EventList extends React.Component {
           pending={pending}
           canApprove={!sameUser || isAdmin}
           loading={loading}
+          setTempAddress={setTempAddress}
+          tempAddress={tempAddress}
+          clearTempAddress={clearTempAddress}
+          setTimeZone={setTimeZone}
+          pathForEvents={pathForEvents}
           approveEvent={() => {
             return approveEvent(townHall, pathForEvents, pathForPublishing)
           }}
@@ -52,8 +61,8 @@ class EventList extends React.Component {
           }}
         />
       </List.Item>
-    )
-  }
+      )
+    }
 
   render () {
     const {

@@ -1,3 +1,8 @@
+import {
+  makeConstant
+} from "../../utils";
+const STATE_BRANCH = 'EVENTS';
+//TODO: convert these
 export const REQUEST_EVENTS = "GET_EVENTS";
 export const REQUEST_EVENTS_SUCCESS = "GET_EVENTS_SUCCESS";
 export const REQUEST_EVENTS_FAILED = "GET_EVENTS_FAILED";
@@ -31,3 +36,12 @@ export const GET_USER_EMAIL_FOR_EVENT = "GET_USER_EMAIL_FOR_EVENT";
 export const GET_USER_EMAIL_FOR_EVENT_SUCCESS = "GET_USER_EMAIL_FOR_EVENT_SUCCESS";
 export const GET_USER_EMAIL_FOR_EVENT_FAILED = "GET_USER_EMAIL_FOR_EVENT_FAILED";
 export const GET_USER_EMAIL_FOR_OLD_EVENT_SUCCESS = "GET_USER_EMAIL_FOR_OLD_EVENT_SUCCESS";
+export const ADDRESS_CHANGE = makeConstant(STATE_BRANCH, "ADDRESS_CHANGE");
+export const SET_LAT_LNG = makeConstant(STATE_BRANCH, "SET_LAT_LNG");
+export const GENERAL_FAIL = makeConstant(STATE_BRANCH, "GENERAL_FAIL");
+export const CHANGE_TIME_ZONE = makeConstant(STATE_BRANCH, "CHANGE_TIME_ZONE");
+export const CHANGE_TIME_ZONE_SUCCESS = makeConstant(STATE_BRANCH, "CHANGE_TIME_ZONE_SUCCESS");
+export const SET_START_TIME = makeConstant(STATE_BRANCH, "SET_START_TIME");
+export const SET_END_TIME = makeConstant(STATE_BRANCH, "SET_END_TIME");
+export const SET_DATE = makeConstant(STATE_BRANCH, "SET_DATE");
+export const SET_TIME_ZONE = makeConstant(STATE_BRANCH, "SET_TIME_ZONE");
