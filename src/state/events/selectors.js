@@ -11,7 +11,12 @@ export const getAllEvents = state => state.events.allEvents;
 export const getAllOldEvents = state => state.events.allOldEvents;
 export const getLoading = state => state.events.loading;
 export const getEventsCounts = state => state.events.eventsCounts;
-export const getTotalEventCounts = state => state.events.totalEventsCounts;
+
+const totalFederalEvents = (state) => state.events.totalFederalEvents;
+const totalStateEvents = (state) => state.events.totalStateEvents;
+export const getTotalEventCounts = createSelector([totalFederalEvents, totalStateEvents], (fed, state) => {
+  return fed + state;
+})
 
 export const getAllOldEventsWithUserEmails = createSelector([getAllOldEvents, getAllResearchers], (oldEvents, researchers) => {
 

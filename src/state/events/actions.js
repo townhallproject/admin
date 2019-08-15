@@ -18,12 +18,12 @@ import {
   GET_USER_EMAIL_FOR_EVENT,
   REQUEST_EVENTS_SUCCESS,
   REQUEST_EVENTS_COUNTS,
-  REQUEST_EVENTS_COUNTS_SUCCESS,
+  REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
+  REQUEST_FEDERAL_TOTAL_EVENTS_COUNTS_SUCCESS,
+  REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
   CLEAR_EVENTS_COUNTS,
-  DECREMENT_EVENTS,
-  DECREMENT_TOTAL_EVENTS,
   REQUEST_TOTAL_EVENTS_COUNTS,
-  REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS,
 } from './constants';
 
 
@@ -137,8 +137,23 @@ export const requestEventsCounts = (path) => ({
   payload: path,
 });
 
-export const requestEventsCountsSuccess = (payload) => ({
-  type: REQUEST_EVENTS_COUNTS_SUCCESS,
+export const requestFederalEventsCountsSuccess = (payload) => ({
+  type: REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS,
+  payload: payload,
+});
+
+export const requestStateEventsCountsSuccess = (payload) => ({
+  type: REQUEST_STATE_EVENTS_COUNTS_SUCCESS,
+  payload: payload,
+});
+
+export const requestFederalTotalEventsCountsSuccess = (payload) => ({
+  type: REQUEST_FEDERAL_TOTAL_EVENTS_COUNTS_SUCCESS,
+  payload: payload,
+});
+
+export const requestStateTotalEventsCountsSuccess = (payload) => ({
+  type: REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
   payload: payload,
 });
 
@@ -146,23 +161,8 @@ export const requestTotalEventsCounts = () => ({
   type: REQUEST_TOTAL_EVENTS_COUNTS,
 });
 
-export const requestTotalEventsCountsSuccess = (payload) => ({
-  type: REQUEST_TOTAL_EVENTS_COUNTS_SUCCESS,
-  payload: payload,
-});
-
 export const clearEventsCounts = () => ({
   type: CLEAR_EVENTS_COUNTS,
-});
-
-export const decrementEvents = (key) => ({
-  type: DECREMENT_EVENTS,
-  payload: key,
-});
-
-export const decrementTotalEvents = (key) => ({
-  type: DECREMENT_TOTAL_EVENTS,
-  payload: key,
 });
 
 export const approveEventSuccess = (eventId) => ({
