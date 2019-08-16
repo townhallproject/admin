@@ -46,9 +46,13 @@ const reduxLogicDependencies = {
 
 const logicMiddleware = createLogicMiddleware(logics, reduxLogicDependencies);
 
-const middleware = applyMiddleware(
+let middleware = applyMiddleware(
   logicMiddleware
 );
+
+if (process.env.NODE_ENV === `development` && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
+  middleware = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(middleware);
+}
 
 export default () => {
   const store = createStore(
