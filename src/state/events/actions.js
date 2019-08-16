@@ -47,16 +47,17 @@ export const setLoading = (loading) => ({
   payload: loading,
 });
 
-export const requestOldEvents = (path, date, dates) => ({
+export const requestOldEvents = ({ path, date, dates, chamber }) => ({
     type: REQUEST_OLD_EVENTS,
     payload: {
         path,
         date,
         dates,
+        chamber,
     }
 })
   
-export const addOldEventToState = events => ({
+export const addAllOldEventsToState = events => ({
   type: REQUEST_OLD_EVENTS_SUCCESS,
   payload: events
 });

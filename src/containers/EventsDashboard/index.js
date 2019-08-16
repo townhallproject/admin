@@ -86,11 +86,11 @@ class EventsDashBoard extends React.Component {
                     type="flex"
                     justify="center"
                 >
-                <FederalStateRadioSwitcher 
+                {/* <FederalStateRadioSwitcher 
                     onRadioChange={this.onRadioChange}
                     eventsCounts={eventsCounts}
                     defaultValue={radioButtonValue}
-                />
+                /> */}
                 </Row>
                 {pendingOrLive === ARCHIVED_EVENTS_TAB ?
                 <LookupOldEvents /> :

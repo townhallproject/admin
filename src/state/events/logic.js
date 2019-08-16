@@ -18,6 +18,7 @@ import {
   REQUEST_OLD_EVENTS,
   UPDATE_EXISTING_EVENT,
   UPDATE_EVENT_SUCCESS,
+  UPDATE_OLD_EVENT_SUCCESS,
   UPDATE_EVENT_FAIL,
   UPDATE_OLD_EVENT,
 } from "./constants";
@@ -28,7 +29,7 @@ import {
   PENDING_EVENTS_TAB,
 } from '../../constants'
 import {
-  addOldEventToState,
+  addAllOldEventsToState,
   setLoading,
   storeEventsInState,
   clearEventsCounts,
@@ -97,9 +98,9 @@ const fetchOldEventsLogic = createLogic({
     const allUids = [];
 
     let fsQueryRef = fsRef
-      .where('dateObj', '>=', payload.dates[0])
-      .where('dateObj', '<=', payload.dates[1])
-      .orderBy('dateObj')
+      .where('timestamp', '>=', payload.dates[0])
+      .where('timestamp', '<=', payload.dates[1])
+      .orderBy('timestamp')
       
     fsQueryRef.get()
       .then(snapshot => {
@@ -121,7 +122,7 @@ const fetchOldEventsLogic = createLogic({
         });
       })
       .then(() => {
-          dispatch(addOldEventToState(allEvents));
+          dispatch(addAllOldEventsToState(allEvents));
           dispatch(setLoading(false));
           done();
       })
@@ -286,7 +287,7 @@ const updateEventLogic = createLogic({
 const updateOldEventLogic = createLogic({
   type: UPDATE_OLD_EVENT,
   processOptions: {
-    successType: UPDATE_EVENT_SUCCESS,
+    successType: UPDATE_OLD_EVENT_SUCCESS,
     failType: UPDATE_EVENT_FAIL,
   },
   process(deps) {
@@ -303,7 +304,7 @@ const updateOldEventLogic = createLogic({
     }
 
     let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
-    eventRef.update(updateData).then(() => {
+    return eventRef.update(updateData).then(() => {
       return {...updateData, eventId}
     })
     .catch(err => {

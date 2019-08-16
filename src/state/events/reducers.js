@@ -7,6 +7,7 @@ import {
   REQUEST_OLD_EVENTS_SUCCESS,
   SET_LOADING,
   UPDATE_EVENT_SUCCESS,
+  UPDATE_OLD_EVENT_SUCCESS,
   GET_USER_EMAIL_FOR_EVENT_SUCCESS,
   GET_USER_EMAIL_FOR_OLD_EVENT_SUCCESS,
   RESET_OLD_EVENTS,
@@ -97,6 +98,16 @@ const eventReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         allEvents: map(state.allEvents, (ele) => {
+          if(ele.eventId === payload.eventId) {
+            return {...ele, ...payload}
+          }
+          return ele
+        })
+      }
+    case UPDATE_OLD_EVENT_SUCCESS:
+      return {
+        ...state,
+        allOldEvents: map(state.allOldEvents, (ele) => {
           if(ele.eventId === payload.eventId) {
             return {...ele, ...payload}
           }
