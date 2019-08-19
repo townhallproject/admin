@@ -14,9 +14,9 @@ export const getEventsCounts = state => state.events.eventsCounts;
 export const getTotalEventCounts = state => state.events.totalEventsCounts;
 
 export const getAllOldEventsWithUserEmails = createSelector([getAllOldEvents, getAllResearchers], (oldEvents, researchers) => {
-
+  console.log(researchers);
   return map(oldEvents, event => {
-    const user = find(researchers, { uid: event.enteredBy}) || find(researchers, { email: event.userEmail });
+    const user = find(researchers, { uid: event.enteredBy}) || find(researchers, { email: event.enteredBy}) || find(researchers, { email: event.userEmail });
     return {
       ...event,
       userEmail: user ? user.email : null,
@@ -25,6 +25,7 @@ export const getAllOldEventsWithUserEmails = createSelector([getAllOldEvents, ge
 })
 
 export const getEmailCoverage = createSelector([getAllOldEventsWithUserEmails], (oldEvents) => {
+  console.log(oldEvents);
   const finished = filter(oldEvents, event => event.userEmail);
   const total = filter(oldEvents, event => event.enteredBy);
   return finished.length / total.length * 100;

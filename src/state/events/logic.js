@@ -39,7 +39,8 @@ import {
   archiveEventSuccess,
 } from "./actions";
 import {
-  requestResearcherById
+  requestResearcherById,
+  requestResearcherByEmail,
 } from "../researchers/actions";
 
 const fetchEvents = createLogic({
@@ -91,15 +92,18 @@ const fetchOldEventsLogic = createLogic({
     const ref = firebasedb.ref(`${payload.path}/${payload.date}`);
     dispatch(setLoading(true))
     const allEvents = [];
-    const allUids = [];
+    const allUsers = [];
     ref.orderByChild('dateObj').startAt(payload.dates[0]).endAt(payload.dates[1]).on('child_added', (snapshot) => {
       const event = snapshot.val();
       const researcher = event.enteredBy;
-      if (researcher && !includes(researcher, '@')) {
-        if (!includes(allUids, researcher)) {
-          dispatch(requestResearcherById(researcher))
+      console.log(researcher);
+      if (researcher && !includes(allUsers, researcher)) {
+        if (!includes(researcher, '@')) {
+          dispatch(requestResearcherById(researcher));
+        } else {
+          dispatch(requestResearcherByEmail(researcher));
         }
-        allUids.push(researcher);
+        allUsers.push(researcher);
       }
       allEvents.push(event);
     })

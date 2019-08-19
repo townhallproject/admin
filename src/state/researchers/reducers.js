@@ -28,6 +28,7 @@ const userReducer = (state = initialState, {type, payload}) => {
         error: null
       };
     case SET_RESEARCHER_EMAIL_DATA: 
+      console.log(uniqBy([...state.allResearchers, payload.user], 'uid'));
       return {
         ...state,
         allResearchers: uniqBy([...state.allResearchers, payload.user], 'uid')
