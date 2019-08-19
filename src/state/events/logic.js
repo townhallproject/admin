@@ -96,7 +96,6 @@ const fetchOldEventsLogic = createLogic({
     ref.orderByChild('dateObj').startAt(payload.dates[0]).endAt(payload.dates[1]).on('child_added', (snapshot) => {
       const event = snapshot.val();
       const researcher = event.enteredBy;
-      console.log(researcher);
       if (researcher && !includes(allUsers, researcher)) {
         if (!includes(researcher, '@')) {
           dispatch(requestResearcherById(researcher));
