@@ -27,14 +27,49 @@ export const getAllCurrentRsvps = createSelector(
     });
 
 export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (allCurrent) => {
-  return map(allCurrent, currentRsvp => {
+  const arrayOfObjects =  map(allCurrent, currentRsvp => {
     const toReturn = {
       ...currentRsvp,
       ...currentRsvp.can_contact
     }
-    delete toReturn.can_contact;
-    return toReturn;
+    // accessibly_needs: ""
+    // can_contact: false
+    // date: "Tue, Aug 20 2019"
+    // email_address: "nwilliams@townhallproject.com"
+    // eventId: "-LlmMPaGyMbfVU8GwdYI"
+    // family_name: "Williams"
+    // given_name: "Nathan"
+    // location: "Portland Public Library - Rines Auditorium 5 Monument Sq, Portland, ME 04101"
+    // phone: "2063002296"
+    // postal_code: "97212"
+    // time: "6:00 PM"
+    // title: "Susan Collins R ME"
+     return [toReturn.given_name,
+      toReturn.family_name,
+      toReturn.email_address,
+      toReturn.postal_code,
+      '',
+      toReturn.accessibly_needs,
+      toReturn.solicitation_source || '',
+      '',
+      toReturn.date_submitted || '',
+      toReturn.can_contact,
+     ]
   });
+
+  const headers = ["First Name",
+    "Last Name",
+    "email",
+    "zipcode",
+    "confirmed call 2",
+    "Accessibly Needs",
+    "How Did You Kear",
+    "confirmed call 1",
+    "Date Rsvped",
+    "Can contact",
+  ]
+
+  return [headers, ...arrayOfObjects]
 })
 
 export const getAllRsvpsForCsv = createSelector([getAllRsvps], (allCurrent) => {
@@ -43,7 +78,7 @@ export const getAllRsvpsForCsv = createSelector([getAllRsvps], (allCurrent) => {
       ...currentRsvp,
       ...currentRsvp.can_contact
     }
-    delete toReturn.can_contact;
+    console.log(currentRsvp.can_contact)
     return toReturn;
   });
 })
