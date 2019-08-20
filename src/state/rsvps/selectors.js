@@ -46,26 +46,30 @@ export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (al
      return [toReturn.given_name,
       toReturn.family_name,
       toReturn.email_address,
-      toReturn.postal_code,
+      toReturn.phone,
+      `'''${toReturn.postal_code}'''`,
       '',
       toReturn.accessibly_needs,
       toReturn.solicitation_source || '',
       '',
       toReturn.date_submitted || '',
       toReturn.can_contact,
+      toReturn.location,
      ]
   });
 
   const headers = ["First Name",
     "Last Name",
     "email",
-    "zipcode",
+    "zip code",
+    "phone number",
     "confirmed call 2",
     "Accessibly Needs",
     "How Did You Kear",
     "confirmed call 1",
     "Date Rsvped",
     "Can contact",
+    "Location",
   ]
 
   return [headers, ...arrayOfObjects]
