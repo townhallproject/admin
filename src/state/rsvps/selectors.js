@@ -65,7 +65,7 @@ export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (al
     "phone number",
     "confirmed call 2",
     "Accessibly Needs",
-    "How Did You Kear",
+    "How Did You Hear",
     "confirmed call 1",
     "Date Rsvped",
     "Can contact",
