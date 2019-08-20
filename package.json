@@ -5,6 +5,9 @@
   "author": "Łukasz Holeczek",
   "homepage": "http://thp-admin.herokuapp.com",
   "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
+  "engines": {
+    "node": "10.3.0"
+  },
   "license": "MIT",
   "private": true,
   "repository": {
