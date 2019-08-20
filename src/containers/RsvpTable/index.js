@@ -198,7 +198,7 @@ class RSVPTable extends React.Component {
     ];
     return (
         <div>
-            <Button.Group
+            <div
                 className="download-table-button-group"
             >
                 <Button 
@@ -210,17 +210,9 @@ class RSVPTable extends React.Component {
                     > RSVPs for current events
                     </CSVLink>
                 </Button>
-                {/* <Button
-                    icon="download"
-                >
-                    <CSVLink 
-                        data={allRsvpsForCsv}
-                        filename="All_RSVPs.csv"
-                    > All RSVPs (including past events)
-                    </CSVLink>
-                </Button> */}
         
-            </Button.Group>
+        
+            </div>
             <div className="researcher-table">
                 <Table 
                     columns={columns} 
