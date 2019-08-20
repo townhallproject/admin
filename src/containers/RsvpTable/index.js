@@ -176,20 +176,13 @@ class RSVPTable extends React.Component {
       title: 'Contact',
       dataIndex: 'can_contact',
       key: 'can_contact',
-      render: (can_contact) => (
-          <span>
-            {map(can_contact, (contact, type) => {
-                  const color = contact ? 'green' : 'red';
-                  const falseTagText = {
-                      can_text: 'No text',
-                      can_email: 'No email',
-                      partner: 'Partners can\'t contact'
-                  }
-                  return contact ? (
-                    <Tag color={color} key={type}>{type}</Tag>) : 
-                    (<Tag color={color} key={type}>{falseTagText[type]}</Tag>)
-                })}
-        </span>)
+      render: (can_contact) => {
+          const color = can_contact ? 'green' : 'red';
+          return can_contact ? (
+                    <Tag color={color}>yes</Tag>) : 
+                    (<Tag color={color}>no</Tag>)
+          }
+              
     },
     {
         title: 'Event id',

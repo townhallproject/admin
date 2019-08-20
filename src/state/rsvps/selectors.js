@@ -30,7 +30,6 @@ export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (al
   const arrayOfObjects =  map(allCurrent, currentRsvp => {
     const toReturn = {
       ...currentRsvp,
-      ...currentRsvp.can_contact
     }
     // accessibly_needs: ""
     // can_contact: false
