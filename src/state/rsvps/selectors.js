@@ -52,9 +52,9 @@ export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (al
       toReturn.accessibly_needs,
       toReturn.solicitation_source || '',
       '',
+      toReturn.location,
       toReturn.date_submitted || '',
       toReturn.can_contact,
-      toReturn.location,
      ]
   });
 
@@ -67,9 +67,9 @@ export const getAllCurrentRsvpsForCsv = createSelector([getAllCurrentRsvps], (al
     "Accessibly Needs",
     "How Did You Hear",
     "confirmed call 1",
+    "Location",
     "Date Rsvped",
     "Can contact",
-    "Location",
   ]
 
   return [headers, ...arrayOfObjects]
