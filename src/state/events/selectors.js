@@ -3,7 +3,6 @@ import {
   find, 
   map,
   filter,
-  includes,
 } from 'lodash';
 import { getAllResearchers } from '../researchers/selectors';
 
@@ -19,9 +18,10 @@ export const getTotalEventCounts = createSelector([totalFederalEvents, totalStat
 })
 
 export const getAllOldEventsWithUserEmails = createSelector([getAllOldEvents, getAllResearchers], (oldEvents, researchers) => {
-
   return map(oldEvents, event => {
-    const user = find(researchers, { uid: event.enteredBy}) || find(researchers, { email: event.userEmail });
+    const user = find(researchers, { uid: event.enteredBy}) || 
+      find(researchers, { email: event.enteredBy}) || 
+      find(researchers, { email: event.userEmail });
     return {
       ...event,
       userEmail: user ? user.email : null,
