@@ -46,6 +46,11 @@ const PotentialVolTable = ({ potentialVols, updatePotentialVols }) => {
             key: 'respondedOn',
         },
         {
+            title: 'District',
+            dataIndex: 'stateDistrict',
+            key: 'stateDistrict',
+        },
+        {
             title: 'Assigned To',
             dataIndex: 'assignedTo',
             editable: true,
