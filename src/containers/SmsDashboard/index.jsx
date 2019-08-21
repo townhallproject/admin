@@ -18,7 +18,7 @@ class SmsUsersDashboard extends Component {
     }
 
     render() {
-        const { updatePotentialVols, potentialVols, usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
+        const { updatePotentialVols, potentialVolsWithReplyData, usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
         const messageApp = (<List
             className="comment-list"
             header={`${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
@@ -47,7 +47,7 @@ class SmsUsersDashboard extends Component {
                         }, 
                         {
                             title: 'View and edit potential vols',
-                            contents: (<PotentialVolTable potentialVols={potentialVols} updatePotentialVols={updatePotentialVols}/>)
+                            contents: (<PotentialVolTable potentialVols={potentialVolsWithReplyData} updatePotentialVols={updatePotentialVols}/>)
                         }, 
                 ]}
                 />
@@ -62,6 +62,7 @@ const mapStateToProps = state => ({
     totalSmsUsers: smsUsersStateBranch.selectors.getTotalSMSUsers(state),
     usersSentMessages: smsUsersStateBranch.selectors.getUsersWithMessages(state),
     usersWithReplies: smsUsersStateBranch.selectors.getUsersWithReplies(state),
+    potentialVolsWithReplyData: smsUsersStateBranch.selectors.getPotentialVolsWithReplyData(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -70,7 +71,7 @@ const mapDispatchToProps = dispatch => ({
     requestTotalCount: () => dispatch(smsUsersStateBranch.actions.requestTotalCount()),
     requestCache: () => dispatch(smsUsersStateBranch.actions.requestCache()),
     sendMessage: (payload) => dispatch(smsUsersStateBranch.actions.sendMessage(payload)),
-    receiveMessage: (payload) => dispatch(smsUsersStateBranch.actions.receiveMessage(payload))
+    receiveMessage: (payload) => dispatch(smsUsersStateBranch.actions.receiveMessage(payload)),
 });
 
 
