@@ -4,6 +4,8 @@ import {
   RECEIVE_SMS_CACHE,
   RECEIVE_MESSAGE,
   SENT_MESSAGE,
+  RECEIVE_POTENTIAL_VOLS,
+  UPDATE_POTENTIAL_VOLS_SUCCESS,
 } from "./constants";
 import {
   map,
@@ -12,6 +14,7 @@ import {
 import moment from "moment";
 
 const initialState = {
+  potentialVols: [],
   totalSmsUsers: 0,
   userCache: [],
   error: null,
@@ -37,6 +40,17 @@ const smsUserReducer = (state = initialState, {type, payload}) => {
           userCache: payload,
           error: null,
         }
+    case RECEIVE_POTENTIAL_VOLS:
+      return {
+        ...state,
+        potentialVols: payload,
+        error: null,
+      }
+    case UPDATE_POTENTIAL_VOLS_SUCCESS: 
+      return {
+        ...state,
+        potentialVols: state.potentialVols.map((vol) => payload.phoneNumber === vol.phoneNumber ? {...vol, ...payload.data } : vol)
+      }
     case SENT_MESSAGE: 
         return {
           ...state,
