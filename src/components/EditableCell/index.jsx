@@ -14,7 +14,6 @@ export default class EditableCell extends React.Component {
             if (error && error[e.currentTarget.id]) {
                 return;
             }
-            console.log(values)
             this.setState(values)
         });
     }
@@ -34,7 +33,6 @@ export default class EditableCell extends React.Component {
             if (error && error[e.currentTarget.id]) {
                 return;
             }
-            console.log(record, values)
             this.toggleEdit();
             handleSave(record.phoneNumber, values);
         });
