@@ -3,10 +3,13 @@ import  PropTypes from 'prop-types';
 
 import {
     Layout,
+    Affix,
+    Menu,
 } from 'antd';
 
 import AppHeader from '../DefaultLayout/Header';
 import RsvpTable from '../RsvpTable';
+import EventsDownload from '../EventsDownload';
 
 const {
     Header,
@@ -30,8 +33,8 @@ class DownloadApp extends Component {
             </Header>
             <Layout>  
                 <Content>    
-                    <RsvpTable
-                    />
+                    <RsvpTable />
+                    <EventsDownload />
                 </Content>
             </Layout>
         </Layout>
