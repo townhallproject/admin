@@ -4,6 +4,7 @@ import { List } from 'antd';
 import SmsCard from '../../components/SmsCard';
 
 import smsUsersStateBranch from '../../state/sms-users';
+import TabComponent from '../../components/Tabs';
 
 
 class SmsUsersDashboard extends Component {
@@ -16,25 +17,39 @@ class SmsUsersDashboard extends Component {
 
     render() {
         const { usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
+        const messageApp = (<List
+            className="comment-list"
+            header={`${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
+            itemLayout="horizontal"
+            dataSource={usersWithReplies}
+            renderItem={item => (
+                <li key={item.phoneNumber}>
+                    <SmsCard
+                        item={item}
+                        key={`${item.phoneNumber}-card`}
+                        sendMessage={sendMessage}
+                        receiveMessage={receiveMessage}
+                    />
+                </li>
+            )}
+        />)
+
         return (
             <React.Fragment>
                 <div>Total number of sms users: {this.props.totalSmsUsers}</div>
-                <List
-                    className="comment-list"
-                    header={`${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
-                    itemLayout="horizontal"
-                    dataSource={usersWithReplies}
-                    renderItem={item => (
-                        <li key={item.phoneNumber}>
-                            <SmsCard 
-                                item={item}
-                                key={`${item.phoneNumber}-card`}
-                                sendMessage={sendMessage}
-                                receiveMessage={receiveMessage}
-                            />
-                        </li>
-                    )}
+                <TabComponent 
+                    tabContents={[
+                        {
+                        title: 'send and view messages',
+                        contents: messageApp
+                        }, 
+                        {
+                            title: 'View and edit potential vols',
+                            contents: messageApp
+                        }, 
+                ]}
                 />
+                
             </React.Fragment>
         );
     }
