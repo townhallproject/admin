@@ -169,7 +169,14 @@ This step makes your testing database behave the same as the production database
 - Don't forget to Scroll back to the top of the page and press `publish`
 - You're done
 ---
-## 5. 🎂 Congratulations you're done 🎂
+
+## 5. Devtools setup
+React and Redux devtools can be helpful tools to install for debugging in Chrome:
+- [React devtools chrome extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
+- [Redux devtools chrome extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)
+
+---
+## 6. 🎂 Congratulations you're done 🎂
 When you encounter new problems, make SURE to edit this `README` with updated information so that future coders can spend more time being productive!
 
 ---

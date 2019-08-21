@@ -7,6 +7,7 @@ import {
   ASSIGN_MOC_TO_RESEARCHER,
   ADD_AND_ASSIGN_TO_RESEARCHER,
   REQUEST_RESEARCHER_BY_ID,
+  REQUEST_RESEARCHER_BY_EMAIL,
 } from "./constants";
 
 export const requestAllResearchers = () => ({
@@ -28,7 +29,14 @@ export const requestResearcherById = (uid) => ({
      payload: {
        uid,
      }
-})
+});
+
+export const requestResearcherByEmail = (email) => ({
+  type: REQUEST_RESEARCHER_BY_EMAIL,
+   payload: {
+     email,
+   }
+});
 
 export const updateResearcherMocs = (mocList) => ({
   type: UPDATE_RESEARCHER_MOCS,
