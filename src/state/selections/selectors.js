@@ -17,6 +17,9 @@ import {
   getAllOldEventsWithUserEmails,
   getAllEvents,
 } from '../events/selectors';
+import {
+  getCurrentUser,
+} from '../users/selectors';
 import { get116thCongress } from '../mocs/selectors';
 
 export const getPendingOrLiveTab = state => state.selections.selectedEventTab;
@@ -137,7 +140,7 @@ export const getEventsAsDownloadObjects= createSelector([getFilteredArchivedEven
         convertedTownHall.dateNumber = eventData.yearMonthDay;
         return convertedTownHall;
     })
-})
+});
 
 export const getEventsForDownload = createSelector([getAllEvents], (allEvents) => {
   return map(allEvents, eventData => {
@@ -174,6 +177,16 @@ export const getEventsForDownload = createSelector([getAllEvents], (allEvents) =
     convertedTownHall.Link_Name = eventData.linkName || ' ';
     convertedTownHall.dateNumber = eventData.yearMonthDay;
     return convertedTownHall;
+  });
+});
+
+export const getNewEventsForDownload = createSelector(
+  [getEventsForDownload, getCurrentUser], 
+  (allEvents, user) => {
+  return filter(allEvents, (event) => {
+    console.log(event.lastUpdated);
+    console.log(user.last_event_download);
+    return !user.last_event_download || event.lastUpdated > user.last_event_download;
   });
 });
 
