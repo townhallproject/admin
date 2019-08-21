@@ -22,7 +22,7 @@ export const getAllOldEventsWithUserEmails = createSelector([getAllOldEvents, ge
       userEmail: user ? user.email : null,
     }
   })
-})
+});
 
 export const getEmailCoverage = createSelector([getAllOldEventsWithUserEmails], (oldEvents) => {
   const finished = filter(oldEvents, event => event.userEmail);
@@ -38,4 +38,4 @@ export const getAllEventsAsList = createSelector([getAllEvents, getAllResearcher
           userEmail: user ? user.email : null,
         }
       })
-})
+});
