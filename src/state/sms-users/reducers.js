@@ -5,6 +5,7 @@ import {
   RECEIVE_MESSAGE,
   SENT_MESSAGE,
   RECEIVE_POTENTIAL_VOLS,
+  UPDATE_POTENTIAL_VOLS_SUCCESS,
 } from "./constants";
 import {
   map,
@@ -44,6 +45,11 @@ const smsUserReducer = (state = initialState, {type, payload}) => {
         ...state,
         potentialVols: payload,
         error: null,
+      }
+    case UPDATE_POTENTIAL_VOLS_SUCCESS: 
+      return {
+        ...state,
+        potentialVols: state.potentialVols.map((vol) => payload.phoneNumber === vol.phoneNumber ? {...vol, ...payload.data } : vol)
       }
     case SENT_MESSAGE: 
         return {
