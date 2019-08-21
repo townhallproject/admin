@@ -5,18 +5,20 @@ import SmsCard from '../../components/SmsCard';
 
 import smsUsersStateBranch from '../../state/sms-users';
 import TabComponent from '../../components/Tabs';
+import PotentialVolTable from '../../components/PotentialVolsTable';
 
 
 class SmsUsersDashboard extends Component {
 
     componentDidMount() {
-        const { requestTotalCount, requestCache } = this.props;
+        const { requestTotalCount, requestCache, requestPotentialVols } = this.props;
         requestTotalCount();
         requestCache();
+        requestPotentialVols()
     }
 
     render() {
-        const { usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
+        const { potentialVols, usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
         const messageApp = (<List
             className="comment-list"
             header={`${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
@@ -45,7 +47,7 @@ class SmsUsersDashboard extends Component {
                         }, 
                         {
                             title: 'View and edit potential vols',
-                            contents: messageApp
+                            contents: (<PotentialVolTable potentialVols={potentialVols} />)
                         }, 
                 ]}
                 />
@@ -56,12 +58,14 @@ class SmsUsersDashboard extends Component {
 }
 
 const mapStateToProps = state => ({
+    potentialVols: smsUsersStateBranch.selectors.getPotentialVols(state),
     totalSmsUsers: smsUsersStateBranch.selectors.getTotalSMSUsers(state),
     usersSentMessages: smsUsersStateBranch.selectors.getUsersWithMessages(state),
     usersWithReplies: smsUsersStateBranch.selectors.getUsersWithReplies(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+    requestPotentialVols: () => dispatch(smsUsersStateBranch.actions.requestPotentialVols()),
     requestTotalCount: () => dispatch(smsUsersStateBranch.actions.requestTotalCount()),
     requestCache: () => dispatch(smsUsersStateBranch.actions.requestCache()),
     sendMessage: (payload) => dispatch(smsUsersStateBranch.actions.sendMessage(payload)),

@@ -10,6 +10,8 @@ import {
   REQUEST_CACHE,
   SEND_SMS_MESSAGE,
   SENT_MESSAGE,
+  RECEIVE_POTENTIAL_VOLS,
+  REQUEST_POTENTIAL_VOLS,
 } from "./constants";
 
 const url = process.env.REACT_APP_SMS_API;
@@ -26,6 +28,28 @@ const requestAllSMSUsersLogic = createLogic({
       successType: RECEIVE_TOTAL_USERS,
     },
   type: REQUEST_TOTAL_USERS,
+});
+
+const requestAllPotentialVolssLogic = createLogic({
+  process({
+    firebasedb
+  }) {
+    return firebasedb.ref('sms-users/potential-vols').once('value')
+     .then((snapshot) => {
+       const toReturn = [];
+       snapshot.forEach((ele) => {
+         const user = ele.val();
+         user.phoneNumber = user.phoneNumber || ele.key;
+         toReturn.push(user)
+       })
+       return toReturn;
+     })
+  },
+  processOptions: {
+    failType: REQUEST_FAILED,
+    successType: RECEIVE_POTENTIAL_VOLS,
+  },
+  type: REQUEST_POTENTIAL_VOLS,
 });
 
 const requestCacheLogic = createLogic({
@@ -76,4 +100,5 @@ export default [
   requestAllSMSUsersLogic,
   sendMessageLogic,
   requestCacheLogic,
+  requestAllPotentialVolssLogic,
 ];
