@@ -18,7 +18,6 @@ import {
 import './style.scss';
 import LookupOldEvents from '../LookupOldEvents';
 import FederalStateRadioSwitcher from '../../components/FederalStateRadioSwitcher';
-import EventsDownloadButton from '../../components/EventsDownloadButton';
 
 class EventsDashBoard extends React.Component {
     constructor(props) {
@@ -80,7 +79,6 @@ class EventsDashBoard extends React.Component {
             tempAddress,
             clearTempAddress,
             setTimeZone,
-            eventsForDownload,
         } = this.props;
         return (
             <React.Fragment>
@@ -96,10 +94,6 @@ class EventsDashBoard extends React.Component {
                 </Row>
                 {pendingOrLive === ARCHIVED_EVENTS_TAB ?
                 <LookupOldEvents /> :
-                <div>
-                    <EventsDownloadButton 
-                        eventsForDownload={eventsForDownload}
-                    />
                     <EventList  
                         pending={pendingOrLive === PENDING_EVENTS_TAB}
                         eventsForList={eventsForList}
@@ -118,8 +112,7 @@ class EventsDashBoard extends React.Component {
                         tempAddress={tempAddress}
                         clearTempAddress={clearTempAddress}
                         setTimeZone={setTimeZone}
-                    />
-                </div>}
+                    />}
             </React.Fragment>
         )
     }
@@ -138,7 +131,6 @@ const mapStateToProps = state => ({
     userSubmissionPath: selectionStateBranch.selectors.getSubmissionUrl(state),
     eventsCounts: eventsStateBranch.selectors.getEventsCounts(state),
     tempAddress: selectionStateBranch.selectors.getTempAddress(state),
-    eventsForDownload: selectionStateBranch.selectors.getEventsForDownload(state),
 });
 
 const mapDispatchToProps = dispatch => ({
