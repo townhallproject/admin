@@ -15,7 +15,6 @@ class EventsDownloadButton extends React.Component {
     return (
       <Button
       icon="download"
-      block
       >
         <CSVLink
           data={ eventsForDownload }
