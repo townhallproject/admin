@@ -176,6 +176,7 @@ export const getEventsForDownload = createSelector([getAllEvents], (allEvents) =
     convertedTownHall.Link = eventData.link || 'https://townhallproject.com/?eventId=' + eventData.eventId;
     convertedTownHall.Link_Name = eventData.linkName || ' ';
     convertedTownHall.dateNumber = eventData.yearMonthDay;
+    convertedTownHall.Last_Updated = moment(eventData.lastUpdated).format('MMM D YYYY, h:mm a');
     return convertedTownHall;
   });
 });
@@ -183,10 +184,11 @@ export const getEventsForDownload = createSelector([getAllEvents], (allEvents) =
 export const getNewEventsForDownload = createSelector(
   [getEventsForDownload, getCurrentUser], 
   (allEvents, user) => {
-  return filter(allEvents, (event) => {
-    console.log(event.lastUpdated);
-    console.log(user.last_event_download);
-    return !user.last_event_download || event.lastUpdated > user.last_event_download;
+    return filter(allEvents, (event) => {
+      console.log(moment(event.Last_Updated, 'MMM D YYYY, h:mm a').valueOf());
+      console.log(user.last_event_download);
+      return !user.last_event_download || 
+      moment(event.Last_Updated, 'MMM D YYYY, h:mm a').valueOf() > user.last_event_download;
   });
 });
 

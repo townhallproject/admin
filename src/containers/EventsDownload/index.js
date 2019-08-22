@@ -10,6 +10,7 @@ import userStateBranch from '../../state/users';
 
 import { LIVE_FEDERAL_PATH } from '../../state/constants';
 import moment from 'moment';
+import { cloneDeep } from 'lodash';
 
 class EventsDownload extends React.Component {
 
@@ -41,27 +42,29 @@ class EventsDownload extends React.Component {
     } = this.props;
     return (
       <React.Fragment>
-        <p>There are { newEventsForDownload.length } new events 
+        <p>There { newEventsForDownload.length === 1 ? 'is ' : 'are ' } 
+          { newEventsForDownload.length } new 
+          event{ newEventsForDownload.length === 1 ? ' ' : 's ' } 
           since { moment(currentUser.last_event_download).format('dddd, MMMM Do YYYY, h:mm a') }. 
         </p>
-        <Button
-          icon="download"
-          onClick={ this.downloadEvents }>
-          <CSVLink
-            data={ newEventsForDownload }
-            filename={ `thp_live_events.csv` }>
+        <CSVLink
+          data={ newEventsForDownload }
+          onClick={ this.downloadEvents }
+          filename={ `thp_live_events_${moment().format('YYYY-MM-DD-hhmma')}.csv` }>
+          <Button
+            icon="download">
               Download New Events
-          </CSVLink>
-        </Button>
-        <Button
-          icon="download"
-          onClick={ this.downloadEvents }>
-          <CSVLink
-            data={ allEventsForDownload }
-            filename={`thp_all_live_events.csv`}>
+          </Button>
+        </CSVLink>
+        <CSVLink
+          data={ allEventsForDownload }
+          onClick={ this.downloadEvents }
+          filename={`thp_all_live_events.csv`}>
+          <Button
+            icon="download">
               Download All Events
-          </CSVLink>
-        </Button>
+          </Button>
+        </CSVLink>
       </React.Fragment>
     )
   }

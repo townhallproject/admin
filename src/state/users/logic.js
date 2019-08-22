@@ -18,6 +18,10 @@ import {
   SET_USER_EVENT_DL_DATE,
 } from "./constants";
 
+import {
+  updateUser,
+} from './actions';
+
 const requestPendingUsersLogic = createLogic({
     process({firebasedb}) {
       return firebasedb.ref('pending_access_request').once('value')
@@ -141,10 +145,13 @@ const setUserEventDlDate = createLogic({
       firebasedb,
     } = deps;
     const uid = action.payload;
-    const wtf = firebasedb.ref(`users/${uid}`).update({
-      last_event_download: moment().valueOf(),
+    const now = moment().valueOf();
+    firebasedb.ref(`users/${uid}`).update({
+      last_event_download: now,
     });
-    console.log(wtf);
+    dispatch(updateUser({
+      last_event_download: now,
+    }));
     done();
   },
   type: SET_USER_EVENT_DL_DATE,
