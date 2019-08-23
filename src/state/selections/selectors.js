@@ -185,8 +185,6 @@ export const getNewEventsForDownload = createSelector(
   [getEventsForDownload, getCurrentUser], 
   (allEvents, user) => {
     return filter(allEvents, (event) => {
-      console.log(moment(event.Last_Updated, 'MMM D YYYY, h:mm a').valueOf());
-      console.log(user.last_event_download);
       return !user.last_event_download || 
       moment(event.Last_Updated, 'MMM D YYYY, h:mm a').valueOf() > user.last_event_download;
   });

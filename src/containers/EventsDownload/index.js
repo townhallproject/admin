@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Button } from 'antd';
-import { CSVLink } from "react-csv";
+import { CSVLink, CSVDownload } from "react-csv";
 
 import eventsStateBranch from '../../state/events';
 import selectionStateBranch from '../../state/selections';
@@ -10,7 +10,6 @@ import userStateBranch from '../../state/users';
 
 import { LIVE_FEDERAL_PATH } from '../../state/constants';
 import moment from 'moment';
-import { cloneDeep } from 'lodash';
 
 class EventsDownload extends React.Component {
 
@@ -26,11 +25,12 @@ class EventsDownload extends React.Component {
     requestEvents(LIVE_FEDERAL_PATH);
   }
 
-  downloadEvents() {
+  downloadEvents(csvLink) {
     const {
       setUserEventDlDate,
       currentUser,
     } = this.props;
+    csvLink.link.click();
     setUserEventDlDate(currentUser.uid);
   }
 
@@ -49,22 +49,22 @@ class EventsDownload extends React.Component {
         </p>
         <CSVLink
           data={ newEventsForDownload }
-          onClick={ this.downloadEvents }
-          filename={ `thp_live_events_${moment().format('YYYY-MM-DD-hhmma')}.csv` }>
-          <Button
-            icon="download">
-              Download New Events
-          </Button>
-        </CSVLink>
+          filename={ `thp_live_events_${moment().format('YYYY-MM-DD-hhmma')}.csv` }
+          ref={(r) => this.csvLinkNew = r}></CSVLink>
+        <Button
+          onClick={() => {this.downloadEvents(this.csvLinkNew);}}
+          icon="download">
+            Download New Events
+        </Button>
         <CSVLink
           data={ allEventsForDownload }
-          onClick={ this.downloadEvents }
-          filename={`thp_all_live_events.csv`}>
-          <Button
-            icon="download">
+          filename={`thp_all_live_events.csv`}
+          ref={(r) => this.csvLinkAll = r}></CSVLink>
+        <Button
+          onClick={() => {this.downloadEvents(this.csvLinkAll);}}
+          icon="download">
               Download All Events
-          </Button>
-        </CSVLink>
+        </Button>
       </React.Fragment>
     )
   }
