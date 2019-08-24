@@ -154,6 +154,9 @@ const setUserEventDlDate = createLogic({
     }));
     done();
   },
+  processOptions: {
+    failType: REQUEST_FAILED,
+  },
   type: SET_USER_EVENT_DL_DATE,
 });
 

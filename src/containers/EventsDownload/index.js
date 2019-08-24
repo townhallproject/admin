@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Button } from 'antd';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 
 import eventsStateBranch from '../../state/events';
 import selectionStateBranch from '../../state/selections';
@@ -45,25 +45,29 @@ class EventsDownload extends React.Component {
         <p>There { newEventsForDownload.length === 1 ? 'is ' : 'are ' } 
           { newEventsForDownload.length } new 
           event{ newEventsForDownload.length === 1 ? ' ' : 's ' } 
-          since { moment(currentUser.last_event_download).format('dddd, MMMM Do YYYY, h:mm a') }. 
+          since your last download 
+          on { moment(currentUser.last_event_download).format('dddd, M/D/YYYY, h:mm a') }. 
         </p>
         <CSVLink
           data={ newEventsForDownload }
-          filename={ `thp_live_events_${moment().format('YYYY-MM-DD-hhmma')}.csv` }
-          ref={(r) => this.csvLinkNew = r}></CSVLink>
+          filename={ `thp_live_events_${moment().format('YYYY-MM-DD-kkmm')}.csv` }
+          ref={ (r) => this.csvLinkNew = r }>
+        </CSVLink>
         <Button
-          onClick={() => {this.downloadEvents(this.csvLinkNew);}}
+          onClick={ () => this.downloadEvents(this.csvLinkNew) }
+          disabled={ newEventsForDownload.length === 0 }
           icon="download">
             Download New Events
         </Button>
         <CSVLink
           data={ allEventsForDownload }
           filename={`thp_all_live_events.csv`}
-          ref={(r) => this.csvLinkAll = r}></CSVLink>
+          ref={ (r) => this.csvLinkAll = r }>
+        </CSVLink>
         <Button
-          onClick={() => {this.downloadEvents(this.csvLinkAll);}}
+          onClick={ () => this.downloadEvents(this.csvLinkAll) }
           icon="download">
-              Download All Events
+            Download All Events
         </Button>
       </React.Fragment>
     )
