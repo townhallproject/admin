@@ -11,11 +11,15 @@ import userStateBranch from '../../state/users';
 import { LIVE_FEDERAL_PATH } from '../../state/constants';
 import moment from 'moment';
 
+import './style.scss';
+
 class EventsDownload extends React.Component {
 
   constructor(props) {
     super(props);
     this.downloadEvents = this.downloadEvents.bind(this);
+    this.csvLinkNew = React.createRef();
+    this.csvLinkAll = React.createRef();
   }
 
   componentDidMount() {
@@ -30,7 +34,7 @@ class EventsDownload extends React.Component {
       setUserEventDlDate,
       currentUser,
     } = this.props;
-    csvLink.link.click();
+    csvLink.current.link.click();
     setUserEventDlDate(currentUser.uid);
   }
 
@@ -51,7 +55,7 @@ class EventsDownload extends React.Component {
         <CSVLink
           data={ newEventsForDownload }
           filename={ `thp_live_events_${moment().format('YYYY-MM-DD-kkmm')}.csv` }
-          ref={ (r) => this.csvLinkNew = r }>
+          ref={ this.csvLinkNew }>
         </CSVLink>
         <Button
           onClick={ () => this.downloadEvents(this.csvLinkNew) }
@@ -62,7 +66,7 @@ class EventsDownload extends React.Component {
         <CSVLink
           data={ allEventsForDownload }
           filename={`thp_all_live_events.csv`}
-          ref={ (r) => this.csvLinkAll = r }>
+          ref={ this.csvLinkAll }>
         </CSVLink>
         <Button
           onClick={ () => this.downloadEvents(this.csvLinkAll) }
