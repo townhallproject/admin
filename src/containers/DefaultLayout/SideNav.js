@@ -60,7 +60,7 @@ class SideNav extends Component {
             </Menu.Item>
             <SubMenu key="events" title={<Link to="/events"><span>Events</span></Link>}>
               <Menu.Item key={PENDING_EVENTS_TAB} onClick={() => handleChangeTab(PENDING_EVENTS_TAB)}>
-                <Link to="/events">Pending<Badge count={totalEventsCounts.pending}></Badge></Link>
+                <Link to="/events">Pending<Badge count={totalEventsCounts}></Badge></Link>
               </Menu.Item>
               <Menu.Item key={LIVE_EVENTS_TAB} onClick={() => handleChangeTab(LIVE_EVENTS_TAB)}>
                 <Link to="/events">Live<Badge count={0}></Badge></Link>

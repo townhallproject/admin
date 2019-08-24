@@ -14,6 +14,7 @@ import {
   ADD_AND_ASSIGN_TO_RESEARCHER,
   ADD_AND_ASSIGN_TO_RESEARCHER_SUCCESS,
   REQUEST_RESEARCHER_BY_ID,
+  REQUEST_RESEARCHER_BY_EMAIL,
   SET_RESEARCHER_EMAIL_DATA,
   REQUEST_FAILED,
 } from "./constants";
@@ -48,6 +49,35 @@ const getResearcherByIdLogic = createLogic({
     successType: SET_RESEARCHER_EMAIL_DATA,
   },
   type: REQUEST_RESEARCHER_BY_ID,
+});
+
+const getResearcherByEmailLogic = createLogic({
+  process({
+    action,
+    firebasedb
+  }) {
+    const {
+      payload
+    } = action;
+    const ref = firebasedb.ref(`users/`);
+    return ref.once('value').then((snapshot) => {
+      let user = {};
+      snapshot.forEach((subshot) => {
+        if (subshot.val().email === payload.email) {
+          user = {
+            email: subshot.val().email,
+            uid: subshot.key,
+          };
+        }
+      });
+      return { user };
+    })
+  },
+  processOptions: {
+    failType: REQUEST_FAILED,
+    successType: SET_RESEARCHER_EMAIL_DATA,
+  },
+  type: REQUEST_RESEARCHER_BY_EMAIL,
 });
 
 const fetchAllResearchers = createLogic({
@@ -225,6 +255,7 @@ const addAndAssignmentLogic = createLogic({
 export default [
   fetchAllResearchers,
   getResearcherByIdLogic,
+  getResearcherByEmailLogic,
   removeAssignmentLogic,
   addAssignmentLogic,
   addAndAssignmentLogic
