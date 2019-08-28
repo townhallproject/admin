@@ -8,6 +8,7 @@ import {
   SUBMIT_REQUEST_ACCESS_SUCCESS,
   RECEIVE_PENDING_USERS,
   HANDLE_APPROVE_REJECT,
+  UPDATE_USER,
 } from "./constants";
 
 const initialState = {
@@ -49,6 +50,14 @@ const userReducer = (state = initialState, {type, payload}) => {
             requestedAccess: true,
           },
         }
+    case UPDATE_USER:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          ...payload
+        }
+      }
     default:
       return state;
   }

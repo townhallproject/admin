@@ -24,6 +24,7 @@ import NotAuthLayout from '../../components/NotAuthLayout';
 import './style.scss';
 import { 
   RSVP_DOWNLOAD_ACCESS,
+  EVENT_DOWNLOAD_ACCESS,
   ADMIN_ACCESS,
   PENDING_EVENTS_TAB,
   LIVE_EVENTS_TAB,
@@ -203,7 +204,7 @@ class DefaultLayout extends Component {
       if (user[ADMIN_ACCESS]) {
         return this.renderAdminApp()
       }
-      if (user[RSVP_DOWNLOAD_ACCESS]) {
+      if (user[RSVP_DOWNLOAD_ACCESS] || user[EVENT_DOWNLOAD_ACCESS]) {
         return (
           <DownloadApp 
             user={user}

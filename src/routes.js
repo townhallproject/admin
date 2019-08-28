@@ -37,8 +37,13 @@ const Requests = Loadable({
   loading: Loading,
 });
 
-const Downloads = Loadable({
-  loader: () => import('./routes/Downloads'),
+const DownloadRsvps = Loadable({
+  loader: () => import('./routes/DownloadRsvps'),
+  loading: Loading,
+});
+
+const DownloadEvents = Loadable({
+  loader: () => import('./routes/DownloadEvents'),
   loading: Loading,
 });
 
@@ -61,7 +66,8 @@ const routes = [
   { path: '/researchers', name: 'Researchers', component: Researchers },
   { path: '/resources', name: 'Resources', component: Resources },
   { path: '/manage-access', name: 'Manage Data Access', component: Requests },
-  { path: '/downloads', name: 'Downloads', component: Downloads },
+  { path: '/download-rsvps', name: 'DownloadRsvps', component: DownloadRsvps },
+  { path: '/download-events', name: 'DownloadEvents', component: DownloadEvents },
   { path: '/subscribers', name: 'Subscribers', component: Subscribers },
   { path: '/sms-users', name: 'SMS Users', component: SmsUsers },
 
