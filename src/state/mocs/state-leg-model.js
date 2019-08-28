@@ -1,19 +1,20 @@
-import {statesAb} from '../../assets/data/states'
+import {
+  statesAb
+} from '../../assets/data/states'
+import { LEVEL_STATE } from '../../constants';
 
-export default class Candidate {
+export default class StateLeg {
 
   constructor(opts) {
-    this.level = opts.level;
+    this.level = LEVEL_STATE;
     this.chamber = opts.chamber;
     this.district = opts.district || null;
     this.party = opts.party;
     this.state = opts.state || null;
     this.stateName = opts.state ? statesAb[this.state] : null;
     this.email = opts.email || null;
-    this.in_office = !!opts.incumbent;
+    this.in_office = true;
     this.role = opts.role || null;
-    this.incumbent = opts.incumbent || false;
-    this.pledged = !!opts.pledged;
     this.displayName = opts.displayName.replace(/\./g, '');
     this.lastUpdated = opts.lastUpdated || null;
     this.lastUpdatedBy = opts.lastUpdatedBy || null;
@@ -23,7 +24,7 @@ export default class Candidate {
     let memberKey;
     let member = this.displayName;
     let nameArray = member.split(' ');
-    if (nameArray.length === 0 ) {
+    if (nameArray.length === 0) {
       return console.log('only one name', member);
     }
     if (nameArray.length > 2) {

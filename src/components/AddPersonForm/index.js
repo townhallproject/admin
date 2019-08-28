@@ -67,9 +67,9 @@ class AddPersonForm extends React.Component {
 
   handleSubmit(e) {
     const {
-      saveCandidate,
+      savePerson,
       form,
-      candidateKeySavePath,
+      keySavePath,
       usState,
     } = this.props;
     e.preventDefault();
@@ -78,9 +78,9 @@ class AddPersonForm extends React.Component {
         console.log('Received values of form: ', values);
         const person = {
           ...values,
-          level: usState ? 'state' : 'level'
+          level: usState ? 'state' : values.level
         }
-        saveCandidate(candidateKeySavePath, person);
+        savePerson(person, keySavePath);
         form.resetFields();
       }
     });
@@ -92,7 +92,11 @@ class AddPersonForm extends React.Component {
       getFieldValue,
     } = this.props.form;
     const {
+      level,
       usState,
+      roleLabel,
+      formTitle,
+      candidate,
     } = this.props;
     const formItemLayout = {
       labelCol: {
@@ -118,7 +122,7 @@ class AddPersonForm extends React.Component {
     };
     return (
       <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >
-        <h1>Add a candidate</h1>
+        <h1>{formTitle}</h1>
 
         <Form.Item {...noLabelFormItemLayout}>
           {getFieldDecorator('displayName', {
@@ -129,7 +133,7 @@ class AddPersonForm extends React.Component {
         </Form.Item>
         <Form.Item label="Level (state or federal)">
           {getFieldDecorator('level', {
-            initialValue: usState ? LEVEL_STATE : LEVEL_FEDERAL,
+            initialValue: level || usState ? LEVEL_STATE : LEVEL_FEDERAL,
             rules: [{ required: true}],
           })(
             <Select>
@@ -149,7 +153,7 @@ class AddPersonForm extends React.Component {
             </Select>
           )}
         </Form.Item>
-        <Form.Item label="Running For (prefix)">
+        <Form.Item label={roleLabel}>
           {getFieldDecorator('role', {
             rules: [{ required: true, message: 'Please enter a role' }],
           })(
@@ -176,11 +180,11 @@ class AddPersonForm extends React.Component {
             </Select>
           )}
         </Form.Item>
-        {(getFieldValue('chamber') === 'lower' || usState) && 
+        {(getFieldValue('chamber') === 'lower' || getFieldValue('level') === LEVEL_STATE) && 
         <Form.Item 
           {...noLabelFormItemLayout}
           hasFeedback 
-          help={usState ? "full district, ie HD-9" : "zero padded number, '09'"}
+          help={getFieldValue('level') === LEVEL_STATE ? "full district, ie HD-9" : "zero padded number, '09'"}
         >
           {getFieldDecorator('district', {
             rules: [{ required: false, message: 'need a name' }],
@@ -188,16 +192,16 @@ class AddPersonForm extends React.Component {
             <Input placeholder="District" />
           )}
         </Form.Item>}
-        <Form.Item label="Incumbent">
+        {candidate &&<Form.Item label="Incumbent">
           {getFieldDecorator('incumbent')(
             <Checkbox />
           )}
-        </Form.Item>
-        <Form.Item label="Pledger">
+        </Form.Item>}
+        {candidate && <Form.Item label="Pledger">
           {getFieldDecorator('pledged')(
             <Checkbox />
           )}
-        </Form.Item>
+        </Form.Item>}
         <Form.Item label="State">
           {getFieldDecorator('state', {
             initialValue: usState || ''
