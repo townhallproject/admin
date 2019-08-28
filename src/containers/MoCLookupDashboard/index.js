@@ -49,17 +49,17 @@ class MoCLookUpDashboard extends React.Component {
       updateDisplayNameValue,
     } = this.props;
     const { TabPane } = Tabs;
-    return (!isModerator &&
+    return (
       <div>
-        <Tabs defaultActiveKey="congress">
-          <TabPane tab="Current Congress" key="congress">
+        <Tabs defaultActiveKey={!isModerator ? "congress": "candidates"}>
+          {!isModerator && <TabPane tab="Current Congress" key="congress">
             <MocTable 
               mocs={the116theCongress}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
             />
-          </TabPane>
+          </TabPane>}
           <TabPane tab="Candidates" key="candidates">
             <FederalStateRadioSwitcher 
               onRadioChange={this.onRadioChange}
