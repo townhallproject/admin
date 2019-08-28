@@ -95,7 +95,7 @@ class NotAuthLayout extends Component {
                                 {getFieldDecorator('moderator', {
                                     initialValue: true,
                                     valuePropName: 'checked',
-                                    })(<Checkbox>Can approve other people's events</Checkbox>
+                                    })(<Checkbox>Can approve only other people's events (not your own)</Checkbox>
 
                                     )}
                             </Form.Item>
