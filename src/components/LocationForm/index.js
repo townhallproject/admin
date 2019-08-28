@@ -157,19 +157,6 @@ class LocationForm extends React.Component {
     const meetingType = getFieldValue('meetingType');
     return (
       <React.Fragment>
-        {/* <FormItem class="general-inputs">
-          {getFieldDecorator('Location', {
-            initialValue: currentTownHall.Location,
-          })(
-            <Input
-              type="text"
-              className="input-underline"
-              id="Location"
-              placeholder="Name of location (eg. Gary Recreation Center)"
-              onChange={(el) => this.handleLocationChange(el)}
-            />,
-          )}
-        </FormItem> */}
         <FormItem 
           label="is a presidental event"
           help="switch on if the event should be stored by the event location and not the MOC state/district"
