@@ -211,9 +211,14 @@ export default class EventCard extends React.Component {
                   description={this.state.currentEditing === 'meetingType' ? selectMeetingType : displayMeetingType}
               />
               <p>Notes: {this.state.currentEditing === 'eventNotes' ? selectEventNotes : displayEditNotes}</p>
-              <p>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`}</p>
-              <p>{townHall.Location || ''}</p>
+              <EditableText 
+                  content={townHall.Location || ''}
+                  updateEvent={updateEvent}
+                  fieldKey='Location'
+                  label="location"
+                  />
               <p>{townHall.address}</p>
+              <p>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`}</p>
               {townHall.disclaimer && <p>{townHall.disclaimer}</p>}
               <EditableText 
                   content={<a href={townHall.link} target="_blank">{townHall.link}</a>}
