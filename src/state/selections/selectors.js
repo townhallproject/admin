@@ -109,6 +109,7 @@ export const getEventsAsDownloadObjects= createSelector([getFilteredArchivedEven
         const convertedTownHall = {};
         convertedTownHall.Entered_By = eventData.userEmail;
         convertedTownHall.Member = eventData.displayName || eventData.Member;
+        convertedTownHall.Chamber = eventData.chamber;
         convertedTownHall.Event_Name = eventData.eventName ? eventData.eventName : ' ';
         convertedTownHall.Location = eventData.Location ? eventData.Location : ' ';
         convertedTownHall.Meeting_Type = eventData.meetingType;
