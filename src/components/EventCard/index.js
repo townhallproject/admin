@@ -37,6 +37,8 @@ export default class EventCard extends React.Component {
     this.selectIconFlag = this.selectIconFlag.bind(this)
     this.setEditEventNotesTrue = this.setEditEventNotesTrue.bind(this)
     this.selectEventNotes = this.selectEventNotes.bind(this)
+    this.setEditLinkUrlTrue = this.setEditLinkUrlTrue.bind(this)
+    this.editLinkUrl = this.editLinkUrl.bind(this)
     this.stopEditing = this.stopEditing.bind(this)
     this.toggleAdaAccessible = this.toggleAdaAccessible.bind(this)
   }
@@ -140,6 +142,18 @@ export default class EventCard extends React.Component {
       this.setState({currentEditing: false})
   }
 
+  setEditLinkUrlTrue() {
+    this.setState({currentEditing: 'link'});
+  }
+
+  editLinkUrl({target}) {
+    const {
+      updateEvent,
+    } = this.props
+    updateEvent({link: target.value.trim()})
+    this.setState({currentEditing: false})
+  }
+
   stopEditing() {
       this.setState({currentEditing: false})
   }
@@ -181,6 +195,12 @@ export default class EventCard extends React.Component {
           <Icon type="edit" onClick={this.setEditEventNotesTrue} />
         </React.Fragment>
       );
+      const displayLinkUrl = (
+        <React.Fragment>
+          <span><a href={townHall.link}>{townHall.link}</a></span>
+          <Icon type="edit" onClick={this.setEditLinkUrlTrue} />
+        </React.Fragment>
+      );
       const displayAddressOrDateEdit = (
         <EditAddressOrDateButton 
           townHall={townHall}
@@ -215,6 +235,12 @@ export default class EventCard extends React.Component {
               <TextArea onPressEnter={this.selectEventNotes} defaultValue={townHall.Notes}/>
           </Row>
           )
+      const editLinkUrl = (
+        <Row type="flex" justify="start">
+          <Button icon="close" shape="circle" onClick={this.stopEditing}/>
+          <Input onPressEnter={this.editLinkUrl} defaultValue={townHall.link}/>
+        </Row>
+        )
       
       return (
         <Card 
@@ -239,17 +265,12 @@ export default class EventCard extends React.Component {
             `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`} 
             {displayAddressOrDateEdit}</p>
           {townHall.disclaimer && <p>{townHall.disclaimer}</p>}
-          <EditableText 
-            content={<a href={townHall.link} target="_blank">{townHall.link}</a>}
-            updateEvent={updateEvent}
-            fieldKey='link'
-            label="link"
-          />
+          <div>Link URL: {this.state.currentEditing === 'link' ? editLinkUrl : displayLinkUrl}</div>
           <EditableText 
             content={townHall.linkName}
             updateEvent={updateEvent}
             fieldKey='linkName'
-            label="link name"
+            label="Link Name"
           />
 
           <Checkbox defaultChecked={townHall.ada_accessible} onChange={this.toggleAdaAccessible}>ADA Accessible</Checkbox>
