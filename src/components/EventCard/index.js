@@ -253,24 +253,32 @@ export default class EventCard extends React.Component {
             title={townHall.eventName || ''}
             description={this.state.currentEditing === 'meetingType' ? selectMeetingType : displayMeetingType}
           />
-          <p>Notes: {this.state.currentEditing === 'eventNotes' ? selectEventNotes : displayEditNotes}</p>
+          <label>Notes: </label>
+          <div>
+            {this.state.currentEditing === 'eventNotes' ? selectEventNotes : displayEditNotes}
+          </div>
+
           <EditableText 
+            label="Location"
             content={townHall.Location || ''}
             updateEvent={updateEvent}
             fieldKey='Location'
-            label="location"
           />
-          <p>{townHall.address} {displayAddressOrDateEdit}</p>
-          <p>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : 
+          <div>{townHall.address} {displayAddressOrDateEdit}</div>
+
+          <label>Date: </label>
+          <div>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : 
             `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`} 
-            {displayAddressOrDateEdit}</p>
+            {displayAddressOrDateEdit}</div>
           {townHall.disclaimer && <p>{townHall.disclaimer}</p>}
-          <div>Link URL: {this.state.currentEditing === 'link' ? editLinkUrl : displayLinkUrl}</div>
+
+          <label>Link URL: </label>
+          <div>{this.state.currentEditing === 'link' ? editLinkUrl : displayLinkUrl}</div>
           <EditableText 
+            label="Link Name"
             content={townHall.linkName}
             updateEvent={updateEvent}
             fieldKey='linkName'
-            label="Link Name"
           />
 
           <Checkbox defaultChecked={townHall.ada_accessible} onChange={this.toggleAdaAccessible}>ADA Accessible</Checkbox>
