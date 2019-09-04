@@ -27,7 +27,6 @@ import {
   EVENT_DOWNLOAD_ACCESS,
   ADMIN_ACCESS,
   PENDING_EVENTS_TAB,
-  LIVE_EVENTS_TAB,
 } from '../../constants';
 import DownloadApp from '../DownloadApp';
 

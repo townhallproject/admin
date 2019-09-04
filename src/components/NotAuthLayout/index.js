@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import AppHeader from '../../containers/DefaultLayout/Header';
 import './style.scss';
-import { MODERATOR_ACCESS, ADMIN_ACCESS } from '../../constants';
+import { ADMIN_ACCESS } from '../../constants';
 
 const {
   Header,

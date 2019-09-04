@@ -37,7 +37,6 @@ class MoCLookUpDashboard extends React.Component {
 
   render() {
     const {
-      allMocNamesIds,
       saveStateLeg,
       isModerator,
       saveCandidate,
@@ -94,7 +93,7 @@ class MoCLookUpDashboard extends React.Component {
 
 const mapStateToProps = state => ({
   allMocNamesIds: mocStateBranch.selectors.getAllMocsIds(state),
-    isModerator: userStateBranch.selectors.getModeratorStatus(state),
+  isModerator: userStateBranch.selectors.getModeratorStatus(state),
   radioValue: selectionStateBranch.selectors.getActiveFederalOrState(state),
   keySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
   the116theCongress: mocStateBranch.selectors.get116thCongress(state),

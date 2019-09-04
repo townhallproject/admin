@@ -43,7 +43,6 @@ class EventsDashBoard extends React.Component {
       pathForEvents,
       requestEventsCounts,
       pendingOrLive,
-      eventsCounts,
     } = this.props;
     if (prevProps.pathForEvents !== pathForEvents && pathForEvents) {
       requestEvents(pathForEvents);

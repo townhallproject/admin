@@ -10,9 +10,6 @@ import {
   Tag,
 } from 'antd';
 import {
-  map,
-} from 'lodash';
-import {
   CSVLink,
 } from "react-csv";
 
@@ -91,7 +88,6 @@ class RSVPTable extends React.Component {
 
   render() {
     const {
-        allRsvpsForCsv,
         allCurrentRsvps,
         allCurrentRsvpsForCsv,
     } = this.props;
