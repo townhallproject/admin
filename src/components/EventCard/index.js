@@ -161,11 +161,41 @@ export default class EventCard extends React.Component {
         clearTempAddress,
         setTimeZone,
         pathForEvents,
-
       } = this.props;
-      const displayMeetingType = (<React.Fragment><span>{townHall.meetingType}</span><Icon type="edit" onClick={this.setEditMeetingTypeTrue} /></React.Fragment>)
-      const displayIconFlag = (<React.Fragment><span>{townHall.iconFlag}</span><Icon type="edit" onClick={this.setEditIconFlagTrue} /></React.Fragment>)
-      const displayEditNotes = (<React.Fragment><span>{townHall.Notes}</span><Icon type="edit" onClick={this.setEditEventNotesTrue} /></React.Fragment>)
+
+      const displayMeetingType = (
+        <React.Fragment>
+          <span>{townHall.meetingType}</span>
+          <Icon type="edit" onClick={this.setEditMeetingTypeTrue} />
+        </React.Fragment>
+      );
+      const displayIconFlag = (
+        <React.Fragment>
+          <span>{townHall.iconFlag}</span>
+          <Icon type="edit" onClick={this.setEditIconFlagTrue} />
+        </React.Fragment>
+      );
+      const displayEditNotes = (
+        <React.Fragment>
+          <span>{townHall.Notes}</span>
+          <Icon type="edit" onClick={this.setEditEventNotesTrue} />
+        </React.Fragment>
+      );
+      const displayAddressOrDateEdit = (
+        <EditAddressOrDateButton 
+          townHall={townHall}
+          address={townHall.address}
+          repeatingEvent={townHall.repeatingEvent}
+          dateString={townHall.dateString}
+          time={townHall.Time}
+          updateEvent={updateEvent}
+          setTempAddress={setTempAddress}
+          tempAddress={tempAddress}
+          clearTempAddress={clearTempAddress}
+          setTimeZone={setTimeZone}
+          pathForEvents={pathForEvents}
+        />
+      );
 
       const selectMeetingType = (
           <Row type="flex" justify="start">
@@ -187,57 +217,51 @@ export default class EventCard extends React.Component {
           )
       
       return (
-          <Card 
-              key={townHall.eventId}
-              className="event-card"
-              extra={(<EditAddressOrDateButton 
-                          townHall={townHall}
-                          address={townHall.address}
-                          repeatingEvent={townHall.repeatingEvent}
-                          dateString={townHall.dateString}
-                          time={townHall.Time}
-                          updateEvent={updateEvent}
-                          setTempAddress={setTempAddress}
-                          tempAddress={tempAddress}
-                          clearTempAddress={clearTempAddress}
-                          setTimeZone={setTimeZone}
-                          pathForEvents={pathForEvents}
-                  />)}
-              actions={pending ? this.renderPendingActions() : this.renderLiveActions()}
-              title={`${townHall.displayName || townHall.Member} (${townHall.party}) ${townHall.state} ${townHall.district || ''}`}
-          >
-              <Meta
-                  title={townHall.eventName || ''}
-                  description={this.state.currentEditing === 'meetingType' ? selectMeetingType : displayMeetingType}
-              />
-              <p>Notes: {this.state.currentEditing === 'eventNotes' ? selectEventNotes : displayEditNotes}</p>
-              <p>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`}</p>
-              <p>{townHall.Location || ''}</p>
-              <p>{townHall.address}</p>
-              {townHall.disclaimer && <p>{townHall.disclaimer}</p>}
-              <EditableText 
-                  content={<a href={townHall.link} target="_blank">{townHall.link}</a>}
-                  updateEvent={updateEvent}
-                  fieldKey='link'
-                  label="link"
-              />
-              <EditableText 
-                  content={townHall.linkName}
-                  updateEvent={updateEvent}
-                  fieldKey='linkName'
-                  label="link name"
-              />
+        <Card 
+          key={townHall.eventId}
+          className="event-card"
+          actions={pending ? this.renderPendingActions() : this.renderLiveActions()}
+          title={`${townHall.displayName || townHall.Member} (${townHall.party}) ${townHall.state} ${townHall.district || ''}`}
+        >
+          <Meta
+            title={townHall.eventName || ''}
+            description={this.state.currentEditing === 'meetingType' ? selectMeetingType : displayMeetingType}
+          />
+          <p>Notes: {this.state.currentEditing === 'eventNotes' ? selectEventNotes : displayEditNotes}</p>
+          <EditableText 
+            content={townHall.Location || ''}
+            updateEvent={updateEvent}
+            fieldKey='Location'
+            label="location"
+          />
+          <p>{townHall.address} {displayAddressOrDateEdit}</p>
+          <p>{townHall.repeatingEvent ? `${townHall.repeatingEvent}` : 
+            `${townHall.dateString} at ${townHall.Time} ${townHall.timeZone}`} 
+            {displayAddressOrDateEdit}</p>
+          {townHall.disclaimer && <p>{townHall.disclaimer}</p>}
+          <EditableText 
+            content={<a href={townHall.link} target="_blank">{townHall.link}</a>}
+            updateEvent={updateEvent}
+            fieldKey='link'
+            label="link"
+          />
+          <EditableText 
+            content={townHall.linkName}
+            updateEvent={updateEvent}
+            fieldKey='linkName'
+            label="link name"
+          />
 
-              <Checkbox defaultChecked={townHall.ada_accessible} onChange={this.toggleAdaAccessible}>ADA Accessible</Checkbox>
-              <ul><h4>Meta data (not shown)</h4>
-                  <li>Event id: {townHall.eventId}</li>
-                  <li>Chamber: {townHall.chamber}</li>
-                  <li>Icon Flag: {this.state.currentEditing === 'iconFlag' ? selectIconFlag : displayIconFlag}</li>
-                  <li>Entered by: {townHall.userEmail}</li>
-                  {townHall.internalNotes && <p>Internal Notes: {townHall.internalNotes}</p>}
-                  <Tag color={townHall.dateValid ? "#2db7f5" : "#f50" }>{townHall.dateValid ? 'Date Valid' : 'Date not valid' }</Tag>
-                  <Tag color={townHall.lat ?  "#2db7f5" : "#f50"}>{townHall.lat ? 'has geocode' : 'needs geocode'}</Tag>
-              </ul>     
-      </Card>)
+          <Checkbox defaultChecked={townHall.ada_accessible} onChange={this.toggleAdaAccessible}>ADA Accessible</Checkbox>
+          <ul><h4>Meta data (not shown)</h4>
+              <li>Event id: {townHall.eventId}</li>
+              <li>Chamber: {townHall.chamber}</li>
+              <li>Icon Flag: {this.state.currentEditing === 'iconFlag' ? selectIconFlag : displayIconFlag}</li>
+              <li>Entered by: {townHall.userEmail}</li>
+              {townHall.internalNotes && <p>Internal Notes: {townHall.internalNotes}</p>}
+              <Tag color={townHall.dateValid ? "#2db7f5" : "#f50" }>{townHall.dateValid ? 'Date Valid' : 'Date not valid' }</Tag>
+              <Tag color={townHall.lat ?  "#2db7f5" : "#f50"}>{townHall.lat ? 'has geocode' : 'needs geocode'}</Tag>
+          </ul>
+        </Card>)
     }
 }

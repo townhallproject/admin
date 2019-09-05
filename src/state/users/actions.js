@@ -7,6 +7,8 @@ import {
   APPROVE_USER_REQUEST,
   REQUEST_CURRENT_USER_BY_ID,
   REJECT_USER_REQUEST,
+  SET_USER_EVENT_DL_DATE,
+  UPDATE_USER,
 } from "./constants";
 
 export const requestCurrentPendingUsers = () => ({
@@ -59,3 +61,13 @@ export const receiveUser = user => ({
   type: RECEIVE_USER, 
   payload: user
 })
+
+export const setUserEventDlDate = (uid) => ({
+  type: SET_USER_EVENT_DL_DATE,
+  payload: uid,
+});
+
+export const updateUser = (userData) => ({
+  type: UPDATE_USER,
+  payload: userData,
+});
