@@ -31,8 +31,12 @@ export const getUsersWithReplies = createSelector([getUsersWithMessages], (users
 export const getPotentialVolsWithReplyData = createSelector([getUsersWithMessages, getPotentialVols], (usersWithMessages, potentialVols) => {
   return map(potentialVols, vol => {
     const data = find(usersWithMessages, (user) => user.phoneNumber === vol.phoneNumber);
-    vol.respondedOn = moment(data.messages[1].time_stamp).format('L');
-    vol.stateDistrict = data.stateDistrict;
+    if (data) {
+      vol.respondedOn = moment(data.messages[1].time_stamp).format('L');
+      vol.stateDistrict = data.stateDistrict;
+    } else {
+      console.log('vol had no data', vol)
+    }
     return vol;
   })
 })
