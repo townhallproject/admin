@@ -42,7 +42,6 @@ export default class EditableCell extends React.Component {
         this.form = form;
         const { children, dataIndex, record } = this.props;
         const { editing } = this.state;
-        console.log(editing, record[dataIndex], children)
         return editing ? (
             <Form.Item style={{ margin: 0 }}>
                 {form.getFieldDecorator(dataIndex, {
