@@ -21,7 +21,7 @@ class SmsUsersDashboard extends Component {
         const { updatePotentialVols, potentialVolsWithReplyData, usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
         const messageApp = (<List
             className="comment-list"
-            header={`${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
+            header={`Showing conversations within the last week. ${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
             itemLayout="horizontal"
             dataSource={usersWithReplies}
             renderItem={item => (
