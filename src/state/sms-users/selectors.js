@@ -12,21 +12,22 @@ export const getUserCache = state => state.smsUsers.userCache;
 export const getPotentialVols = state => state.smsUsers.potentialVols;
 
 export const getUsersWithMessages = createSelector([getUserCache], (users) => {
-    const filtered =  filter(users, (ele) => ele.messages && ele.messages.length);
-    const messages = filter(filtered, (user) => {
+  return filter(users, (ele) => ele.messages && ele.messages.length);
+})
+
+export const getRecentConversations = createSelector([getUsersWithMessages], (filtered) => {
+    return filter(filtered, (user) => {
       const date = moment(user.messages[0].time_stamp);
       const aWeekAgo = moment().subtract(1, 'week');
-      console.log(user.messages[0].time_stamp, date.format())
       return date.isAfter(aWeekAgo);
     })
-    return messages;
 })
 
 export const getUsersWithReplies = createSelector([getUsersWithMessages], (users) => {
   return filter(users, (ele) => ele.messages.length > 1);
 })
 
-export const getPotentialVolsWithReplyData = createSelector([getUsersWithMessages, getPotentialVols], (usersWithMessages, potentialVols) => {
+export const getPotentialVolsWithReplyData = createSelector([getRecentConversations, getPotentialVols], (usersWithMessages, potentialVols) => {
   const vols =  map(potentialVols, vol => {
     const data = find(usersWithMessages, (user) => user.phoneNumber === vol.phoneNumber);
     if (data) {

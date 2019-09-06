@@ -18,12 +18,12 @@ class SmsUsersDashboard extends Component {
     }
 
     render() {
-        const { updatePotentialVols, potentialVolsWithReplyData, usersSentMessages, sendMessage, receiveMessage, usersWithReplies } = this.props;
+        const { updatePotentialVols, potentialVolsWithReplyData, usersSentMessages, sendMessage, receiveMessage, usersWithReplies, recentConversations } = this.props;
         const messageApp = (<List
             className="comment-list"
-            header={`Showing conversations within the last week. ${usersSentMessages.length} sent, ${usersWithReplies.length} replies`}
+            header={`Totals: ${usersSentMessages.length} sent, ${usersWithReplies.length} replies. Only showing conversations from the last week`}
             itemLayout="horizontal"
-            dataSource={usersWithReplies}
+            dataSource={recentConversations}
             renderItem={item => (
                 <li key={item.phoneNumber}>
                     <SmsCard
@@ -46,7 +46,7 @@ class SmsUsersDashboard extends Component {
                         contents: messageApp
                         }, 
                         {
-                            title: 'View and edit potential vols',
+                            title: 'View and edit recent potential vols',
                             contents: (<PotentialVolTable potentialVols={potentialVolsWithReplyData} updatePotentialVols={updatePotentialVols}/>)
                         }, 
                 ]}
@@ -62,6 +62,7 @@ const mapStateToProps = state => ({
     totalSmsUsers: smsUsersStateBranch.selectors.getTotalSMSUsers(state),
     usersSentMessages: smsUsersStateBranch.selectors.getUsersWithMessages(state),
     usersWithReplies: smsUsersStateBranch.selectors.getUsersWithReplies(state),
+    recentConversations: smsUsersStateBranch.selectors.getRecentConversations(state),
     potentialVolsWithReplyData: smsUsersStateBranch.selectors.getPotentialVolsWithReplyData(state),
 });
 
