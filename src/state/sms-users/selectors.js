@@ -15,7 +15,8 @@ export const getUsersWithMessages = createSelector([getUserCache], (users) => {
     const filtered =  filter(users, (ele) => ele.messages && ele.messages.length);
     const messages = filter(filtered, (user) => {
       const date = moment(user.messages[0].time_stamp);
-      const aWeekAgo = moment().subtract(1, 'week')
+      const aWeekAgo = moment().subtract(1, 'week');
+      console.log(user.messages[0].time_stamp, date.format())
       return date.isAfter(aWeekAgo);
     })
     return messages;
