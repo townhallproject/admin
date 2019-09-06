@@ -15,16 +15,16 @@ export const getUsersWithMessages = createSelector([getUserCache], (users) => {
   return filter(users, (ele) => ele.messages && ele.messages.length);
 })
 
-export const getRecentConversations = createSelector([getUsersWithMessages], (filtered) => {
+export const getUsersWithReplies = createSelector([getUsersWithMessages], (users) => {
+  return filter(users, (ele) => ele.messages.length > 1);
+})
+
+export const getRecentConversations = createSelector([getUsersWithReplies], (filtered) => {
     return filter(filtered, (user) => {
       const date = moment(user.messages[0].time_stamp);
       const aWeekAgo = moment().subtract(1, 'week');
       return date.isAfter(aWeekAgo);
     })
-})
-
-export const getUsersWithReplies = createSelector([getUsersWithMessages], (users) => {
-  return filter(users, (ele) => ele.messages.length > 1);
 })
 
 export const getPotentialVolsWithReplyData = createSelector([getRecentConversations, getPotentialVols], (usersWithMessages, potentialVols) => {
