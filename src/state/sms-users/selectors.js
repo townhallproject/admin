@@ -35,7 +35,6 @@ export const getPotentialVolsWithReplyData = createSelector([getRecentConversati
       vol.stateDistrict = data.stateDistrict;
       return vol;
     } else {
-      console.log('vol had no data', vol)
       return null;
     }
   })
