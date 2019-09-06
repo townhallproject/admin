@@ -15,7 +15,8 @@ export const getUsersWithMessages = createSelector([getUserCache], (users) => {
     const filtered =  filter(users, (ele) => ele.messages && ele.messages.length);
     const messages = filter(filtered, (user) => {
       const date = moment(user.messages[0].time_stamp);
-      return date.isAfter(moment().add(1, 'week'));
+      const aWeekAgo = moment().subtract(1, 'week')
+      return date.isAfter(aWeekAgo);
     })
     return messages;
 })
@@ -25,14 +26,16 @@ export const getUsersWithReplies = createSelector([getUsersWithMessages], (users
 })
 
 export const getPotentialVolsWithReplyData = createSelector([getUsersWithMessages, getPotentialVols], (usersWithMessages, potentialVols) => {
-  return map(potentialVols, vol => {
+  const vols =  map(potentialVols, vol => {
     const data = find(usersWithMessages, (user) => user.phoneNumber === vol.phoneNumber);
     if (data) {
       vol.respondedOn = moment(data.messages[1].time_stamp).format('L');
       vol.stateDistrict = data.stateDistrict;
+      return vol;
     } else {
       console.log('vol had no data', vol)
+      return null;
     }
-    return vol;
   })
+  return filter(vols);
 })
