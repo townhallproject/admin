@@ -1,5 +1,8 @@
 import React from 'react';
-import { map } from 'lodash';
+import {
+  map,
+  reduce
+} from 'lodash';
 import {
   Radio, 
   Row,
@@ -31,10 +34,11 @@ class FederalStateRadioSwitcher extends React.Component {
                         onChange={this.props.onRadioChange}
                         className="federal-state-radio-group"
                         >
-                        {map(FEDERAL_STATE_RADIO_BUTTONS, (key) => {
+                        {map(eventsCounts, (value, key) => {
+                            console.log()
                             return (
                                 <RadioButton key={key} value={key}>
-                                    <Badge key={key} count={eventsCounts[key]}>
+                                    <Badge key={key} count={value}>
                                         {key}
                                     </Badge>
                                 </RadioButton>
@@ -49,7 +53,10 @@ class FederalStateRadioSwitcher extends React.Component {
 }
 
 FederalStateRadioSwitcher.defaultProps = {
-    eventsCounts: {},
+    eventsCounts: reduce(FEDERAL_STATE_RADIO_BUTTONS, (acc, cur) => {
+        acc[cur] = 0;
+        return acc;
+    }, {}),
 }
 
 export default FederalStateRadioSwitcher;
