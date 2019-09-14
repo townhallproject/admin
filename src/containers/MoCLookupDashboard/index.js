@@ -37,7 +37,6 @@ class MoCLookUpDashboard extends React.Component {
 
   render() {
     const {
-      allMocNamesIds,
       saveStateLeg,
       isModerator,
       saveCandidate,
