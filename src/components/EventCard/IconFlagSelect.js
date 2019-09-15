@@ -10,6 +10,7 @@ export const CAMPAIGN_ICON_FLAG = 'campaign';
 export const STAFF_ICON_FLAG = 'staff';
 export const HR_1_ICON_FLAG = 'hr-one';
 export const NEXT_GEN_ICON_FLAG='next-gen';
+export const THFOL = 'mfol';
 
 export default class MeetingTypeSelect extends React.Component {
 
@@ -23,12 +24,15 @@ export default class MeetingTypeSelect extends React.Component {
         <Select
             defaultValue={iconFlag}
             key="iconFlag"
-            placeholder="Meeting type"
+            placeholder="icon type"
             onSelect={onSelect}
             style={{width: 200 }}
           >
             <Option value={IN_PERSON_ICON_FLAG}>
             In Person
+            </Option>
+            <Option value={THFOL}>
+              TH For Our Lives
             </Option>
             <Option value={ACTIVISM_ICON_FLAG}>
             Activist Event

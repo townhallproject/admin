@@ -10,7 +10,8 @@ import moment from 'moment';
 import { 
   LIVE_EVENTS_TAB, 
   PENDING_EVENTS_TAB, 
-  STATES_LEGS 
+  STATES_LEGS, 
+  FEDERAL_RADIO_BUTTON
 } from '../../constants';
 import {
   getAllEventsAsList,
@@ -33,21 +34,21 @@ export const includeLiveEventsInLookup = state => state.selections.includeLiveEv
 export const getTempAddress = state => state.selections.tempAddress;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
-  if (includes(STATES_LEGS, federalOrState)) {
+  if (federalOrState !== FEDERAL_RADIO_BUTTON) {
     return `state_townhalls/${federalOrState}`;
   }
   return 'townHalls';
 });
 
 export const getSubmissionUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
-  if (includes(STATES_LEGS, federalOrState)) {
+  if (federalOrState !== FEDERAL_RADIO_BUTTON) {
     return `state_legislators_user_submission/${federalOrState}`;
   }
   return 'UserSubmission';
 });
 
 export const getArchiveUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
-  if (includes(STATES_LEGS, federalOrState)) {
+  if (federalOrState !== FEDERAL_RADIO_BUTTON) {
     return `archived_state_town_halls/${federalOrState}`;
   }
   return 'archived_town_halls';
