@@ -29,7 +29,8 @@ const EditableRow = ({ form, index, ...props }) => {
       </EditableContext.Provider>
     );
   }
-  const EditableFormRow = Form.create()(EditableRow);
+
+const EditableFormRow = Form.create()(EditableRow);
 
 const iconFlagMap = {
     activism: activism,
@@ -121,11 +122,10 @@ class ResultsTable extends React.Component {
     render() {
         const components = {
             body: {
-            row: EditableFormRow,
-            cell: EditableCell,
+                row: EditableFormRow,
+                cell: EditableCell,
             },
         };
-
 
         const columns = this.columns.map(col => {
             if (this.props.includeLiveEventsInLookup || !col.editable) {
@@ -134,11 +134,12 @@ class ResultsTable extends React.Component {
             return {
                 ...col,
                 onCell: record => ({
-                record,
-                editable: col.editable,
-                dataIndex: col.dataIndex,
-                title: col.title,
-                handleSave: this.handleSave,
+                    record,
+                    editable: col.editable,
+                    inputType: col.key,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    handleSave: this.handleSave,
                 }),
             };
         });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input, Form } from 'antd';
 import { EditableContext } from './achivedResultsTable';
+import MeetingTypeSelect from '../../components/EventCard/MeetingTypeSelect';
 
 
 export default class EditableCell extends React.Component {
@@ -10,12 +11,24 @@ export default class EditableCell extends React.Component {
 
   toggleEdit = () => {
     const editing = !this.state.editing;
-    this.setState({ editing }, () => {
-      if (editing) {
-        this.input.focus();
-      }
-    });
+    this.setState({ editing });
   };
+
+  getInput = () => {
+    const {
+      record,
+      dataIndex,
+      inputType,
+    } = this.props;
+    if (inputType === 'meetingType') {
+      return (
+        <MeetingTypeSelect 
+          meetingType={record[dataIndex]}
+        />
+      )
+    }
+    return <Input />;
+  }
 
   save = e => {
     const { record, handleSave } = this.props;
@@ -30,7 +43,12 @@ export default class EditableCell extends React.Component {
 
   renderCell = form => {
     this.form = form;
-    const { children, dataIndex, record, title } = this.props;
+    const {
+      children,
+      dataIndex,
+      record,
+      title,
+    } = this.props;
     const { editing } = this.state;
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
@@ -42,7 +60,9 @@ export default class EditableCell extends React.Component {
             },
           ],
           initialValue: record[dataIndex],
-        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
+        })(this.getInput())
+        // (<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)
+        }
       </Form.Item>
     ) : (
       <div
@@ -59,6 +79,7 @@ export default class EditableCell extends React.Component {
     const {
       editable,
       dataIndex,
+      inputType,
       title,
       record,
       index,
@@ -69,7 +90,7 @@ export default class EditableCell extends React.Component {
     return (
       <td {...restProps}>
         {editable ? (
-          <EditableContext.Consumer>{(form) => this.renderCell(form)}</EditableContext.Consumer>
+          <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
         ) : (
           children
         )}
