@@ -75,21 +75,15 @@ class LookupOldEvents extends React.Component {
             archiveUrl,
             dateLookupRange,
             chamber,
-            event,
         } = this.props;
         const dateStart = moment(dateLookupRange[0]).startOf('day').valueOf();
         const dateEnd = moment(dateLookupRange[1]).endOf('day').valueOf();
 
-        const dateArray = getDateArray(dateLookupRange);
-        dateArray.forEach(date => {
-            requestOldEvents({
-                date,
-                chamber,
-                event,
-                path: archiveUrl,
-                dates: [dateStart, dateEnd],
-            });
-        })
+        requestOldEvents({
+            chamber,
+            path: archiveUrl,
+            dates: [dateStart, dateEnd],
+        });
     }
 
     handleChamberChange = (value) => {

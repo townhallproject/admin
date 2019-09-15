@@ -119,7 +119,6 @@ class ResultsTable extends React.Component {
     };
 
     render() {
-
         const components = {
             body: {
             row: EditableFormRow,

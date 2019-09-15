@@ -148,7 +148,6 @@ export const getFilteredEvents = createSelector(
   ], 
   (includeLive, states, oldEvents, liveEvents, chamber, events, legislativeBody) => {
     let filteredEvents = includeLive ? [...oldEvents, ...liveEvents] : oldEvents;
-
     filteredEvents = map(filteredEvents, normalizeEventSchema);
 
     if (states.length) { 
