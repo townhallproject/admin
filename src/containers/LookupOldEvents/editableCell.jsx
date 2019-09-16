@@ -1,10 +1,17 @@
 import React from 'react';
 import { Input, Form } from 'antd';
 import { EditableContext } from './achivedResultsTable';
-import MeetingTypeSelect from '../../components/EventCard/MeetingTypeSelect';
-
+import { MEETING_TYPE_OPTIONS } from '../../constants';
+import { Select } from 'antd';
+const Option = Select.Option;
 
 export default class EditableCell extends React.Component {
+  constructor(props) {
+    super(props);
+    this.save = this.save.bind(this);
+    this.getInput = this.getInput.bind(this);
+  }
+
   state = {
     editing: false,
   };
@@ -14,7 +21,7 @@ export default class EditableCell extends React.Component {
     this.setState({ editing });
   };
 
-  getInput = () => {
+  getInput() {
     const {
       record,
       dataIndex,
@@ -22,22 +29,35 @@ export default class EditableCell extends React.Component {
     } = this.props;
     if (inputType === 'meetingType') {
       return (
-        <MeetingTypeSelect 
-          meetingType={record[dataIndex]}
-        />
+        <Select 
+          key="meetingType"
+          placeholder="Meeting type"
+          onSelect={this.save}
+          style={{width: 200 }}
+        >
+          {MEETING_TYPE_OPTIONS.map((val) => {
+            return <Option value={val}>{val}</Option>
+          })}
+        </Select>
       )
     }
     return <Input />;
   }
 
-  save = e => {
-    const { record, handleSave } = this.props;
+  save = (e) => {
+    console.log(this)
+    const {
+      record,
+      handleSave,
+    } = this.props;
+    console.log(this.form.getFieldsValue());
     this.form.validateFields((error, values) => {
+      console.log(values)
       if (error && error[e.currentTarget.id]) {
         return;
       }
-      this.toggleEdit();
       handleSave(record.eventId, values);
+      this.toggleEdit();
     });
   };
 
@@ -90,7 +110,7 @@ export default class EditableCell extends React.Component {
     return (
       <td {...restProps}>
         {editable ? (
-          <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
+          <EditableContext.Consumer>{(form) => this.renderCell(form)}</EditableContext.Consumer>
         ) : (
           children
         )}

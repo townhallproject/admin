@@ -116,6 +116,7 @@ class ResultsTable extends React.Component {
 
 
     handleSave = (eventId, editedData) => {
+        console.log(editedData)
         this.props.updateOldEvent(editedData, eventId);
     };
 

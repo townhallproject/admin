@@ -26,3 +26,18 @@ export const ACCESS_LEVELS_MAP = {
     [MOC_DOWNLOAD_ACCESS]: 'download MoC data',
     [ADMIN_ACCESS]: 'ACCESS EVERYTHING!',
 }
+export const MEETING_TYPE_OPTIONS = [
+    'Town Hall',
+    'Gun Safety Activist Event',
+    'H.R. 1 Town Hall',
+    'H.R. 1 Activist Event',
+    'Tele-Town Hall',
+    'Ticketed Event',
+    'Campaign Town Hall',
+    'Adopt-A-District/State',
+    'Empty Chair Town Hall',
+    'Hearing',
+    'DC Event',
+    'Office Hours',
+    'Other',
+]
