@@ -62,12 +62,12 @@ class ResultsTable extends React.Component {
             title: 'Icon',
             render: (text, record) => <img
                 src={iconFlagMap[record.iconFlag]}
-                // not sure why the below line isn't working
-                // src={`../../assets/img/icon-flags/${record.iconFlag}.svg`}
                 alt={record.iconFlag}
                 width={30} 
             />,
             key: 'iconFlag',
+            dataIndex: 'iconFlag',
+            editable: true,
         },
         {
             title: 'Level',

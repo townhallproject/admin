@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Form } from 'antd';
 import { EditableContext } from './achivedResultsTable';
-import { MEETING_TYPE_OPTIONS } from '../../constants';
+import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
 import { Select } from 'antd';
 const Option = Select.Option;
 
@@ -27,20 +27,33 @@ export default class EditableCell extends React.Component {
       dataIndex,
       inputType,
     } = this.props;
-    if (inputType === 'meetingType') {
-      return (
-        <Select 
-          key="meetingType"
-          placeholder="Meeting type"
-          onSelect={this.save}
-          style={{width: 200 }}
-        >
-          {MEETING_TYPE_OPTIONS.map((val) => {
-            return <Option value={val}>{val}</Option>
-          })}
-        </Select>
-      )
-    }
+    switch (inputType) {
+      case 'meetingType':
+        return (
+          <Select 
+            key="meetingType"
+            placeholder="Meeting type"
+            onSelect={this.save}
+            style={{width: 200}}
+          >
+            {MEETING_TYPE_OPTIONS.map((val) => {
+              return <Option value={val}>{val}</Option>
+            })}
+          </Select>
+        )
+      case 'iconFlag':
+        return (
+          <Select 
+            key="iconFlag"
+            onSelect={this.save}
+            style={{width: 200}}
+          >
+            {ICON_FLAGS.map((val) => {
+              return <Option value={val.data}>{val.text}</Option>
+            })}
+          </Select>
+        )
+    };
     return <Input onPressEnter={this.save} onBlur={this.save} />;
   }
 

@@ -25,7 +25,7 @@ export const ACCESS_LEVELS_MAP = {
     [EVENT_DOWNLOAD_ACCESS]: 'download Events',
     [MOC_DOWNLOAD_ACCESS]: 'download MoC data',
     [ADMIN_ACCESS]: 'ACCESS EVERYTHING!',
-}
+};
 export const MEETING_TYPE_OPTIONS = [
     'Town Hall',
     'Gun Safety Activist Event',
@@ -40,4 +40,38 @@ export const MEETING_TYPE_OPTIONS = [
     'DC Event',
     'Office Hours',
     'Other',
+];
+export const ICON_FLAGS = [
+    {
+        text: 'In Person',
+        data: 'in-person',
+    },
+    {
+        text: 'Activist Event',
+        data: 'activism',
+    },
+    {
+        text: 'Tele Town Hall',
+        data: 'tele',
+    },
+    {
+        text: 'Campaign Town Hall',
+        data: 'campaign',
+    },
+    {
+        text: 'Staff',
+        data: 'staff',
+    },
+    {
+        text: 'HR 1 Event',
+        data: 'hr-one',
+    },
+    {
+        text: 'Youth Vote Town Hall',
+        data: 'next-gen',
+    },
+    {
+        text: 'mfol',
+        data: 'mfol',
+    },
 ]
