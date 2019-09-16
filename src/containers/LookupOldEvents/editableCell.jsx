@@ -41,18 +41,15 @@ export default class EditableCell extends React.Component {
         </Select>
       )
     }
-    return <Input />;
+    return <Input onPressEnter={this.save} onBlur={this.save} />;
   }
 
   save = (e) => {
-    console.log(this)
     const {
       record,
       handleSave,
     } = this.props;
-    console.log(this.form.getFieldsValue());
     this.form.validateFields((error, values) => {
-      console.log(values)
       if (error && error[e.currentTarget.id]) {
         return;
       }
