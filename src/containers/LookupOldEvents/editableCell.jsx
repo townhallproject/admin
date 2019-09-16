@@ -53,6 +53,17 @@ export default class EditableCell extends React.Component {
             })}
           </Select>
         )
+      case 'level':
+        return (
+          <Select 
+            key="level"
+            onSelect={this.save}
+            style={{width: 100}}
+          >
+            <Option value="federal">federal</Option>
+            <Option value="state">state</Option>
+          </Select>
+        )
     };
     return <Input onPressEnter={this.save} onBlur={this.save} />;
   }

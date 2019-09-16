@@ -73,6 +73,7 @@ class ResultsTable extends React.Component {
             title: 'Level',
             dataIndex: 'level',
             key: 'level',
+            editable: true,
         },
         {
             title: 'State',
