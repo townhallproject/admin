@@ -85,6 +85,8 @@ class ResultsTable extends React.Component {
                 return record.state;
             },
             key: 'state',
+            dataIndex: 'state',
+            editable: true,
         },
         {
             title: 'Address',
@@ -100,20 +102,20 @@ class ResultsTable extends React.Component {
             },
             key: 'timeStart',
         },
-        {
-            title: 'ADA',
-            dataIndex: 'ada_accessible',
-            key: 'ada_accessible',
-            editable: true,
-        },
-        {
-            title: 'Verified?',
-            // this data doesn't exist yet
-            // display as a checkbox in the future?
-            dataIndex: 'verified',
-            key: 'verified',
-            editable: true,
-        },
+        // {
+        //     title: 'ADA',
+        //     dataIndex: 'ada_accessible',
+        //     key: 'ada_accessible',
+        //     editable: true,
+        // },
+        // {
+        //     title: 'Verified?',
+        //     // this data doesn't exist yet
+        //     // display as a checkbox in the future?
+        //     dataIndex: 'verified',
+        //     key: 'verified',
+        //     editable: true,
+        // },
     ];
 
 

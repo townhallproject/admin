@@ -1,8 +1,9 @@
 import React from 'react';
-import { Input, Form } from 'antd';
+import { Input, Form, Select } from 'antd';
 import { EditableContext } from './achivedResultsTable';
+import StateDistrictEditor from '../../components/StateDistrictEditor';
 import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
-import { Select } from 'antd';
+
 const Option = Select.Option;
 
 export default class EditableCell extends React.Component {
@@ -34,6 +35,7 @@ export default class EditableCell extends React.Component {
             key="meetingType"
             placeholder="Meeting type"
             onSelect={this.save}
+            onBlur={this.save}
             style={{width: 200}}
           >
             {MEETING_TYPE_OPTIONS.map((val) => {
@@ -46,6 +48,7 @@ export default class EditableCell extends React.Component {
           <Select 
             key="iconFlag"
             onSelect={this.save}
+            onBlur={this.save}
             style={{width: 200}}
           >
             {ICON_FLAGS.map((val) => {
@@ -58,14 +61,25 @@ export default class EditableCell extends React.Component {
           <Select 
             key="level"
             onSelect={this.save}
+            onBlur={this.save}
             style={{width: 100}}
           >
             <Option value="federal">federal</Option>
             <Option value="state">state</Option>
           </Select>
         )
+      case 'state':
+        return (
+          <StateDistrictEditor 
+            saveChanges={this.save}
+          />
+        )
     };
-    return <Input onPressEnter={this.save} onBlur={this.save} />;
+    return (
+      <Input 
+        onPressEnter={this.save}
+        onBlur={this.save} 
+      />)
   }
 
   save = (e) => {
@@ -77,6 +91,14 @@ export default class EditableCell extends React.Component {
       if (error && error[e.currentTarget.id]) {
         return;
       }
+      console.log(this.form.getFieldValue('state'));
+      if (Object.keys(values)[0] === 'state') {
+        values = {
+          state: values.state.usState,
+          district: values.state.district,
+        };
+      }
+      console.log(values);
       handleSave(record.eventId, values);
       this.toggleEdit();
     });
@@ -100,15 +122,13 @@ export default class EditableCell extends React.Component {
               message: `${title} is required.`,
             },
           ],
-          initialValue: record[dataIndex],
-        })(this.getInput())
-        // (<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)
-        }
+          initialValue: dataIndex === 'state' ? 
+            {usState: record['state'], district: record['district']} : record[dataIndex],
+        })(this.getInput())}
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
         {children}
