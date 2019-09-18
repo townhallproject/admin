@@ -90,7 +90,7 @@ const fetchOldEventsLogic = createLogic({
     const {
       payload
     } = action;
-    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/${payload.date}`)
+    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
     let fsRef = firestore.collection(ARCHIVE_COLLECTION);
 
     dispatch(setLoading(true))
@@ -114,7 +114,7 @@ const fetchOldEventsLogic = createLogic({
           const researcher = eventData.enteredBy;
           if (researcher && !includes(researcher, '@')) {
             if (!includes(allUids, researcher)) {
-              dispatch(requestResearcherById(researcher))
+              // dispatch(requestResearcherById(researcher))
             }
             allUids.push(researcher);
           }

@@ -29,7 +29,8 @@ const EditableRow = ({ form, index, ...props }) => {
       </EditableContext.Provider>
     );
   }
-  const EditableFormRow = Form.create()(EditableRow);
+
+const EditableFormRow = Form.create()(EditableRow);
 
 const iconFlagMap = {
     activism: activism,
@@ -49,6 +50,7 @@ class ResultsTable extends React.Component {
             title: 'Name',
             dataIndex: 'displayName',
             key: 'displayName',
+            editable: true,
         }, 
         {
             title: 'Meeting Type',
@@ -60,17 +62,18 @@ class ResultsTable extends React.Component {
             title: 'Icon',
             render: (text, record) => <img
                 src={iconFlagMap[record.iconFlag]}
-                // not sure why the below line isn't working
-                // src={`../../assets/img/icon-flags/${record.iconFlag}.svg`}
                 alt={record.iconFlag}
                 width={30} 
             />,
             key: 'iconFlag',
+            dataIndex: 'iconFlag',
+            editable: true,
         },
         {
             title: 'Level',
             dataIndex: 'level',
             key: 'level',
+            editable: true,
         },
         {
             title: 'State',
@@ -82,6 +85,8 @@ class ResultsTable extends React.Component {
                 return record.state;
             },
             key: 'state',
+            dataIndex: 'state',
+            editable: true,
         },
         {
             title: 'Address',
@@ -97,36 +102,35 @@ class ResultsTable extends React.Component {
             },
             key: 'timeStart',
         },
-        {
-            title: 'ADA',
-            dataIndex: 'ada_accessible',
-            key: 'ada_accessible',
-            editable: true,
-        },
-        {
-            title: 'Verified?',
-            // this data doesn't exist yet
-            // display as a checkbox in the future?
-            dataIndex: 'verified',
-            key: 'verified',
-            editable: true,
-        },
+        // {
+        //     title: 'ADA',
+        //     dataIndex: 'ada_accessible',
+        //     key: 'ada_accessible',
+        //     editable: true,
+        // },
+        // {
+        //     title: 'Verified?',
+        //     // this data doesn't exist yet
+        //     // display as a checkbox in the future?
+        //     dataIndex: 'verified',
+        //     key: 'verified',
+        //     editable: true,
+        // },
     ];
 
 
     handleSave = (eventId, editedData) => {
+        console.log(editedData)
         this.props.updateOldEvent(editedData, eventId);
     };
 
     render() {
-
         const components = {
             body: {
-            row: EditableFormRow,
-            cell: EditableCell,
+                row: EditableFormRow,
+                cell: EditableCell,
             },
         };
-
 
         const columns = this.columns.map(col => {
             if (this.props.includeLiveEventsInLookup || !col.editable) {
@@ -135,11 +139,12 @@ class ResultsTable extends React.Component {
             return {
                 ...col,
                 onCell: record => ({
-                record,
-                editable: col.editable,
-                dataIndex: col.dataIndex,
-                title: col.title,
-                handleSave: this.handleSave,
+                    record,
+                    editable: col.editable,
+                    inputType: col.key,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    handleSave: this.handleSave,
                 }),
             };
         });
