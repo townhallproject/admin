@@ -93,15 +93,18 @@ class ResultsTable extends React.Component {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
+            editable: true,
         },
         {
             title: 'Date',
             render: (text, record) => {
                  let dateString = moment(record.timeStart).format('ddd, MMM D YYYY');
-                 let timeString = moment(record.timeStart).format('h a')
+                 let timeString = moment(record.timeStart).format('h:mm a')
                 return `${dateString} ${timeString}`
             },
+            dataIndex: 'timeStart',
             key: 'timeStart',
+            editable: true,
         },
         // {
         //     title: 'ADA',

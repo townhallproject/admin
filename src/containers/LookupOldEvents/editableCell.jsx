@@ -1,8 +1,12 @@
 import React from 'react';
-import { Input, Form, Select } from 'antd';
+import { connect } from 'react-redux';
+import { Input, Form, Select, Modal } from 'antd';
 import { EditableContext } from './achivedResultsTable';
 import StateDistrictEditor from '../../components/StateDistrictEditor';
+import EditAddressOrDateForm from '../../components/EditAddressOrDateModal';
 import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
+import selectionStateBranch from '../../state/selections';
+import ArchiveEventsEditModal from '../../components/ArchiveEventsEditModal';
 
 const Option = Select.Option;
 
@@ -13,10 +17,13 @@ export default class EditableCell extends React.Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.saveNewValue = this.saveNewValue.bind(this);
     this.saveFormEntry = this.saveFormEntry.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   state = {
     editing: false,
+    loading: false,
+    modalVisible: false,
   };
 
   toggleEdit() {
@@ -24,11 +31,41 @@ export default class EditableCell extends React.Component {
     this.setState({ editing });
   };
 
+  showModal = () => {
+    console.log('show modal')
+    this.setState({
+      modalVisible: true,
+      editing: true,
+    });
+  }
+
+  handleClose(e) {
+    this.setState({
+      modalVisible: false,
+      editing: false,
+    });
+  }
+
+  handleCloseOnSubmit = (e) => {
+    this.setState({
+      loading: false,
+      modalVisible: false,
+      editing: false,
+    });
+  }
+
   getInput() {
     const {
       inputType,
+      handleSave,
     } = this.props;
     switch (inputType) {
+      case 'displayName':
+        return (
+          <Input 
+            onPressEnter={this.save}
+            onBlur={this.save} 
+          />)
       case 'meetingType':
         return (
           <Select 
@@ -74,13 +111,36 @@ export default class EditableCell extends React.Component {
             saveChanges={this.saveFormEntry}
           />
         )
-      default: 
+      case 'address':
+      case 'timeStart':
         return (
-          <Input 
-            onPressEnter={this.saveFormEntry}
-            onBlur={this.saveFormEntry} 
-          />)
-     }
+          <ArchiveEventsEditModal
+            visible={this.state.modalVisible}
+            handleClose={this.handleClose}
+            townHall={record}
+            updateEvent={handleSave}
+          />
+        )
+        // return (
+        //   <Modal
+        //     title="Edit Address or Date"
+        //     visible={this.state.modalVisible}
+        //     onOk={this.checkModalData}
+        //     onCancel={this.handleClose}
+        //     closable
+        //   >
+        //     <EditAddressOrDateForm
+        //       loading={this.state.loading}
+        //       currentTownHall={record}
+        //       address={record['address']}
+        //       updateEvent={this.save}
+        //       setTempAddress={setTempAddress}
+        //       tempAddress={tempAddress}
+        //       clearTempAddress={clearTempAddress}
+        //     />
+        //   </Modal>
+        // )
+    };
   }
 
   saveNewValue(key, value) {
@@ -101,7 +161,6 @@ export default class EditableCell extends React.Component {
       if (error && error[e.currentTarget.id]) {
         return;
       }
-      console.log(this.form.getFieldValue('state'));
       if (Object.keys(values)[0] === 'state') {
         values = {
           state: values.state.usState,
@@ -121,6 +180,7 @@ export default class EditableCell extends React.Component {
       dataIndex,
       record,
       title,
+      inputType,
     } = this.props;
     const { editing } = this.state;
     return editing ? (
@@ -135,14 +195,14 @@ export default class EditableCell extends React.Component {
               message: `${title} is required.`,
             },
           ],
-          initialValue: dataIndex === 'state' ? 
+          initialValue: inputType === 'state' ? 
             {usState: record['state'], district: record['district']} : record[dataIndex],
         })(this.getInput())}
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        onClick={this.toggleEdit}
+        onClick={inputType === 'address' ? this.showModal : this.toggleEdit}
       >
         {children}
       </div>
