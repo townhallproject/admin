@@ -3,10 +3,6 @@ import { Select } from 'antd';
 
 const Option = Select.Option;
 
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
 export default class MeetingTypeSelect extends React.Component {
 
   render() {

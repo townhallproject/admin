@@ -27,7 +27,6 @@ import {
   EVENT_DOWNLOAD_ACCESS,
   ADMIN_ACCESS,
   PENDING_EVENTS_TAB,
-  LIVE_EVENTS_TAB,
 } from '../../constants';
 import DownloadApp from '../DownloadApp';
 
@@ -122,46 +121,45 @@ class DefaultLayout extends Component {
       return (
         <Layout>
           <Header>
-              <AppHeader 
-                userName={user.username}
-                logOut={this.logOut}
-              />
-            </Header>
+            <AppHeader 
+              userName={user.username}
+              logOut={this.logOut}
+            />
+          </Header>
           <Layout>
-              <Sider
-                width={300}
-                style={{
-                  overflow: 'auto', 
-                  height: '100vh', 
-               
-                }}
-              > 
-                <SideNav 
-                    handleChangeTab={changeActiveEventTab}
-                    activeEventTab={activeEventTab}
-                    activeMenuItem={currentHashLocation}
-                    totalEventsCounts={totalEventsCounts}
-                />
-              </Sider>
+            <Sider
+              width={300}
+              style={{
+                overflow: 'auto', 
+                height: '100vh',
+              }}
+            > 
+              <SideNav 
+                handleChangeTab={changeActiveEventTab}
+                activeEventTab={activeEventTab}
+                activeMenuItem={currentHashLocation}
+                totalEventsCounts={totalEventsCounts}
+              />
+            </Sider>
+            <Content style={{
+              padding: 24, margin: 0, minHeight: 280,
+            }}>   
               <Switch>
-                <Content style={{
-                  padding: 24, margin: 0, minHeight: 280,
-                }}>       
-                  {routes.map((route, idx) => {
-                      return route.component ? (
-                      <Route 
-                        key={idx} 
-                        path={route.path} 
-                        exact={route.exact} 
-                        name={route.name} 
-                        render={props => (
-                          <route.component {...props} />
-                        )} />)
-                        : null
-                    },
-                  )}
-                </Content>
+                {routes.map((route, idx) => {
+                  return route.component ? (
+                    <Route 
+                      key={idx} 
+                      path={route.path} 
+                      exact={route.exact} 
+                      name={route.name} 
+                      render={props => (
+                        <route.component {...props} />
+                      )} />)
+                      : null
+                  },
+                )}
               </Switch>
+            </Content>
           </Layout>
         </Layout>
       )

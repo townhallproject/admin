@@ -3,7 +3,6 @@ import {
   Icon,
 } from 'antd';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import EditAddressOrDateModal from '../EditAddressOrDateModal';
 

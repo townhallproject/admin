@@ -142,7 +142,6 @@ class LocationForm extends React.Component {
 
   render() {
     const {
-      address,
       style,
       getFieldDecorator,
       tempAddress,

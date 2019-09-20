@@ -3,10 +3,6 @@ import { Select } from 'antd';
 
 const Option = Select.Option;
 
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
 export const IN_PERSON_ICON_FLAG = 'in-person';
 export const ACTIVISM_ICON_FLAG = 'activism';
 export const TELE_ICON_FLAG = 'tele';
