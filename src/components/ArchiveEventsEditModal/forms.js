@@ -14,6 +14,7 @@ import LocationForm from '../LocationForm';
 
 const FormItem = Form.Item;
 const timeFormats = ['hh:mm A', 'h:mm A'];
+const archiveEventsTimeFormat = 'YYYY-MM-DDTHH:mm:ssZZ'
 
 class ArchiveAddressDateEditForm extends React.Component {
   constructor(props) {
@@ -47,14 +48,16 @@ class ArchiveAddressDateEditForm extends React.Component {
   onChangeDate(date) {
     const {
       updateEvent,
+      townHall,
     } = this.props;
-    const {
-      timeStart,
-      timeEnd,
-      offset,
-    } = this.state;
+    const newDate = moment(date).format('YYYY-MM-DD');
+    const endTime = moment(townHall.timeEnd, archiveEventsTimeFormat).format('HH:mm:ss');
+    const endTZ = moment(townHall.timeEnd, archiveEventsTimeFormat).format('ZZ');
+    const newTimeEnd = moment(`${newDate}T${endTime}${endTZ}`, archiveEventsTimeFormat);
     const updateObject = {
       timestamp: moment(date).format('x'),
+      timeStart: moment(date).format(archiveEventsTimeFormat),
+      timeEnd: newTimeEnd.format(archiveEventsTimeFormat),
     }
     console.log(updateObject);
     if (moment().isAfter(date)) {
@@ -62,20 +65,27 @@ class ArchiveAddressDateEditForm extends React.Component {
     } else {
       this.setState({ pastDateWarning: false });
     }
-    // updateEvent(updateObject);
+    updateEvent(updateObject, townHall.eventId);
   }
 
   onChangeStartTime(time, timeString) {
+    console.log('onChangeStartTime: ', time, timeString);
     const {
       updateEvent,
     } = this.props;
+    const {
+      timestamp,
+    } = this.props;
+    // const newTimestamp = moment(timeString, timeFormats).format('x');
     const updateObject = {
-      timeStart24: moment(timeString, timeFormats).format('HH:mm:ss'),
+      timestamp: moment(timeString, timeFormats).format('x'),
+      timeStart: moment(timeString, timeFormats).format('HH:mm:ss'),
       Time: moment(timeString, timeFormats).format('h:mm A'),
       timeEnd24: moment(timeString, timeFormats).add(2, 'h').format('HH:mm:ss'),
       timeEnd: moment(timeString, timeFormats).add(2, 'h').format('h:mm A'),
     }
-    updateEvent(updateObject);
+    console.log(updateObject);
+    // updateEvent(updateObject);
   }
 
   onChangeEndTime(time, timeString) {
@@ -135,7 +145,7 @@ class ArchiveAddressDateEditForm extends React.Component {
     ) : (
       <FormItem>
         {getFieldDecorator('date', {
-          initialValue: moment(townHall.timestamp, 'x'),
+          initialValue: moment(townHall.timeStart, archiveEventsTimeFormat),
           rules: [{
             message: 'Please enter a valid date',
             required: true,
@@ -198,7 +208,7 @@ class ArchiveAddressDateEditForm extends React.Component {
         {this.renderRepeatingEvent()}
         <FormItem label="Start time">
           {getFieldDecorator('time', {
-            initialValue: moment(townHall.timeStart, 'YYYY-MM-DDTHH:mm:ss-ZZ'),
+            initialValue: moment(townHall.timeStart, archiveEventsTimeFormat),
             rules: [{
               message: 'Please enter a valid time',
               required: true,
@@ -221,12 +231,10 @@ class ArchiveAddressDateEditForm extends React.Component {
             )}
         </FormItem>
         <FormItem label="End time">
-          {getFieldDecorator(
-            'endTime', {
-              initialValue: moment(townHall.timeEnd, 'YYYY-MM-DDTHH:mm:ss-ZZ'),
+          {getFieldDecorator('endTime', {
+              initialValue: moment(townHall.timeEnd, archiveEventsTimeFormat),
             },
-          )(
-            <TimePicker
+          )(<TimePicker
               use12Hours
               minuteStep={15}
               format="h:mm A"
