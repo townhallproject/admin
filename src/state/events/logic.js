@@ -287,6 +287,7 @@ const updateEventLogic = createLogic({
       action,
       firebasedb,
     } = deps;
+    console.log(action.payload);
     const { updateData, path, eventId } = action.payload;
     if(!path || !eventId) {
       return

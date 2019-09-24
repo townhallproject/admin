@@ -54,16 +54,17 @@ class LocationForm extends React.Component {
       tempLat,
       tempLng,
       clearTempAddress,
+      currentTownHall,
     } = this.props;
 
     if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
-      updateEvent(tempAddressFullData)
+      updateEvent(tempAddressFullData, currentTownHall.eventId)
     }
     updateEvent({
       lat: tempLat,
       lng: tempLng,
       address: tempAddress
-    });
+    }, currentTownHall.eventId);
     clearTempAddress();
   }
 
