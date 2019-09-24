@@ -113,6 +113,7 @@ export default class EditableCell extends React.Component {
         )
       case 'address':
       case 'timeStart':
+        console.log(inputType);
         return (
           <ArchiveEventsEditModal
             visible={this.state.modalVisible}
@@ -121,25 +122,6 @@ export default class EditableCell extends React.Component {
             updateEvent={handleSave}
           />
         )
-        // return (
-        //   <Modal
-        //     title="Edit Address or Date"
-        //     visible={this.state.modalVisible}
-        //     onOk={this.checkModalData}
-        //     onCancel={this.handleClose}
-        //     closable
-        //   >
-        //     <EditAddressOrDateForm
-        //       loading={this.state.loading}
-        //       currentTownHall={record}
-        //       address={record['address']}
-        //       updateEvent={this.save}
-        //       setTempAddress={setTempAddress}
-        //       tempAddress={tempAddress}
-        //       clearTempAddress={clearTempAddress}
-        //     />
-        //   </Modal>
-        // )
     };
   }
 
@@ -202,7 +184,8 @@ export default class EditableCell extends React.Component {
     ) : (
       <div
         className="editable-cell-value-wrap"
-        onClick={inputType === 'address' ? this.showModal : this.toggleEdit}
+        onClick={(inputType === 'address' || inputType === 'timeStart') ? 
+          this.showModal : this.toggleEdit}
       >
         {children}
       </div>
