@@ -95,6 +95,7 @@ const requestTimeZoneLogic = createLogic({
     const {
       payload
     } = action;
+    console.log(payload);
     const time = Date.parse(`${payload.date} ${payload.time}`) / 1000;
     const loc = `${payload.lat},${payload.lng}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;

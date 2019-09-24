@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { Input, Form, Select, Modal } from 'antd';
 import ArchiveEditForm from './forms';
@@ -27,9 +28,12 @@ class ArchiveEventsEditModal extends React.Component {
     this.setState({
       loading: false,
     });
+    const dateTime = moment(townHall.timeStart);
+    const date = dateTime.format('ddd, MMM DD YYYY');
+    const time = dateTime.format('hh:mm A');
     setTimeZone({
-      date: townHall.dateString,
-      time: townHall.Time,
+      date: date,
+      time: time,
       lat: townHall.lat,
       lng: townHall.lng,
       eventId: townHall.eventId,
