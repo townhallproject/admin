@@ -50,14 +50,14 @@ class ArchiveAddressDateEditForm extends React.Component {
       updateEvent,
       townHall,
     } = this.props;
-    const newDate = moment(date).format('YYYY-MM-DD');
-    const endTime = moment(townHall.timeEnd, archiveEventsTimeFormat).format('HH:mm:ss');
-    const endTZ = moment(townHall.timeEnd, archiveEventsTimeFormat).format('ZZ');
-    const newTimeEnd = moment(`${newDate}T${endTime}${endTZ}`, archiveEventsTimeFormat);
+    const newDate = moment.parseZone(date).format('YYYY-MM-DD');
+    const endTime = moment.parseZone(townHall.timeEnd).format('HH:mm:ss');
+    const offset = moment.parseZone(townHall.timeEnd).utcOffset();
+    const newTimeEnd = moment(`${newDate}T${endTime}`, archiveEventsTimeFormat);
     const updateObject = {
       timestamp: moment(date).format('x'),
-      timeStart: moment(date).format(archiveEventsTimeFormat),
-      timeEnd: newTimeEnd.format(archiveEventsTimeFormat),
+      timeStart: moment(date).utcOffset(offset).format(archiveEventsTimeFormat),
+      timeEnd: newTimeEnd.utcOffset(offset).format(archiveEventsTimeFormat),
     }
     console.log(updateObject);
     if (moment().isAfter(date)) {
@@ -65,37 +65,32 @@ class ArchiveAddressDateEditForm extends React.Component {
     } else {
       this.setState({ pastDateWarning: false });
     }
-    updateEvent(updateObject, townHall.eventId);
+    // updateEvent(updateObject, townHall.eventId);
   }
 
   onChangeStartTime(time, timeString) {
-    console.log('onChangeStartTime: ', time, timeString);
     const {
       updateEvent,
+      townHall,
     } = this.props;
-    const {
-      timestamp,
-    } = this.props;
-    // const newTimestamp = moment(timeString, timeFormats).format('x');
     const updateObject = {
-      timestamp: moment(timeString, timeFormats).format('x'),
-      timeStart: moment(timeString, timeFormats).format('HH:mm:ss'),
-      Time: moment(timeString, timeFormats).format('h:mm A'),
-      timeEnd24: moment(timeString, timeFormats).add(2, 'h').format('HH:mm:ss'),
-      timeEnd: moment(timeString, timeFormats).add(2, 'h').format('h:mm A'),
+      timestamp: time.format('x'),
+      timeStart: time.format(archiveEventsTimeFormat),
     }
     console.log(updateObject);
-    // updateEvent(updateObject);
+    // updateEvent(updateObject, townHall.eventId);
   }
 
   onChangeEndTime(time, timeString) {
     const {
       updateEvent,
+      townHall,
     } = this.props;
     const updateObject = {
-      timeEnd: moment(timeString, timeFormats).format('h:mm A'),
+      timeEnd: time.format(archiveEventsTimeFormat),
     }
-    updateEvent(updateObject);
+    console.log(updateObject);
+    // updateEvent(updateObject, townHall.eventId);
   }
 
   closeTimeStart() {
@@ -124,7 +119,6 @@ class ArchiveAddressDateEditForm extends React.Component {
     const { 
       repeatingEvent,
       pastDateWarning,
-      date,
     } = this.state;
     return repeatingEvent ? (
       <FormItem
@@ -208,7 +202,7 @@ class ArchiveAddressDateEditForm extends React.Component {
         {this.renderRepeatingEvent()}
         <FormItem label="Start time">
           {getFieldDecorator('time', {
-            initialValue: moment(townHall.timeStart, archiveEventsTimeFormat),
+            initialValue: moment.parseZone(townHall.timeStart),
             rules: [{
               message: 'Please enter a valid time',
               required: true,
@@ -216,7 +210,7 @@ class ArchiveAddressDateEditForm extends React.Component {
           })(<TimePicker
                 use12Hours
                 minuteStep={15}
-                format="h:mm A"
+                format="hh:mm A"
                 defaultOpenValue={moment().hour(0).minute(0)}
                 onChange={this.onChangeStartTime}
                 open={startOpen}
@@ -232,7 +226,7 @@ class ArchiveAddressDateEditForm extends React.Component {
         </FormItem>
         <FormItem label="End time">
           {getFieldDecorator('endTime', {
-              initialValue: moment(townHall.timeEnd, archiveEventsTimeFormat),
+              initialValue: moment.parseZone(townHall.timeEnd),
             },
           )(<TimePicker
               use12Hours

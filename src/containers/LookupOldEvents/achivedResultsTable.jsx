@@ -98,9 +98,7 @@ class ResultsTable extends React.Component {
         {
             title: 'Date',
             render: (text, record) => {
-                 let dateString = moment(record.timeStart, 'YYYY-MM-DDTHH:mm:ss-ZZ').format('ddd, MMM D YYYY h:mm a');
-                //  let timeString = moment(record.timeStart).format('h:mm a')
-                return dateString;
+                return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
             },
             dataIndex: 'timeStart',
             key: 'timeStart',
