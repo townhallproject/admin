@@ -10,7 +10,7 @@ import {
   TimePicker,
   Alert,
 } from 'antd';
-import LocationForm from '../LocationForm';
+import LocationForm from './LocationForm';
 
 const FormItem = Form.Item;
 const timeFormats = ['hh:mm A', 'h:mm A'];
@@ -176,7 +176,6 @@ class ArchiveAddressDateEditForm extends React.Component {
       updateEvent,
       setLatLng,
     } = this.props;
-    townHall.Location = townHall.location;
     const {
       getFieldDecorator,
       getFieldValue,

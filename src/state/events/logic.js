@@ -314,6 +314,7 @@ const updateOldEventLogic = createLogic({
       eventId
     } = action.payload;
     if (!eventId) {
+      console.log('Missing eventId');
       return
     }
 
