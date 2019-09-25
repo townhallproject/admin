@@ -10,6 +10,7 @@ import {
   CLEAR_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
   CHANGE_TIME_ZONE,
+  CHANGE_ARCHIVED_TIME_ZONE,
   CHANGE_CHAMBER_FILTER,
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
@@ -80,5 +81,10 @@ export const clearTempAddress = () => ({
 
 export const getTimeZone = (payload) => ({
   type: CHANGE_TIME_ZONE,
+  payload,
+});
+
+export const getArchivedTimeZone = (payload) => ({
+  type: CHANGE_ARCHIVED_TIME_ZONE,
   payload,
 });

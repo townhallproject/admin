@@ -28,12 +28,15 @@ class ArchiveEventsEditModal extends React.Component {
     this.setState({
       loading: false,
     });
-    const dateTime = moment(townHall.timeStart);
+    const dateTime = moment.parseZone(townHall.timeStart);
     const date = dateTime.format('ddd, MMM DD YYYY');
     const time = dateTime.format('hh:mm A');
     setTimeZone({
       date: date,
       time: time,
+      timestamp: townHall.timestamp,
+      timeStart: townHall.timeStart,
+      timeEnd: townHall.timeEnd,
       lat: townHall.lat,
       lng: townHall.lng,
       eventId: townHall.eventId,
@@ -79,7 +82,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setTempAddress: (address) => dispatch(selectionStateBranch.actions.setTempAddress(address)),
   clearTempAddress: () => dispatch(selectionStateBranch.actions.clearTempAddress()),
-  setTimeZone: (payload) => dispatch(selectionStateBranch.actions.getTimeZone(payload)),
+  setTimeZone: (payload) => dispatch(selectionStateBranch.actions.getArchivedTimeZone(payload)),
   setTempAddress: (address) => dispatch(selectionStateBranch.actions.setTempAddress(address)),
 });
 

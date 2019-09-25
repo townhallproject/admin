@@ -9,12 +9,14 @@ import {
   CHANGE_DATE_LOOKUP,
   GENERAL_FAIL,
   CHANGE_TIME_ZONE,
+  CHANGE_ARCHIVED_TIME_ZONE,
   SET_TEMP_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
 } from "./constants";
 import {
   resetOldEvents,
   updateExistingEvent,
+  updateOldEvent,
 } from "../events/actions";
 import { toggleIncludeLiveEventsInLookup } from "./actions";
 
@@ -139,9 +141,68 @@ const requestTimeZoneLogic = createLogic({
   }
 });
 
+const requestArchivedTimeZoneLogic = createLogic({
+  type: CHANGE_ARCHIVED_TIME_ZONE,
+  processOptions: {
+    failType: GENERAL_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      httpClient,
+    } = deps;
+    const {
+      payload
+    } = action;
+    console.log(payload);
+    const time = Date.parse(`${payload.date} ${payload.time}`) / 1000;
+    const loc = `${payload.lat},${payload.lng}`;
+    const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
+    httpClient.get(url)
+      .then((r) => {
+        const response = r.body;
+        console.log(response)
+        if (!response.timeZoneName) {
+          return Error('no timezone results', response);
+        }
+        const timezoneAb = response.timeZoneName.split(' ');
+        const timeZone = timezoneAb.reduce((acc, cur) => {
+          acc += cur[0];
+          return acc;
+        }, '');
+        const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
+        let utcoffset;
+        if (Number(offset) === offset) {
+          utcoffset = `UTC${offset}00`;
+        } else {
+          const fract = ((offset * 10) % 10) / 10;
+          const integr = Math.trunc(offset);
+          let mins = (Math.abs(fract * 60)).toString();
+          const zeros = '00';
+          mins = zeros.slice(mins.length) + mins;
+          utcoffset = `UTC${integr}${mins}`;
+        }
+
+        const newTimeStart = moment.parseZone(payload.timeStart);
+        console.log(newTimeStart, newTimeStart.utcOffset(offset, true));
+        const newTimeEnd = moment.parseZone(payload.timeEnd).utcOffset(offset, true);
+
+        const eventData = {
+          timestamp: newTimeStart.format('x'),
+          timeStart: newTimeStart.format(),
+          timeEnd: newTimeEnd.format(),
+        }
+
+        dispatch(updateOldEvent(eventData, payload.eventId));
+        done();
+      })
+  }
+});
+
 export default [
     requestLatLngLogic,
     requestTimeZoneLogic,
+    requestArchivedTimeZoneLogic,
     getUrlLogic,
     onSelectionChangeLogic,
 ];

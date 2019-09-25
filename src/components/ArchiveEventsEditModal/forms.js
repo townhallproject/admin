@@ -59,13 +59,12 @@ class ArchiveAddressDateEditForm extends React.Component {
       timeStart: moment(date).utcOffset(offset).format(archiveEventsTimeFormat),
       timeEnd: newTimeEnd.utcOffset(offset).format(archiveEventsTimeFormat),
     }
-    console.log(updateObject);
     if (moment().isAfter(date)) {
       this.setState({ pastDateWarning: true });
     } else {
       this.setState({ pastDateWarning: false });
     }
-    // updateEvent(updateObject, townHall.eventId);
+    updateEvent(updateObject, townHall.eventId);
   }
 
   onChangeStartTime(time, timeString) {
@@ -77,8 +76,7 @@ class ArchiveAddressDateEditForm extends React.Component {
       timestamp: time.format('x'),
       timeStart: time.format(archiveEventsTimeFormat),
     }
-    console.log(updateObject);
-    // updateEvent(updateObject, townHall.eventId);
+    updateEvent(updateObject, townHall.eventId);
   }
 
   onChangeEndTime(time, timeString) {
@@ -89,8 +87,7 @@ class ArchiveAddressDateEditForm extends React.Component {
     const updateObject = {
       timeEnd: time.format(archiveEventsTimeFormat),
     }
-    console.log(updateObject);
-    // updateEvent(updateObject, townHall.eventId);
+    updateEvent(updateObject, townHall.eventId);
   }
 
   closeTimeStart() {
