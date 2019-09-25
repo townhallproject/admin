@@ -20,6 +20,7 @@ class ArchiveEventsEditModal extends React.Component {
       setTimeZone,
       townHall,
       pathForEvents,
+      handleClose,
     } = this.props;
     if (tempAddress.address) {
       console.log('still have address')
@@ -41,7 +42,8 @@ class ArchiveEventsEditModal extends React.Component {
       lng: townHall.lng,
       eventId: townHall.eventId,
       pathForEvents: pathForEvents,
-    })
+    });
+    handleClose();
   }
 
   render() {

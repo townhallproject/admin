@@ -154,7 +154,6 @@ const requestArchivedTimeZoneLogic = createLogic({
     const {
       payload
     } = action;
-    console.log(payload);
     const time = Date.parse(`${payload.date} ${payload.time}`) / 1000;
     const loc = `${payload.lat},${payload.lng}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
@@ -183,16 +182,13 @@ const requestArchivedTimeZoneLogic = createLogic({
           utcoffset = `UTC${integr}${mins}`;
         }
 
-        const newTimeStart = moment.parseZone(payload.timeStart);
-        console.log(newTimeStart, newTimeStart.utcOffset(offset, true));
+        const newTimeStart = moment.parseZone(payload.timeStart).utcOffset(offset, true);
         const newTimeEnd = moment.parseZone(payload.timeEnd).utcOffset(offset, true);
-
         const eventData = {
           timestamp: newTimeStart.format('x'),
           timeStart: newTimeStart.format(),
           timeEnd: newTimeEnd.format(),
         }
-
         dispatch(updateOldEvent(eventData, payload.eventId));
         done();
       })

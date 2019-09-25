@@ -32,7 +32,6 @@ export default class EditableCell extends React.Component {
   };
 
   showModal = () => {
-    console.log('show modal')
     this.setState({
       modalVisible: true,
       editing: true,
@@ -113,11 +112,10 @@ export default class EditableCell extends React.Component {
         )
       case 'address':
       case 'timeStart':
-        console.log(inputType);
         return (
           <ArchiveEventsEditModal
             visible={this.state.modalVisible}
-            handleClose={this.handleClose}
+            handleClose={this.handleCloseOnSubmit}
             townHall={record}
             updateEvent={handleSave}
           />
