@@ -163,6 +163,7 @@ class ResultsTable extends React.Component {
                 bordered
                 dataSource={this.props.filteredOldEvents}
                 columns={columns}
+                rowKey={"eventId"}
             />
         );
     };

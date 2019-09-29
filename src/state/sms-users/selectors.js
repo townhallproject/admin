@@ -3,7 +3,6 @@ import moment from 'moment';
 import {
   filter,
   map,
-  findIndex,
   find,
 } from "lodash";
 

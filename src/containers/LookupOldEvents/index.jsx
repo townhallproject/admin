@@ -5,19 +5,17 @@ import {
 import { map } from 'lodash';
 import {
     Button,
+    Col,
     Switch,
     DatePicker,
     Select,
     Row,
-    Progress,
-    Col,
 } from 'antd';
 
 import moment from 'moment';
 import selectionStateBranch from '../../state/selections';
 import eventStateBranch from '../../state/events';
 import mocStateBranch from '../../state/mocs';
-import { getDateArray } from '../../utils';
 import { statesAb } from '../../assets/data/states';
 
 import "./style.scss";
@@ -106,7 +104,6 @@ class LookupOldEvents extends React.Component {
             dataForChart,
             includeLiveEventsInLookup,
             oldEventsForDownload,
-            emailCoverage,
             getMocReport,
             missingMemberReport116,
             missingMemberCongressData
@@ -140,7 +137,7 @@ class LookupOldEvents extends React.Component {
                             onChange={this.handleLegislativeBodyChange}
                         >
                             {LEGISLATIVE_BODIES.map((legBody) => 
-                                <Option value={legBody}>{`${legBody} legislative body`}</Option>
+                                <Option key={legBody} value={legBody}>{`${legBody} legislative body`}</Option>
                             )}
                         </Select>
                         <Select

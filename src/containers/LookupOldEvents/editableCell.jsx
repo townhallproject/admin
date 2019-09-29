@@ -39,7 +39,7 @@ export default class EditableCell extends React.Component {
             style={{width: 200}}
           >
             {MEETING_TYPE_OPTIONS.map((val) => {
-              return <Option value={val}>{val}</Option>
+              return <Option key={val} value={val}>{val}</Option>
             })}
           </Select>
         )
@@ -52,7 +52,7 @@ export default class EditableCell extends React.Component {
             style={{width: 200}}
           >
             {ICON_FLAGS.map((val) => {
-              return <Option value={val.data}>{val.text}</Option>
+              return <Option key={val.text} value={val.data}>{val.text}</Option>
             })}
           </Select>
         )
@@ -124,7 +124,10 @@ export default class EditableCell extends React.Component {
     } = this.props;
     const { editing } = this.state;
     return editing ? (
-      <Form.Item style={{ margin: 0 }}>
+      <Form.Item 
+        style={{ margin: 0 }}
+        key={`${record.eventId}-row`}
+      >
         {form.getFieldDecorator(dataIndex, {
           rules: [
             {

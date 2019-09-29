@@ -43,7 +43,6 @@ import {
 } from "./actions";
 import {
   requestResearcherById,
-  requestResearcherByEmail,
 } from "../researchers/actions";
 
 const fetchEvents = createLogic({
