@@ -1,9 +1,8 @@
 import {
   Modal,
-  Button
+  Icon,
 } from 'antd';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import EditAddressOrDateModal from '../EditAddressOrDateModal';
 
@@ -76,14 +75,11 @@ class EditAddressOrDateButton extends React.Component {
     } = this.props;
 
     return (
-      <div>
-        <Button 
-          className="edit-btn" 
+      <React.Fragment>
+        <Icon 
+          type="edit" 
           onClick={this.showModal} 
-          icon="edit"
-        >
-          Edit Address or Date
-        </Button>
+        />
         <Modal
           title="Edit Address or Date"
           visible={this.state.visible}
@@ -101,7 +97,7 @@ class EditAddressOrDateButton extends React.Component {
             clearTempAddress={clearTempAddress}
           />
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

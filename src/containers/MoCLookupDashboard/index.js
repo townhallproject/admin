@@ -8,7 +8,6 @@ import selectionStateBranch from '../../state/selections';
 import userStateBranch from '../../state/users';
 
 import AddPersonForm from '../../components/AddPersonForm';
-import MocLookUp from '../../components/MocLookup';
 import FederalStateRadioSwitcher from '../../components/FederalStateRadioSwitcher';
 import MocTable from '../../components/MocTable';
 
@@ -38,28 +37,29 @@ class MoCLookUpDashboard extends React.Component {
 
   render() {
     const {
-      allMocNamesIds,
+      saveStateLeg,
       isModerator,
       saveCandidate,
       radioValue,
-      candidateKeySavePath,
+      keySavePath,
       the116theCongress,
       updateMissingMemberValue,
       updateInOfficeValue,
       updateDisplayNameValue,
     } = this.props;
+    console.log(keySavePath)
     const { TabPane } = Tabs;
-    return (!isModerator &&
+    return (
       <div>
-        <Tabs defaultActiveKey="congress">
-          <TabPane tab="Current Congress" key="congress">
+        <Tabs defaultActiveKey={!isModerator ? "congress": "candidates"}>
+          {!isModerator && <TabPane tab="Current Congress" key="congress">
             <MocTable 
               mocs={the116theCongress}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
             />
-          </TabPane>
+          </TabPane>}
           <TabPane tab="Candidates" key="candidates">
             <FederalStateRadioSwitcher 
               onRadioChange={this.onRadioChange}
@@ -67,12 +67,23 @@ class MoCLookUpDashboard extends React.Component {
             />
             <AddPersonForm 
               usState={radioValue !== 'federal' ? radioValue : ''}
-              saveCandidate={saveCandidate}
-              candidateKeySavePath={candidateKeySavePath}
+              savePerson={saveCandidate}
+              keySavePath={keySavePath}
+              roleLabel={"Running For (prefix)"}
+              formTitle="Add a candidate"
+              candidate={true}
             />
           </TabPane>
-          <TabPane tab="Current State Legislators" key="legislators">
-            
+          <TabPane tab="State Lawmakers" key="legislators">
+              <AddPersonForm 
+                usState={radioValue !== 'federal' ? radioValue : ''}
+                savePerson={saveStateLeg}
+                keySavePath={keySavePath}
+                level="state"
+                currentLawmaker={true}
+                roleLabel={"Current role"}
+                formTitle="Add a lawmaker currently in office"
+              />
           </TabPane>
         </Tabs>
       </div>
@@ -82,16 +93,17 @@ class MoCLookUpDashboard extends React.Component {
 
 const mapStateToProps = state => ({
   allMocNamesIds: mocStateBranch.selectors.getAllMocsIds(state),
-    isModerator: userStateBranch.selectors.getModeratorStatus(state),
+  isModerator: userStateBranch.selectors.getModeratorStatus(state),
   radioValue: selectionStateBranch.selectors.getActiveFederalOrState(state),
-  candidateKeySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
+  keySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
   the116theCongress: mocStateBranch.selectors.get116thCongress(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     getCongressBySession: (congressSession) => dispatch(mocStateBranch.actions.getCongressBySession(congressSession)),
     requestMocIds: () => dispatch(mocStateBranch.actions.requestMocIds()),
-    saveCandidate: (path, person) => dispatch(mocStateBranch.actions.saveCandidate(path, person)),
+    saveStateLeg: (person) => dispatch(mocStateBranch.actions.saveStateLeg(person)),
+    saveCandidate: (person, path) => dispatch(mocStateBranch.actions.saveCandidate(path, person)),
     changeMode: (value) => dispatch(selectionStateBranch.actions.changeMode(value)),
     changeMocEndpoint: (value) => dispatch(selectionStateBranch.actions.changeFederalStateRadio(value)),
     updateMissingMemberValue: (id, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, missingMember)),

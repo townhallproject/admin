@@ -2,6 +2,7 @@ import { createLogic } from "redux-logic"
 import {
   map,
 } from "lodash";
+import moment from 'moment';
 
 import { 
   REQUEST_CURRENT_USER_BY_ID,
@@ -14,7 +15,12 @@ import {
   APPROVE_USER_REQUEST,
   REJECT_USER_REQUEST,
   HANDLE_APPROVE_REJECT,
+  SET_USER_EVENT_DL_DATE,
 } from "./constants";
+
+import {
+  updateUser,
+} from './actions';
 
 const requestPendingUsersLogic = createLogic({
     process({firebasedb}) {
@@ -132,10 +138,33 @@ const requestAccessLogic = createLogic({
   type: SUBMIT_REQUEST_ACCESS,
 });
 
+const setUserEventDlDate = createLogic({
+  process(deps, dispatch, done) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    const uid = action.payload;
+    const now = moment().valueOf();
+    firebasedb.ref(`users/${uid}`).update({
+      last_event_download: now,
+    });
+    dispatch(updateUser({
+      last_event_download: now,
+    }));
+    done();
+  },
+  processOptions: {
+    failType: REQUEST_FAILED,
+  },
+  type: SET_USER_EVENT_DL_DATE,
+});
+
 export default [
   fetchCurrentUser,
   approveUserRequestLogic,
   rejectUserRequestLogic,
   requestPendingUsersLogic,
   requestAccessLogic,
+  setUserEventDlDate,
 ];

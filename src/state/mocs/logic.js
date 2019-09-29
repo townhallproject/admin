@@ -16,6 +16,8 @@ import {
   UPDATE_IN_OFFICE_FAIL,
   UPDATE_DISPLAY_NAME,
   UPDATE_DISPLAY_NAME_FAIL,
+  ADD_STATE_LEG,
+  ADD_STATE_LEG_SUCCESS,
 } from "./constants";
 import {
   updateInOfficeSuccess,
@@ -23,6 +25,7 @@ import {
 } from './actions';
 import Candidate from './candidate-model';
 import { map } from "lodash";
+import StateLeg from "./state-leg-model";
 
 const fetchMocs = createLogic({
   type: GET_MOCS,
@@ -81,7 +84,36 @@ const addCandidateLogic = createLogic({
       id: newId,
       nameEntered: newCandidate.displayName,
     });
+    newCandidate.thp_id = newId;
     firebasedb.ref(`candidate_data/${newId}`).update(newCandidate);
+  }
+});
+
+const addStateLegLogic = createLogic({
+  type: ADD_STATE_LEG,
+  processOptions: {
+    successType: ADD_STATE_LEG_SUCCESS,
+    failType: ADD_CANDIDATE_FAILURE,
+  },
+  process(deps) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    const state = action.payload.person.state;
+    if (!state) {
+      Promise.reject('no state on state leg');
+    }
+    const newId = firebasedb.ref().child(`state_legislators_data/${state}`).push().key;
+    const newOfficePerson = new StateLeg(action.payload.person);
+    const nameKey = newOfficePerson.createNameKey();
+    console.log(newId)
+    firebasedb.ref(`state_legislators_id/${state}/${nameKey}`).update({
+      id: newId,
+      nameEntered: newOfficePerson.displayName,
+    });
+    newOfficePerson.thp_id = newId;
+    firebasedb.ref(`state_legislators_data/${state}/${newId}`).update(newOfficePerson);
   }
 });
 
@@ -147,6 +179,7 @@ const updateDisplayNameLogic = createLogic({
 })
 
 export default [
+  addStateLegLogic,
   fetchMocs,
   addCandidateLogic,
   requestCongressLogic,

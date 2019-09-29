@@ -10,9 +10,6 @@ import {
   Tag,
 } from 'antd';
 import {
-  map,
-} from 'lodash';
-import {
   CSVLink,
 } from "react-csv";
 
@@ -91,7 +88,6 @@ class RSVPTable extends React.Component {
 
   render() {
     const {
-        allRsvpsForCsv,
         allCurrentRsvps,
         allCurrentRsvpsForCsv,
     } = this.props;
@@ -176,20 +172,13 @@ class RSVPTable extends React.Component {
       title: 'Contact',
       dataIndex: 'can_contact',
       key: 'can_contact',
-      render: (can_contact) => (
-          <span>
-            {map(can_contact, (contact, type) => {
-                  const color = contact ? 'green' : 'red';
-                  const falseTagText = {
-                      can_text: 'No text',
-                      can_email: 'No email',
-                      partner: 'Partners can\'t contact'
-                  }
-                  return contact ? (
-                    <Tag color={color} key={type}>{type}</Tag>) : 
-                    (<Tag color={color} key={type}>{falseTagText[type]}</Tag>)
-                })}
-        </span>)
+      render: (can_contact) => {
+          const color = can_contact ? 'green' : 'red';
+          return can_contact ? (
+                    <Tag color={color}>yes</Tag>) : 
+                    (<Tag color={color}>no</Tag>)
+          }
+              
     },
     {
         title: 'Event id',
@@ -205,7 +194,7 @@ class RSVPTable extends React.Component {
     ];
     return (
         <div>
-            <Button.Group
+            <div
                 className="download-table-button-group"
             >
                 <Button 
@@ -217,17 +206,9 @@ class RSVPTable extends React.Component {
                     > RSVPs for current events
                     </CSVLink>
                 </Button>
-                <Button
-                    icon="download"
-                >
-                    <CSVLink 
-                        data={allRsvpsForCsv}
-                        filename="All_RSVPs.csv"
-                    > All RSVPs (including past events)
-                    </CSVLink>
-                </Button>
         
-            </Button.Group>
+        
+            </div>
             <div className="researcher-table">
                 <Table 
                     columns={columns} 

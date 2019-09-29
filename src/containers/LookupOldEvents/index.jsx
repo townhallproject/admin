@@ -269,7 +269,7 @@ const mapDispatchToProps = dispatch => ({
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
     requestLiveEvents: (path) => dispatch(eventStateBranch.actions.requestEvents(path)),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
-    getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId))
+    getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LookupOldEvents);

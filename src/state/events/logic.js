@@ -33,16 +33,17 @@ import {
   setLoading,
   storeEventsInState,
   clearEventsCounts,
-  requestEventsCountsSuccess,
+  requestFederalEventsCountsSuccess,
+  requestStateEventsCountsSuccess,
+  requestFederalTotalEventsCountsSuccess,
+  requestStateTotalEventsCountsSuccess,
   approveEventSuccess,
-  decrementEvents,
-  decrementTotalEvents,
-  requestTotalEventsCountsSuccess,
   deleteEventSuccess,
   archiveEventSuccess,
 } from "./actions";
 import {
-  requestResearcherById
+  requestResearcherById,
+  requestResearcherByEmail,
 } from "../researchers/actions";
 
 const fetchEvents = createLogic({
@@ -153,6 +154,7 @@ const approveEventLogic = createLogic({
       ...townHall,
       userEmail: null,
     }
+    dispatch(setLoading(true));
     firebasedb.ref(`${livePath}/${townHall.eventId}`).update(cleanTownHall)
       .then(() => {
         const approvedTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
@@ -163,14 +165,7 @@ const approveEventLogic = createLogic({
             })
             .then(() => {
               dispatch(approveEventSuccess(cleanTownHall.eventId));
-              if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-                dispatch(decrementEvents('federal'));
-              } else {
-                dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-              }
-              if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-                dispatch(decrementTotalEvents('pending'));
-              }
+              dispatch(setLoading(false));
               done();
             })
           })
@@ -198,6 +193,7 @@ const archiveEventLogic = createLogic({
       const oldTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
       const oldTownHallID = firebasedb.ref(`/townHallIds/${cleanTownHall.eventId}`);
       const dateKey = cleanTownHall.dateObj ? moment(cleanTownHall.dateObj).format('YYYY-MM') : 'no_date';
+      dispatch(setLoading(true));
       console.log(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`)
       firebasedb.ref(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`).update(cleanTownHall)
         .then(() => {
@@ -209,14 +205,7 @@ const archiveEventLogic = createLogic({
               })
               .then(() => {
                 dispatch(archiveEventSuccess(cleanTownHall.eventId));
-                if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-                  dispatch(decrementEvents('federal'));
-                } else {
-                  dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-                }
-                if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-                  dispatch(decrementTotalEvents('pending'));
-                }
+                dispatch(setLoading(false));
                 done();
               })
             }
@@ -238,7 +227,7 @@ const deleteEvent = createLogic({
       firebasedb,
     } = deps;
     const { townHall, path } = action.payload;
-    console.log(path, townHall.eventId)
+    dispatch(setLoading(true));
     const oldTownHall = firebasedb.ref(`${path}/${townHall.eventId}`);
     if (path === 'townHalls') {
       firebasedb.ref(`/townHallIds/${townHall.eventId}`).update({
@@ -250,14 +239,7 @@ const deleteEvent = createLogic({
     oldTownHall.remove()
       .then(() => {
         dispatch(deleteEventSuccess(townHall.eventId));
-        if (EVENTS_PATHS[path] && EVENTS_PATHS[path].FEDERAL_OR_STATE === 'FEDERAL') {
-          dispatch(decrementEvents('federal'));
-        } else {
-          dispatch(decrementEvents(path.match(/[A-Z]*$/)));
-        }
-        if (EVENTS_PATHS[path.match(/[a-zA-Z_]*/)].STATUS === 'PENDING') {
-          dispatch(decrementTotalEvents('pending'));
-        }
+        dispatch(setLoading(false));
         done();
       });
   }
@@ -318,6 +300,7 @@ const requestEventsCounts = createLogic({
   processOptions: {
     failType: REQUEST_EVENTS_COUNTS_FAIL,
   },
+  warnTimeout: 0,
   process(deps, dispatch, done) {
     const {
       action,
@@ -328,20 +311,17 @@ const requestEventsCounts = createLogic({
     if (path === 'archive') {
       done();
     } else {
-      const eventCounts = {};
-      const p1 = firebasedb.ref(`${EVENTS_PATHS[path].STATE}`).once('value', (snapshot) => {
+      firebasedb.ref(`${EVENTS_PATHS[path].STATE}`).on('value', (snapshot) => {
+        const eventCounts = {};
         if (snapshot.numChildren() > 0) {
           for (let [key, val] of Object.entries(snapshot.val())) {
             eventCounts[key] = Object.keys(val).length;
           }
         }
+        dispatch(requestStateEventsCountsSuccess(eventCounts));
       });
-      const p2 = firebasedb.ref(`${EVENTS_PATHS[path].FEDERAL}`).once('value', (snapshot) => {
-        eventCounts.federal = snapshot.numChildren();
-      });
-      Promise.all([p1, p2]).then(() => {
-        dispatch(requestEventsCountsSuccess(eventCounts))
-        done();
+      firebasedb.ref(`${EVENTS_PATHS[path].FEDERAL}`).on('value', (snapshot) => {
+        dispatch(requestFederalEventsCountsSuccess(snapshot.numChildren()));
       });
     }
   }
@@ -352,25 +332,20 @@ const requestTotalEventsCounts = createLogic({
   processOptions: {
     failType: REQUEST_EVENTS_COUNTS_FAIL,
   },
+  warnTimeout: 0,
   process(deps, dispatch, done) {
     const { firebasedb } = deps;
-    const totalEvents = {
-      pending: 0,
-      live: 0
-    };
-    const p1 = firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].STATE}`).once('value', (snapshot) => {
+    firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].STATE}`).on('value', (snapshot) => {
+      let stateEventsCounts = 0;
       if (snapshot.numChildren() > 0) {
-        Object.values(snapshot.val()).forEach((state) => {
-          totalEvents.pending += Object.keys(state).length;
+        snapshot.forEach((stateSnapshot) => {
+          stateEventsCounts += stateSnapshot.numChildren();
         });
       }
+      dispatch(requestStateTotalEventsCountsSuccess(stateEventsCounts));
     });
-    const p2 = firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].FEDERAL}`).once('value', (snapshot) => {
-      totalEvents.pending += snapshot.numChildren();
-    });
-    Promise.all([p1, p2]).then(() => {
-      dispatch(requestTotalEventsCountsSuccess(totalEvents))
-      done();
+    firebasedb.ref(`${EVENTS_PATHS[PENDING_EVENTS_TAB].FEDERAL}`).on('value', (snapshot) => {
+      dispatch(requestFederalTotalEventsCountsSuccess(snapshot.numChildren()));
     });
   }
 })

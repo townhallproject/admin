@@ -1,4 +1,5 @@
 import {
+  ADD_STATE_LEG,
   GET_MOCS, 
   GET_MOCS_SUCCESS,
   GET_MOCS_FAILED,
@@ -31,6 +32,13 @@ export const saveCandidate = (path, person) => ({
   payload: { 
     person,
     path,
+  }
+})
+
+export const saveStateLeg = (person) => ({
+  type: ADD_STATE_LEG,
+  payload: {
+    person,
   }
 })
 

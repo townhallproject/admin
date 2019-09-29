@@ -3,4 +3,11 @@
     .ant-card-actions > li > span i {
         width: unset;
     }
+    .ant-card-body {
+        label {
+            display:inline-block;
+            font-weight: bold;
+            padding-top: 1em;
+        }
+    }
 }

@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import AppHeader from '../../containers/DefaultLayout/Header';
 import './style.scss';
-import { MODERATOR_ACCESS, ADMIN_ACCESS } from '../../constants';
+import { ADMIN_ACCESS } from '../../constants';
 
 const {
   Header,
@@ -87,7 +87,7 @@ class NotAuthLayout extends Component {
                                             <Radio value="rsvpDownloads">Download RSVPs to events</Radio>
                                             <Radio value="eventDownloads">Download Events</Radio>
                                             <Radio value="mocDownload">Access to our Member of Congress database</Radio>
-                                            <Radio value={ADMIN_ACCESS}>Full Admin</Radio>
+                                            <Radio value={ADMIN_ACCESS}>Admin</Radio>
                                         </RadioGroup>
                                 )}
                             </Form.Item>
@@ -95,7 +95,7 @@ class NotAuthLayout extends Component {
                                 {getFieldDecorator('moderator', {
                                     initialValue: true,
                                     valuePropName: 'checked',
-                                    })(<Checkbox>Can approve other people's events</Checkbox>
+                                    })(<Checkbox>Can approve only other people's events (also select 'Admin')</Checkbox>
 
                                     )}
                             </Form.Item>

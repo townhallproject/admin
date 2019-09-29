@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Button,
-    Select,
     Row,
     Col,
 } from 'antd';
@@ -23,9 +22,6 @@ const colors = {
     I: 'purple',
     None: 'gray',
 }
-
-const Option = Select.Option;
-
 
 class OldEventsResults extends React.Component {
 
