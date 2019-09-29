@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {
     Table,
     Form,
+    Checkbox,
 } from 'antd';
 
 import moment from 'moment';
@@ -50,7 +51,7 @@ class ResultsTable extends React.Component {
             title: 'Name',
             dataIndex: 'displayName',
             key: 'displayName',
-            editable: true,
+            editable: false,
         }, 
         {
             title: 'Meeting Type',
@@ -108,19 +109,25 @@ class ResultsTable extends React.Component {
         //     key: 'ada_accessible',
         //     editable: true,
         // },
-        // {
-        //     title: 'Verified?',
-        //     // this data doesn't exist yet
-        //     // display as a checkbox in the future?
-        //     dataIndex: 'verified',
-        //     key: 'verified',
-        //     editable: true,
-        // },
+        {
+            title: 'Researcher verified',
+            dataIndex: 'validated',
+            key: 'validated',
+            editable: false,
+            render: (text, record) => (<Checkbox
+                key={record.validated}
+                onChange={(e) => this.handleSave(record.eventId, { validated : !record.validated })}
+                defaultChecked={record.validated}>
+            </Checkbox>)
+        },
     ];
 
+    constructor(props) {
+        super(props);
+        this.handleSave = this.handleSave.bind(this);
+    }
 
-    handleSave = (eventId, editedData) => {
-        console.log(editedData)
+    handleSave(eventId, editedData) {
         this.props.updateOldEvent(editedData, eventId);
     };
 
