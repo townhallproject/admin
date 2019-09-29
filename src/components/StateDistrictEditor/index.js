@@ -13,7 +13,7 @@ export default class StateDistrictEditor extends React.Component {
   }
 
   constructor(props) {
-    super(props.value);
+    super(props);
     const value = props.value || {};
     this.state = {
       usState: value.usState || '',

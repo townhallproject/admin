@@ -9,23 +9,23 @@ const Option = Select.Option;
 export default class EditableCell extends React.Component {
   constructor(props) {
     super(props);
-    this.save = this.save.bind(this);
     this.getInput = this.getInput.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
+    this.saveNewValue = this.saveNewValue.bind(this);
+    this.saveFormEntry = this.saveFormEntry.bind(this);
   }
 
   state = {
     editing: false,
   };
 
-  toggleEdit = () => {
+  toggleEdit() {
     const editing = !this.state.editing;
     this.setState({ editing });
   };
 
   getInput() {
     const {
-      record,
-      dataIndex,
       inputType,
     } = this.props;
     switch (inputType) {
@@ -34,8 +34,8 @@ export default class EditableCell extends React.Component {
           <Select 
             key="meetingType"
             placeholder="Meeting type"
-            onSelect={this.save}
-            onBlur={this.save}
+            onSelect={(value) => this.saveNewValue('meetingType', value)}
+            onBlur={(value) => this.saveNewValue('meetingType', value)}
             style={{width: 200}}
           >
             {MEETING_TYPE_OPTIONS.map((val) => {
@@ -47,8 +47,8 @@ export default class EditableCell extends React.Component {
         return (
           <Select 
             key="iconFlag"
-            onSelect={this.save}
-            onBlur={this.save}
+            onSelect={(value) => this.saveNewValue('iconFlag', value)}
+            onBlur={(value) => this.saveNewValue('iconFlag', value)}
             style={{width: 200}}
           >
             {ICON_FLAGS.map((val) => {
@@ -60,8 +60,8 @@ export default class EditableCell extends React.Component {
         return (
           <Select 
             key="level"
-            onSelect={this.save}
-            onBlur={this.save}
+            onSelect={(value) => this.saveNewValue('level', value)}
+            onBlur={(value) => this.saveNewValue('level', value)}
             style={{width: 100}}
           >
             <Option value="federal">federal</Option>
@@ -71,18 +71,28 @@ export default class EditableCell extends React.Component {
       case 'state':
         return (
           <StateDistrictEditor 
-            saveChanges={this.save}
+            saveChanges={this.saveFormEntry}
           />
         )
-    };
-    return (
-      <Input 
-        onPressEnter={this.save}
-        onBlur={this.save} 
-      />)
+      default: 
+        return (
+          <Input 
+            onPressEnter={this.saveFormEntry}
+            onBlur={this.saveFormEntry} 
+          />)
+     }
   }
 
-  save = (e) => {
+  saveNewValue(key, value) {
+    const {
+      record,
+      handleSave,
+    } = this.props;
+    this.toggleEdit();
+    handleSave(record.eventId, { [key] : value});
+  }
+
+  saveFormEntry = (e) => {
     const {
       record,
       handleSave,
