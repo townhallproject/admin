@@ -98,9 +98,9 @@ export default class EditableCell extends React.Component {
           district: values.state.district,
         };
       }
-      console.log(values);
-      handleSave(record.eventId, values);
+      console.log('saving these values', values);
       this.toggleEdit();
+      handleSave(record.eventId, values);
     });
   };
 
