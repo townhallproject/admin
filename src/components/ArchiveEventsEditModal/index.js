@@ -14,38 +14,6 @@ class ArchiveEventsEditModal extends React.Component {
     }
   }
 
-  checkData() {
-    const {
-      tempAddress,
-      setTimeZone,
-      townHall,
-      pathForEvents,
-      handleClose,
-    } = this.props;
-    if (tempAddress.address) {
-      console.log('still have address')
-      return;
-    }
-    this.setState({
-      loading: false,
-    });
-    const dateTime = moment.parseZone(townHall.timeStart);
-    const date = dateTime.format('ddd, MMM DD YYYY');
-    const time = dateTime.format('hh:mm A');
-    setTimeZone({
-      date: date,
-      time: time,
-      timestamp: townHall.timestamp,
-      timeStart: townHall.timeStart,
-      timeEnd: townHall.timeEnd,
-      lat: townHall.lat,
-      lng: townHall.lng,
-      eventId: townHall.eventId,
-      pathForEvents: pathForEvents,
-    });
-    handleClose();
-  }
-
   render() {
     const {
       visible,
@@ -60,8 +28,8 @@ class ArchiveEventsEditModal extends React.Component {
       <Modal
         title="Edit Address or Date"
         visible={visible}
-        onOk={this.checkData}
         onCancel={handleClose}
+        footer={null}
         closable
       >
         <ArchiveEditForm
@@ -70,6 +38,7 @@ class ArchiveEventsEditModal extends React.Component {
           setTempAddress={setTempAddress}
           clearTempAddress={clearTempAddress}
           updateEvent={updateEvent}
+          handleClose={handleClose}
         />
       </Modal>
     )

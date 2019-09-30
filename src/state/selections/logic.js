@@ -164,24 +164,7 @@ const requestArchivedTimeZoneLogic = createLogic({
         if (!response.timeZoneName) {
           return Error('no timezone results', response);
         }
-        const timezoneAb = response.timeZoneName.split(' ');
-        const timeZone = timezoneAb.reduce((acc, cur) => {
-          acc += cur[0];
-          return acc;
-        }, '');
         const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
-        let utcoffset;
-        if (Number(offset) === offset) {
-          utcoffset = `UTC${offset}00`;
-        } else {
-          const fract = ((offset * 10) % 10) / 10;
-          const integr = Math.trunc(offset);
-          let mins = (Math.abs(fract * 60)).toString();
-          const zeros = '00';
-          mins = zeros.slice(mins.length) + mins;
-          utcoffset = `UTC${integr}${mins}`;
-        }
-
         const newTimeStart = moment.parseZone(payload.timeStart).utcOffset(offset, true);
         const newTimeEnd = moment.parseZone(payload.timeEnd).utcOffset(offset, true);
         const eventData = {

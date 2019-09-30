@@ -19,10 +19,8 @@ const archiveEventsTimeFormat = 'YYYY-MM-DDTHH:mm:ssZZ'
 class ArchiveAddressDateEditForm extends React.Component {
   constructor(props) {
     super(props);
-    const { townHall } = this.props;
-    this.onChangeDate = this.onChangeDate.bind(this);
-    this.onChangeStartTime = this.onChangeStartTime.bind(this);
-    this.onChangeEndTime = this.onChangeEndTime.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.checkData = this.checkData.bind(this);
     this.closeTimeStart = this.closeTimeStart.bind(this);
     this.closeEndTime = this.closeEndTime.bind(this);
     this.handleOpenStartChange = this.handleOpenStartChange.bind(this);
@@ -32,62 +30,75 @@ class ArchiveAddressDateEditForm extends React.Component {
       repeatingEvent: false,
       startOpen: false,
       endTimeOpen: false,
-      pastDateWarning: moment().isAfter(moment(townHall.timestamp, 'ddd, MMM D YYYY')),
-      date: moment(townHall.timestamp, 'x').format('ddd, MMM D YYYY'),
-      timeStart: moment(townHall.timeStart, 'kk:mm:ss'),
-      timeEnd: moment(townHall.timeEnd, 'kk:mm:ss'),
-      offset: moment(townHall.timestamp, 'ZZ'),
     };
+  }
+
+  handleSubmit(e) {
+    const {
+      townHall,
+      updateEvent,
+      tempAddress,
+      setTimeZone,
+      pathForEvents,
+      handleClose,
+    } = this.props;
+    e.preventDefault();
+    if (tempAddress.address) {
+      console.log('still have address')
+      return;
+    }
+    this.props.form.validateFieldsAndScroll((err, vals) => {
+      if (!err) {
+        const date = vals.date.format('YYYY-MM-DD');
+        const startTime = vals.time.format('HH:mm:ss');
+        const endTime = vals.endTime.format('HH:mm:ss');
+        const updateObj = {
+          timestamp: moment(`${date}T${startTime}`).format('x'),
+          timeStart: moment(`${date}T${startTime}`).format(),
+          timeEnd: moment(`${date}T${endTime}`).format(),
+          location: vals.location,
+          address: vals.address,
+        }
+        console.log(updateObj);
+        updateEvent(updateObj, townHall.eventId);
+      }
+    });
+  }
+
+  checkData() {
+    const {
+      tempAddress,
+      setTimeZone,
+      townHall,
+      pathForEvents,
+      handleClose,
+    } = this.props;
+    if (tempAddress.address) {
+      console.log('still have address')
+      return;
+    }
+    this.setState({
+      loading: false,
+    });
+    const dateTime = moment.parseZone(townHall.timeStart);
+    const date = dateTime.format('ddd, MMM DD YYYY');
+    const time = dateTime.format('hh:mm A');
+    setTimeZone({
+      date: date,
+      time: time,
+      timestamp: townHall.timestamp,
+      timeStart: townHall.timeStart,
+      timeEnd: townHall.timeEnd,
+      lat: townHall.lat,
+      lng: townHall.lng,
+      eventId: townHall.eventId,
+      pathForEvents: pathForEvents,
+    });
+    handleClose();
   }
 
   onRepeatingEventCheckboxChanged(e) {
     this.setState({ repeatingEvent: e.target.checked });
-  }
-
-
-  onChangeDate(date) {
-    const {
-      updateEvent,
-      townHall,
-    } = this.props;
-    const newDate = moment.parseZone(date).format('YYYY-MM-DD');
-    const endTime = moment.parseZone(townHall.timeEnd).format('HH:mm:ss');
-    const offset = moment.parseZone(townHall.timeEnd).utcOffset();
-    const newTimeEnd = moment(`${newDate}T${endTime}`, archiveEventsTimeFormat);
-    const updateObject = {
-      timestamp: moment(date).format('x'),
-      timeStart: moment(date).utcOffset(offset).format(archiveEventsTimeFormat),
-      timeEnd: newTimeEnd.utcOffset(offset).format(archiveEventsTimeFormat),
-    }
-    if (moment().isAfter(date)) {
-      this.setState({ pastDateWarning: true });
-    } else {
-      this.setState({ pastDateWarning: false });
-    }
-    updateEvent(updateObject, townHall.eventId);
-  }
-
-  onChangeStartTime(time, timeString) {
-    const {
-      updateEvent,
-      townHall,
-    } = this.props;
-    const updateObject = {
-      timestamp: time.format('x'),
-      timeStart: time.format(archiveEventsTimeFormat),
-    }
-    updateEvent(updateObject, townHall.eventId);
-  }
-
-  onChangeEndTime(time, timeString) {
-    const {
-      updateEvent,
-      townHall,
-    } = this.props;
-    const updateObject = {
-      timeEnd: time.format(archiveEventsTimeFormat),
-    }
-    updateEvent(updateObject, townHall.eventId);
   }
 
   closeTimeStart() {
@@ -115,7 +126,6 @@ class ArchiveAddressDateEditForm extends React.Component {
     } = this.props.form;
     const { 
       repeatingEvent,
-      pastDateWarning,
     } = this.state;
     return repeatingEvent ? (
       <FormItem
@@ -145,13 +155,6 @@ class ArchiveAddressDateEditForm extends React.Component {
             onChange={this.onChangeDate}
             format='L'
           />)}
-        {pastDateWarning && (
-          <Alert
-            description="The selected date has already passed"
-            type="warning"
-            closable
-          ></Alert>
-        )}
       </FormItem>
     );
   }
@@ -175,6 +178,7 @@ class ArchiveAddressDateEditForm extends React.Component {
       passFormData,
       updateEvent,
       setLatLng,
+      handleClose,
     } = this.props;
     const {
       getFieldDecorator,
@@ -187,7 +191,7 @@ class ArchiveAddressDateEditForm extends React.Component {
       endTimeOpen,
     } = this.state;
     return (
-      <Form {...formItemLayout}>
+      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
         <FormItem className="checkbox">
           <Checkbox
             onChange={this.onRepeatingEventCheckboxChanged}
@@ -208,7 +212,6 @@ class ArchiveAddressDateEditForm extends React.Component {
                 minuteStep={15}
                 format="hh:mm A"
                 defaultOpenValue={moment().hour(0).minute(0)}
-                onChange={this.onChangeStartTime}
                 open={startOpen}
                 onOpenChange={this.handleOpenStartChange}
                 allowClear={false}
@@ -231,7 +234,6 @@ class ArchiveAddressDateEditForm extends React.Component {
               allowClear={false}
               open={endTimeOpen}
               onOpenChange={this.handleOpenEndChange}
-              onChange={this.onChangeEndTime}
               addon={() => (
                 <Button size="small" type="primary" onClick={this.closeEndTime}>
                     Ok
@@ -262,6 +264,12 @@ class ArchiveAddressDateEditForm extends React.Component {
           updateEvent={updateEvent}
           passFormData={passFormData}
         />
+        <Button type="primary" htmlType="submit">
+          OK
+        </Button>
+        <Button onClick={handleClose}>
+          Cancel
+        </Button>
       </Form>
     )
   }

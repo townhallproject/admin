@@ -107,17 +107,17 @@ class LocationForm extends React.Component {
     });
   }
 
-  handleLocationChange({ target }) {
-    this.debounceLocationChange(target.value);
-  }
+  // handleLocationChange({ target }) {
+  //   this.debounceLocationChange(target.value);
+  // }
 
-  debounceLocationChange = debounce((value) => {
-    const { 
-      updateEvent,
-      currentTownHall,
-    } = this.props;
-    updateEvent({ location: value }, currentTownHall.eventId);
-  }, 2000);
+  // debounceLocationChange = debounce((value) => {
+  //   const { 
+  //     updateEvent,
+  //     currentTownHall,
+  //   } = this.props;
+  //   updateEvent({ location: value }, currentTownHall.eventId);
+  // }, 2000);
 
   receiveTempAddress() {
     this.setState({
@@ -170,7 +170,7 @@ class LocationForm extends React.Component {
               className="input-underline"
               id="location"
               placeholder="Name of location (eg. Gary Recreation Center)"
-              onChange={(el) => this.handleLocationChange(el)}
+              // onChange={(el) => this.handleLocationChange(el)}
             />,
           )}
         </FormItem>
