@@ -15,9 +15,9 @@ import {
   FEDERAL_RADIO_BUTTON
 } from '../../constants';
 import {
-  getAllEventsAsList,
   getAllOldEventsWithUserEmails,
   getAllEvents,
+  getAllFederalAndStateLiveEvents,
 } from '../events/selectors';
 import {
   getCurrentUser,
@@ -141,18 +141,32 @@ export const normalizeEventSchema = eventData => {
   return normalizedEvent;
 } 
 
+export const getAllEventsForAnalysis = createSelector([
+    includeLiveEventsInLookup, 
+    getAllOldEventsWithUserEmails, 
+    getAllFederalAndStateLiveEvents
+  ], (
+    includeLive, oldEvents, liveEvents
+  ) => (includeLive ? [...oldEvents, ...liveEvents] : oldEvents)
+);
+
+export const getReturnedStateEventsLength = createSelector([getAllEventsForAnalysis], (allEvents) => {
+  return filter(allEvents, (event) => event.level === "state").length;
+});
+
+export const getTotalUnFilteredOldEventsCount = createSelector([getAllEventsForAnalysis
+], (totalEvents) => totalEvents.length);
+
 export const getFilteredEvents = createSelector(
   [
-    includeLiveEventsInLookup, 
+    getAllEventsForAnalysis,
     getStatesToFilterArchiveBy,
-    getAllOldEventsWithUserEmails,
-    getAllEventsAsList,
     getChamber,
     getEventTypes,
     getLegislativeBody,
   ], 
-  (includeLive, states, oldEvents, liveEvents, chamber, events, legislativeBody) => {
-    let filteredEvents = includeLive ? [...oldEvents, ...liveEvents] : oldEvents;
+  (allEvents, states, chamber, events, legislativeBody) => {
+    let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
 
     if (states.length) { 
@@ -183,6 +197,10 @@ export const getFilteredEvents = createSelector(
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
 
     return filteredEvents;
+});
+
+export const getFilteredOldEventsLength = createSelector([getFilteredEvents], (filtered) => {
+  return filtered.length;
 });
 
 export const getEventsAsDownloadObjects= createSelector([getFilteredEvents], (allEvents) => {
@@ -243,7 +261,7 @@ export const getNewEventsForDownload = createSelector(
 export const getDataForArchiveChart = createSelector(
   [getFilteredEvents],
   (allEvents) => {
-    if (!allEvents) {
+    if (!allEvents || !allEvents.length) {
       return [];
     }
     return map(reduce(allEvents, (acc, cur) => {

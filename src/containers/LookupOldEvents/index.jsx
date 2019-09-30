@@ -10,6 +10,8 @@ import {
     DatePicker,
     Select,
     Row,
+    Progress,
+    Statistic,
 } from 'antd';
 
 import moment from 'moment';
@@ -51,13 +53,12 @@ class LookupOldEvents extends React.Component {
     onIncludeLiveEvents(checked) {
         const {
             requestLiveEvents,
-            liveEventUrl,
             toggleIncludeLiveEventsInLookup
         } = this.props;
         if (checked) {
-            requestLiveEvents(liveEventUrl)
+            requestLiveEvents();
         }
-        toggleIncludeLiveEventsInLookup(checked)
+        toggleIncludeLiveEventsInLookup(checked);
     }
 
     handleAddState(value) {
@@ -106,7 +107,10 @@ class LookupOldEvents extends React.Component {
             oldEventsForDownload,
             getMocReport,
             missingMemberReport116,
-            missingMemberCongressData
+            missingMemberCongressData,
+            totalReturnedEventsLength,
+            filteredEventsLength,
+            stateEventsCount
         } = this.props;
         return (    
             <React.Fragment>
@@ -129,67 +133,88 @@ class LookupOldEvents extends React.Component {
                             style={{ marginLeft: 10 }}
                         >Request events</Button>     
                     </Row>
-                    <Row type="flex">Filter your results:</Row>
-                    <Row type="flex" style={{ justifyContent: 'space-between' }}>
-                        <Select
-                            defaultValue="federal"
-                            style={{ width: '48%' }}
-                            onChange={this.handleLegislativeBodyChange}
+                    {totalReturnedEventsLength > 0 && (
+                    <React.Fragment>
+                        <Row type="flex" justify="space-between">
+                            <Col>
+                                <Statistic title="Total returned events:" value={totalReturnedEventsLength} />
+                            </Col>
+                            <Col>
+                                <Statistic title="Return state events:" value={stateEventsCount} />
+                            </Col>
+                            <Col>
+                                <Statistic title="Currently viewing:" value={filteredEventsLength} />
+                            </Col>
+                        </Row>
+                        <Row>
+                            {/* <Progress 
+                                percent={(totalReturnedEventsLength - stateEventsCount)/totalReturnedEventsLength * 100} 
+                                showInfo={false}
+                            /> */}
+                        </Row>
+                        <Row type="flex">Filter your results:</Row>
+                        <Row type="flex" justify="space-between">
+                            <Select
+                                defaultValue="federal"
+                                style={{ width: '48%' }}
+                                onChange={this.handleLegislativeBodyChange}
+                            >
+                                {LEGISLATIVE_BODIES.map((legBody) => 
+                                    <Option key={legBody} value={legBody}>{`${legBody} legislative body`}</Option>
+                                )}
+                            </Select>
+                            <Select
+                                defaultValue="all"
+                                onChange={this.handleChamberChange}
+                                style={{ width: '48%' }}
+                            >
+                                <Option value="all">All chambers</Option>
+                                <Option value="upper">Upper</Option>
+                                <Option value="lower">Lower</Option>
+                                <Option value="statewide">Statewide</Option>
+                                <Option value="nationwide">Nationwide</Option>
+                                <Option value="citywide">Citywide</Option>
+                            </Select>
+                        </Row>
+                        <Row type="flex">
+                            <Select
+                                placeholder="Filter by event type"
+                                defaultValue={[]}
+                                onChange={this.handleEventTypeChange}
+                                style={{ width: '100%' }}
+                                mode="multiple"
+                            >
+                                <Option value='No events'>No Events</Option>
+                                <Option value='Town Hall'>Town Hall</Option>
+                                <Option value='Tele-Town Hall'>Tele-Town Hall</Option>
+                                <Option value='Empty Chair Town Hall'>Empty Chair Town Hall</Option>
+                                <Option value='Campaign Town Hall'>Campaign Town Hall</Option>
+                                <Option value='Other'>Other</Option>
+                                <Option value='Ticketed Event'>Ticketed Event</Option>
+                                <Option value='Adopt-A-District/State'>Adopt-A-District/State</Option>
+                                <Option value='DC Event'>DC Event</Option>
+                                <Option value='Office Hours'>Office Hours</Option>
+                                <Option value='Hearing'>Hearing</Option>
+                                <Option value='H.R. 1 Activist Event'>H.R. 1 Activist Event</Option>
+                                <Option value='H.R. 1 Town Hall'>H.R. 1 Town Hall</Option>
+                                <Option value='Gun Safety Activist Event'>Gun Safety Activist Event</Option>
+                            </Select>
+                        </Row>
+                        <Row
+                            type="flex" 
                         >
-                            {LEGISLATIVE_BODIES.map((legBody) => 
-                                <Option key={legBody} value={legBody}>{`${legBody} legislative body`}</Option>
-                            )}
-                        </Select>
-                        <Select
-                            defaultValue="all"
-                            onChange={this.handleChamberChange}
-                            style={{ width: '48%' }}
-                        >
-                            <Option value="all">All chambers</Option>
-                            <Option value="upper">Upper</Option>
-                            <Option value="lower">Lower</Option>
-                            <Option value="statewide">Statewide</Option>
-                            <Option value="nationwide">Nationwide</Option>
-                            <Option value="citywide">Citywide</Option>
-                        </Select>
-                    </Row>
-                    <Row type="flex">
-                        <Select
-                            placeholder="Filter by event type"
-                            defaultValue={[]}
-                            onChange={this.handleEventTypeChange}
-                            style={{ width: '100%' }}
-                            mode="multiple"
-                        >
-                            <Option value='No events'>No Events</Option>
-                            <Option value='Town Hall'>Town Hall</Option>
-                            <Option value='Tele-Town Hall'>Tele-Town Hall</Option>
-                            <Option value='Empty Chair Town Hall'>Empty Chair Town Hall</Option>
-                            <Option value='Campaign Town Hall'>Campaign Town Hall</Option>
-                            <Option value='Other'>Other</Option>
-                            <Option value='Ticketed Event'>Ticketed Event</Option>
-                            <Option value='Adopt-A-District/State'>Adopt-A-District/State</Option>
-                            <Option value='DC Event'>DC Event</Option>
-                            <Option value='Office Hours'>Office Hours</Option>
-                            <Option value='Hearing'>Hearing</Option>
-                            <Option value='H.R. 1 Activist Event'>H.R. 1 Activist Event</Option>
-                            <Option value='H.R. 1 Town Hall'>H.R. 1 Town Hall</Option>
-                            <Option value='Gun Safety Activist Event'>Gun Safety Activist Event</Option>
-                        </Select>
-                    </Row>
-                    <Row
-                        type="flex" 
-                    >
-                        <Select
-                            mode="multiple"
-                            placeholder="Filter by state"
-                            onChange={this.handleAddState}
-                            style={{ width: '100%' }}
-                            disabled={this.props.legislativeBody !== 'federal'}
-                        >
-                            {children}
-                        </Select>
-                    </Row>
+                            <Select
+                                mode="multiple"
+                                placeholder="Filter by state"
+                                onChange={this.handleAddState}
+                                style={{ width: '100%' }}
+                                disabled={this.props.legislativeBody !== 'federal'}
+                            >
+                                {children}
+                            </Select>
+                        </Row>
+                    </React.Fragment>)
+                    }
                     <Row
                         type="flex" 
                     >
@@ -245,7 +270,10 @@ const mapStateToProps = state => ({
     liveEventUrl: selectionStateBranch.selectors.getLiveEventUrl(state),
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
     dateLookupRange: selectionStateBranch.selectors.getDateRange(state),
+    totalReturnedEventsLength: selectionStateBranch.selectors.getTotalUnFilteredOldEventsCount(state),
+    filteredEventsLength: selectionStateBranch.selectors.getFilteredOldEventsLength(state),
     loading: eventStateBranch.selectors.getLoading(state),
+    stateEventsCount: selectionStateBranch.selectors.getReturnedStateEventsLength(state),
     dataForChart: selectionStateBranch.selectors.getDataForArchiveChart(state),
     includeLiveEventsInLookup: selectionStateBranch.selectors.includeLiveEventsInLookup(state),
     oldEventsForDownload: selectionStateBranch.selectors.getEventsAsDownloadObjects(state),
@@ -264,7 +292,7 @@ const mapDispatchToProps = dispatch => ({
     changeEventFilter: (events) => dispatch(selectionStateBranch.actions.changeEventFilter(events)),
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
-    requestLiveEvents: (path) => dispatch(eventStateBranch.actions.requestEvents(path)),
+    requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),
 });

@@ -21,6 +21,9 @@ import {
   UPDATE_OLD_EVENT_SUCCESS,
   UPDATE_EVENT_FAIL,
   UPDATE_OLD_EVENT,
+  REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
+  RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
+  GENERAL_FAIL,
 } from "./constants";
 import { 
   EVENTS_PATHS,
@@ -76,6 +79,35 @@ const fetchEvents = createLogic({
       .then(done)
   }
 });
+
+const fetchFederalAndStateLiveEvents = createLogic({
+  type: REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
+    processOptions: {
+      successType: RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
+      failType: GENERAL_FAIL,
+    },
+  process(deps) {
+    const {
+      firebasedb,
+    } = deps;
+    const getEventsPromises = [firebasedb.ref('state_townhalls').once('value'), firebasedb.ref('townHalls').once('value')];
+    return Promise.all(getEventsPromises).then((returned) => {
+      const allEvents = [];
+      const stateSnapshot = returned[0];
+      const federalSnapshot = returned[1];
+      stateSnapshot.forEach((stateEndpoint) => {
+        stateEndpoint.forEach((ele) => {
+          allEvents.push(ele.val());
+        })
+      })
+      federalSnapshot.forEach((event) => {
+        allEvents.push(event.val());
+
+      })
+      return allEvents;
+  })
+  }
+})
 
 const fetchOldEventsLogic = createLogic({
   type: REQUEST_OLD_EVENTS,
@@ -359,5 +391,6 @@ export default [
   updateEventLogic,
   updateOldEventLogic,
   requestEventsCounts,
+  fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
 ];

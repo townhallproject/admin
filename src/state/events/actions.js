@@ -25,12 +25,17 @@ import {
   REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
   CLEAR_EVENTS_COUNTS,
   REQUEST_TOTAL_EVENTS_COUNTS,
+  REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
 } from './constants';
 
 
 export const requestEvents = path => ({
   type: REQUEST_EVENTS,
   payload: path,
+});
+
+export const requestAllLiveEventsForAnalysis = () => ({
+  type: REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
 });
 
 export const storeEventsInState = events => ({
