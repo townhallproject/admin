@@ -35,7 +35,53 @@ class OldEventsResults extends React.Component {
             missingMemberCongressData
         } = this.props;
         return (
-           <Row type="flex">
+            <div>
+            <Row
+                style={{
+                    marginTop: 50,
+                }}
+            >
+                <Button
+                    onClick={() => getMocReport('116')}
+                >
+                    Get Moc Report (116th congress)
+                </Button>
+                <Button
+                    icon="download"
+                    style={{ paddingLeft: 10 }}
+                >
+                    <CSVLink
+                        data={
+                            oldEventsForDownload
+                        }
+                        filename={`${archiveUrl}.csv`}
+                    >
+                        DownloadEvents
+                    </CSVLink>
+                </Button>
+                {missingMemberReport116.length > 0 && < React.Fragment>
+                    <Button
+                        icon="download"
+                    >
+                        <CSVLink
+                            data={
+                                missingMemberReport116
+                            }
+                            filename="Congress_116.csv"
+                        > Download Congress Report
+                        </CSVLink>
+                    </Button>
+                </React.Fragment>}
+            </Row>
+            {/* <Row
+                type="flex"
+                style={{
+                    borderTopColor: 'lightgray',
+                    borderTopStyle: 'solid',
+                    borderTopWidth: 2,
+                    marginTop: 50,
+                }}
+            >
                <Col span={16}>
                     <VictoryChart
                         domainPadding={{ x: 20 }}
@@ -77,45 +123,9 @@ class OldEventsResults extends React.Component {
                         </VictoryStack>
                     }
                </Col>
-    
-               <Col span={8}>
-                    <Button
-                        onClick={() => getMocReport('116')}
-                    >
-                        Get Moc Report (116th congress)
-                    </Button>
-                    <h4>Available Downloads</h4>
-                    <Button
-                        icon="download"
-                        block
-                    >
-                        <CSVLink
-                            data={
-                                oldEventsForDownload
-                            }
-                            filename={`${archiveUrl}.csv`}
-                        > DownloadEvents
-                    </CSVLink>
-                    </Button>
-                    {missingMemberReport116.length > 0 && < React.Fragment>
-                        <Button
-                            icon="download"
-                            block
-                        >
-                            <CSVLink
-                                data={
-                                    missingMemberReport116
-                                }
-                                filename="Congress_116.csv"
-                            > Download Congress Report
-                            </CSVLink>
-                        </Button>
+            </Row> */}
 
-                    </React.Fragment>}
-
-               </Col>
-
-            </Row>
+            </div>
         );
     }
 }

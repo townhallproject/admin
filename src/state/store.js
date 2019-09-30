@@ -14,6 +14,7 @@ import subscribers from './subscribers';
 import { firebaseUrl } from '../state/constants';
 import {
   firebasedb,
+  firestore,
 } from '../utils/firebaseinit';
 
 const reducers = {
@@ -41,6 +42,7 @@ const logics = [
 const reduxLogicDependencies = {
   firebaseUrl: firebaseUrl,
   firebasedb,
+  firestore,
   httpClient: request,
 };
 

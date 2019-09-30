@@ -15,6 +15,7 @@ import {
   RESET_OLD_EVENTS,
   SET_LOADING,
   UPDATE_EXISTING_EVENT,
+  UPDATE_OLD_EVENT,
   GET_USER_EMAIL_FOR_EVENT,
   REQUEST_EVENTS_SUCCESS,
   REQUEST_EVENTS_COUNTS,
@@ -24,12 +25,17 @@ import {
   REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
   CLEAR_EVENTS_COUNTS,
   REQUEST_TOTAL_EVENTS_COUNTS,
+  REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
 } from './constants';
 
 
 export const requestEvents = path => ({
   type: REQUEST_EVENTS,
   payload: path,
+});
+
+export const requestAllLiveEventsForAnalysis = () => ({
+  type: REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
 });
 
 export const storeEventsInState = events => ({
@@ -46,16 +52,16 @@ export const setLoading = (loading) => ({
   payload: loading,
 });
 
-export const requestOldEvents = (path, date, dates) => ({
+export const requestOldEvents = ({ path, dates, chamber }) => ({
     type: REQUEST_OLD_EVENTS,
     payload: {
         path,
-        date,
         dates,
+        chamber,
     }
 })
   
-export const addOldEventToState = events => ({
+export const addAllOldEventsToState = events => ({
   type: REQUEST_OLD_EVENTS_SUCCESS,
   payload: events
 });
@@ -128,6 +134,14 @@ export const updateExistingEvent = (updateData, path, eventId) => ({
   payload: {
     updateData,
     path,
+    eventId,
+  }
+});
+
+export const updateOldEvent = (updateData, eventId) => ({
+  type: UPDATE_OLD_EVENT,
+  payload: {
+    updateData,
     eventId,
   }
 });

@@ -4,6 +4,7 @@ import {
 } from 'lodash';
 import moment from 'moment';
 import { 
+  ARCHIVE_COLLECTION,
   DELETE_EVENT,
   DELETE_EVENT_FAIL,
   REQUEST_EVENTS, 
@@ -17,7 +18,12 @@ import {
   REQUEST_OLD_EVENTS,
   UPDATE_EXISTING_EVENT,
   UPDATE_EVENT_SUCCESS,
+  UPDATE_OLD_EVENT_SUCCESS,
   UPDATE_EVENT_FAIL,
+  UPDATE_OLD_EVENT,
+  REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
+  RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
+  GENERAL_FAIL,
 } from "./constants";
 import { 
   EVENTS_PATHS,
@@ -26,7 +32,7 @@ import {
   PENDING_EVENTS_TAB,
 } from '../../constants'
 import {
-  addOldEventToState,
+  addAllOldEventsToState,
   setLoading,
   storeEventsInState,
   clearEventsCounts,
@@ -40,7 +46,6 @@ import {
 } from "./actions";
 import {
   requestResearcherById,
-  requestResearcherByEmail,
 } from "../researchers/actions";
 
 const fetchEvents = createLogic({
@@ -75,6 +80,35 @@ const fetchEvents = createLogic({
   }
 });
 
+const fetchFederalAndStateLiveEvents = createLogic({
+  type: REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
+    processOptions: {
+      successType: RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
+      failType: GENERAL_FAIL,
+    },
+  process(deps) {
+    const {
+      firebasedb,
+    } = deps;
+    const getEventsPromises = [firebasedb.ref('state_townhalls').once('value'), firebasedb.ref('townHalls').once('value')];
+    return Promise.all(getEventsPromises).then((returned) => {
+      const allEvents = [];
+      const stateSnapshot = returned[0];
+      const federalSnapshot = returned[1];
+      stateSnapshot.forEach((stateEndpoint) => {
+        stateEndpoint.forEach((ele) => {
+          allEvents.push(ele.val());
+        })
+      })
+      federalSnapshot.forEach((event) => {
+        allEvents.push(event.val());
+
+      })
+      return allEvents;
+  })
+  }
+})
+
 const fetchOldEventsLogic = createLogic({
   type: REQUEST_OLD_EVENTS,
   processOptions: {
@@ -83,40 +117,51 @@ const fetchOldEventsLogic = createLogic({
   process({
       getState,
       action,
-      firebasedb
+      firestore
     }, dispatch, done) {
     const {
       payload
     } = action;
-    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/${payload.date}`)
-    const ref = firebasedb.ref(`${payload.path}/${payload.date}`);
+    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
+    let fsRef = firestore.collection(ARCHIVE_COLLECTION);
+
     dispatch(setLoading(true))
     const allEvents = [];
-    const allUsers = [];
-    ref.orderByChild('dateObj').startAt(payload.dates[0]).endAt(payload.dates[1]).on('child_added', (snapshot) => {
-      const event = snapshot.val();
-      const researcher = event.enteredBy;
-      if (researcher && !includes(allUsers, researcher)) {
-        if (!includes(researcher, '@')) {
-          dispatch(requestResearcherById(researcher));
-        } else {
-          dispatch(requestResearcherByEmail(researcher));
+    const allUids = [];
+
+    let fsQueryRef = fsRef
+      .where('timestamp', '>=', payload.dates[0])
+      .where('timestamp', '<=', payload.dates[1])
+      .orderBy('timestamp')
+      
+    fsQueryRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching events.');
+          return;
         }
-        allUsers.push(researcher);
-      }
-      allEvents.push(event);
-    })
-    ref.once('value')
-      .then(() => {
-        dispatch(addOldEventToState(allEvents));
+
+        snapshot.forEach(event => {
+          const eventData = event.data();
+          const researcher = eventData.enteredBy;
+          if (researcher && !includes(researcher, '@')) {
+            if (!includes(allUids, researcher)) {
+              // dispatch(requestResearcherById(researcher))
+            }
+            allUids.push(researcher);
+          }
+          allEvents.push(eventData);
+        });
       })
       .then(() => {
-        if (moment(payload.dates[1]).isSame(moment(payload.date, 'YYYY-MM'), 'month')) {
-          dispatch(setLoading(false))
-        }
-        done()
+          dispatch(addAllOldEventsToState(allEvents));
+          dispatch(setLoading(false));
+          done();
       })
-  }
+      .catch(err => {
+        console.log(`Error fetching events: ${err}`);
+      });
+    }
 });
 
 const approveEventLogic = createLogic({
@@ -252,6 +297,35 @@ const updateEventLogic = createLogic({
   }
 })
 
+const updateOldEventLogic = createLogic({
+  type: UPDATE_OLD_EVENT,
+  processOptions: {
+    successType: UPDATE_OLD_EVENT_SUCCESS,
+    failType: UPDATE_EVENT_FAIL,
+  },
+  process(deps) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    const {
+      updateData,
+      eventId
+    } = action.payload;
+    if (!eventId) {
+      return
+    }
+
+    let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
+    return eventRef.update(updateData).then(() => {
+      return {...updateData, eventId}
+    })
+    .catch(err => {
+      console.log(`Error updating old event: ${err}`);
+    });
+  }
+})
+
 const requestEventsCounts = createLogic({
   type: REQUEST_EVENTS_COUNTS,
   processOptions: {
@@ -315,6 +389,8 @@ export default [
   fetchEvents,
   deleteEvent,
   updateEventLogic,
+  updateOldEventLogic,
   requestEventsCounts,
+  fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
 ];

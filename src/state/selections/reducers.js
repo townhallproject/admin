@@ -10,6 +10,9 @@ import {
   GENERAL_FAIL,
   CLEAR_ADDRESS,
   SET_TEMP_ADDRESS,
+  CHANGE_CHAMBER_FILTER,
+  CHANGE_EVENT_FILTER,
+  CHANGE_LEGISLATIVE_BODY_FILTER,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
@@ -32,11 +35,29 @@ const initialState = {
     address: null,
     state: null,
     stateName: null,
-  }
+  },
+  chamber: null,
+  events: [],
+  legislativeBody: 'federal',
 };
 
 const selectionReducer = (state = initialState, action) => {
   switch (action.type) {
+    case CHANGE_CHAMBER_FILTER:
+      return {
+        ...state,
+        chamber: action.payload,
+      }
+    case CHANGE_LEGISLATIVE_BODY_FILTER:
+      return {
+        ...state,
+        legislativeBody: action.payload,
+      }
+    case CHANGE_EVENT_FILTER:
+        return {
+          ...state,
+          events: action.payload,
+        }
     case CHANGE_EVENTS_TAB:
       return {
         ...state,

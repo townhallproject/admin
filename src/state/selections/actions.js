@@ -10,6 +10,9 @@ import {
   CLEAR_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
   CHANGE_TIME_ZONE,
+  CHANGE_CHAMBER_FILTER,
+  CHANGE_EVENT_FILTER,
+  CHANGE_LEGISLATIVE_BODY_FILTER,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -39,6 +42,21 @@ export const getHashLocationAndSave = () => ({
 export const changeDateLookup = (dates) => ({
   type: CHANGE_DATE_LOOKUP,
   payload: dates,
+});
+
+export const changeChamberFilter = (chamber) => ({
+  type: CHANGE_CHAMBER_FILTER,
+  payload: chamber,
+});
+
+export const changeLegislativeBodyFilter = (legislativeBody) => ({
+  type: CHANGE_LEGISLATIVE_BODY_FILTER,
+  payload: legislativeBody,
+});
+
+export const changeEventFilter = (events) => ({
+  type: CHANGE_EVENT_FILTER,
+  payload: events,
 });
 
 export const changeStateFilters = (states) => ({
