@@ -38,16 +38,26 @@ class LookupOldEvents extends React.Component {
     constructor(props) {
         super(props);
         this.onDateRangeChange = this.onDateRangeChange.bind(this);
-        this.handleRequestOldEvents = this.handleRequestOldEvents.bind(this);
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
     }
 
     onDateRangeChange(date, dateString) {
         const {
-            changeDataLookupRange
+            changeDataLookupRange,
+            requestOldEvents,
+            archiveUrl,
+            chamber,
         } = this.props;
         changeDataLookupRange(dateString);
+        const dateStart = moment(dateString[0]).startOf('day').valueOf();
+        const dateEnd = moment(dateString[1]).endOf('day').valueOf();
+
+        requestOldEvents({
+            chamber,
+            path: archiveUrl,
+            dates: [dateStart, dateEnd],
+        });
     }
 
     onIncludeLiveEvents(checked) {
@@ -66,23 +76,6 @@ class LookupOldEvents extends React.Component {
           handleChangeStateFilters
         } = this.props;
         handleChangeStateFilters(value)
-    }
-
-    handleRequestOldEvents(){
-        const {
-            requestOldEvents,
-            archiveUrl,
-            dateLookupRange,
-            chamber,
-        } = this.props;
-        const dateStart = moment(dateLookupRange[0]).startOf('day').valueOf();
-        const dateEnd = moment(dateLookupRange[1]).endOf('day').valueOf();
-
-        requestOldEvents({
-            chamber,
-            path: archiveUrl,
-            dates: [dateStart, dateEnd],
-        });
     }
 
     handleChamberChange = (value) => {
@@ -125,13 +118,7 @@ class LookupOldEvents extends React.Component {
                         <RangePicker 
                             onChange={this.onDateRangeChange} 
                             format = "MMM D, YYYY"
-                        />
-                        <Button
-                            onClick={this.handleRequestOldEvents}
-                            loading={loading}
-                            type="primary"
-                            style={{ marginLeft: 10 }}
-                        >Request events</Button>     
+                        />  
                     </Row>
                     {totalReturnedEventsLength > 0 && (
                     <React.Fragment>
@@ -225,7 +212,6 @@ class LookupOldEvents extends React.Component {
                             <Switch 
                                 onChange={this.onIncludeLiveEvents} 
                                 checked={includeLiveEventsInLookup}
-
                             />
                         </Col>
                     </Row>
