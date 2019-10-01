@@ -152,10 +152,16 @@ const requestArchivedTimeZoneLogic = createLogic({
       httpClient,
     } = deps;
     const {
-      payload
-    } = action;
-    const time = Date.parse(`${payload.date} ${payload.time}`) / 1000;
-    const loc = `${payload.lat},${payload.lng}`;
+      date,
+      timeStart,
+      timeEnd,
+      lat,
+      lng,
+      eventId,
+    } = action.payload;
+    const time = Date.parse(`${date} ${timeStart}`) / 1000;
+    const loc = `${lat},${lng}`;
+    console.log(time, loc);
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
     httpClient.get(url)
       .then((r) => {
@@ -165,14 +171,14 @@ const requestArchivedTimeZoneLogic = createLogic({
           return Error('no timezone results', response);
         }
         const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
-        const newTimeStart = moment.parseZone(payload.timeStart).utcOffset(offset, true);
-        const newTimeEnd = moment.parseZone(payload.timeEnd).utcOffset(offset, true);
+        const newTimeStart = moment(`${date}T${timeStart}`).utcOffset(offset, true);
+        const newTimeEnd = moment(`${date}T${timeEnd}`).utcOffset(offset, true);
         const eventData = {
           timestamp: newTimeStart.format('x'),
           timeStart: newTimeStart.format(),
           timeEnd: newTimeEnd.format(),
         }
-        dispatch(updateOldEvent(eventData, payload.eventId));
+        dispatch(updateOldEvent(eventData, eventId));
         done();
       })
   }

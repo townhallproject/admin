@@ -1,7 +1,6 @@
 import React from 'react';
-import moment from 'moment';
 import { connect } from 'react-redux';
-import { Input, Form, Select, Modal } from 'antd';
+import { Modal } from 'antd';
 import ArchiveEditForm from './forms';
 import selectionStateBranch from '../../state/selections';
 
@@ -13,6 +12,13 @@ class ArchiveEventsEditModal extends React.Component {
     }
   }
 
+  componentDidMount() {
+    const {
+      clearTempAddress,
+    } = this.props;
+    clearTempAddress();
+  }
+
   render() {
     const {
       visible,
@@ -22,6 +28,7 @@ class ArchiveEventsEditModal extends React.Component {
       setTempAddress,
       clearTempAddress,
       updateEvent,
+      setTimeZone,
     } = this.props;
     return (
       <Modal
@@ -36,6 +43,7 @@ class ArchiveEventsEditModal extends React.Component {
           tempAddress={tempAddress}
           setTempAddress={setTempAddress}
           clearTempAddress={clearTempAddress}
+          setTimeZone={setTimeZone}
           updateEvent={updateEvent}
           handleClose={handleClose}
         />

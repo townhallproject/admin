@@ -1,21 +1,10 @@
 import React from 'react';
-import moment from 'moment';
-import PropTypes from 'prop-types';
 import {
   Button,
-  Checkbox,
-  Input,
-  DatePicker,
   Form,
-  TimePicker,
-  Alert,
 } from 'antd';
 import ArchiveLocationForm from './LocationForm';
 import ArchiveDateTimeForm from './DateTimeForm';
-
-const FormItem = Form.Item;
-const timeFormats = ['hh:mm A', 'h:mm A'];
-const archiveEventsTimeFormat = 'YYYY-MM-DDTHH:mm:ssZZ'
 
 class ArchiveAddressDateEditForm extends React.Component {
   constructor(props) {
@@ -29,8 +18,6 @@ class ArchiveAddressDateEditForm extends React.Component {
       townHall,
       updateEvent,
       tempAddress,
-      setTimeZone,
-      pathForEvents,
       handleClose,
     } = this.props;
     e.preventDefault();
@@ -40,29 +27,22 @@ class ArchiveAddressDateEditForm extends React.Component {
     }
     this.props.form.validateFieldsAndScroll((err, vals) => {
       if (!err) {
-        const date = vals.date.format('YYYY-MM-DD');
-        const startTime = vals.time.format('HH:mm:ss');
-        const endTime = vals.endTime.format('HH:mm:ss');
         const updateObj = {
-          timestamp: moment(`${date}T${startTime}`).format('x'),
-          timeStart: moment(`${date}T${startTime}`).format(),
-          timeEnd: moment(`${date}T${endTime}`).format(),
           location: vals.location,
           address: vals.address,
         }
-        console.log(updateObj);
         updateEvent(updateObj, townHall.eventId);
+        this.checkData(vals);
+        handleClose();
       }
     });
   }
 
-  checkData() {
+  checkData(vals) {
     const {
       tempAddress,
       setTimeZone,
       townHall,
-      pathForEvents,
-      handleClose,
     } = this.props;
     if (tempAddress.address) {
       console.log('still have address')
@@ -71,21 +51,18 @@ class ArchiveAddressDateEditForm extends React.Component {
     this.setState({
       loading: false,
     });
-    const dateTime = moment.parseZone(townHall.timeStart);
-    const date = dateTime.format('ddd, MMM DD YYYY');
-    const time = dateTime.format('hh:mm A');
+    console.log(vals);
+    const date = vals.date.format('YYYY-MM-DD');
+    const startTime = vals.time.format('HH:mm:ss');
+    const endTime = vals.endTime.format('HH:mm:ss');
     setTimeZone({
       date: date,
-      time: time,
-      timestamp: townHall.timestamp,
-      timeStart: townHall.timeStart,
-      timeEnd: townHall.timeEnd,
+      timeStart: startTime,
+      timeEnd: endTime,
       lat: townHall.lat,
       lng: townHall.lng,
       eventId: townHall.eventId,
-      pathForEvents: pathForEvents,
     });
-    handleClose();
   }
 
   render() {
@@ -105,7 +82,6 @@ class ArchiveAddressDateEditForm extends React.Component {
       setTempAddress,
       clearTempAddress,
       updateEvent,
-      setLatLng,
       handleClose,
     } = this.props;
     const {
