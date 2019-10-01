@@ -18,7 +18,7 @@ const initialState = {
   value: undefined,
 };
 
-class LocationForm extends React.Component {
+class ArchiveLocationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = initialState;
@@ -83,12 +83,12 @@ class LocationForm extends React.Component {
   handleSearch() {
     const {
       geoCodeLocation,
-      address,
+      currentTownHall,
     } = this.props;
     const {
       value,
     } = this.state;
-    if (address === value || !value) {
+    if (currentTownHall.address === value || !value) {
       return;
     }
     geoCodeLocation(value);
@@ -106,18 +106,6 @@ class LocationForm extends React.Component {
       value: target.value,
     });
   }
-
-  // handleLocationChange({ target }) {
-  //   this.debounceLocationChange(target.value);
-  // }
-
-  // debounceLocationChange = debounce((value) => {
-  //   const { 
-  //     updateEvent,
-  //     currentTownHall,
-  //   } = this.props;
-  //   updateEvent({ location: value }, currentTownHall.eventId);
-  // }, 2000);
 
   receiveTempAddress() {
     this.setState({
@@ -146,7 +134,6 @@ class LocationForm extends React.Component {
 
   render() {
     const {
-      address,
       style,
       getFieldDecorator,
       tempAddress,
@@ -170,7 +157,6 @@ class LocationForm extends React.Component {
               className="input-underline"
               id="location"
               placeholder="Name of location (eg. Gary Recreation Center)"
-              // onChange={(el) => this.handleLocationChange(el)}
             />,
           )}
         </FormItem>
@@ -224,27 +210,24 @@ class LocationForm extends React.Component {
   }
 }
 
-LocationForm.propTypes = {
+ArchiveLocationForm.propTypes = {
   address: PropTypes.string,
   clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
   getFieldValue: PropTypes.func.isRequired,
-  setFieldsValue: PropTypes.func.isRequired,
   style: PropTypes.shape({}),
   tempAddress: PropTypes.string,
   tempLat: PropTypes.number,
   tempLng: PropTypes.number,
-  tempStateInfo: PropTypes.shape({}),
 };
 
-LocationForm.defaultProps = {
+ArchiveLocationForm.defaultProps = {
   address: '',
   style: null,
   tempAddress: null,
   tempLat: 0,
   tempLng: 0,
-  tempStateInfo: null,
 };
 
-export default LocationForm;
+export default ArchiveLocationForm;

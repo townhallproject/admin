@@ -8,7 +8,6 @@ import selectionStateBranch from '../../state/selections';
 class ArchiveEventsEditModal extends React.Component {
   constructor(props) {
     super(props);
-    this.checkData = this.checkData.bind(this);
     this.state = {
       loading: false,
     }
