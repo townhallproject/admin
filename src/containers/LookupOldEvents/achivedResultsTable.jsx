@@ -104,12 +104,17 @@ class ResultsTable extends React.Component {
             key: 'timeStart',
             editable: true,
         },
-        // {
-        //     title: 'ADA',
-        //     dataIndex: 'ada_accessible',
-        //     key: 'ada_accessible',
-        //     editable: true,
-        // },
+        {
+            title: 'ADA',
+            dataIndex: 'ada_accessible',
+            key: 'ada_accessible',
+            editable: false,
+            render: (text, record) => (<Checkbox
+                key={record.ada_accessible}
+                onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
+                defaultChecked={record.ada_accessible}>
+            </Checkbox>)
+        },
         {
             title: 'Researcher verified',
             dataIndex: 'validated',
