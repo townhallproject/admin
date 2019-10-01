@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Button,
   Form,
+  Row,
+  Col,
 } from 'antd';
 import ArchiveLocationForm from './LocationForm';
 import ArchiveDateTimeForm from './DateTimeForm';
@@ -51,7 +53,6 @@ class ArchiveAddressDateEditForm extends React.Component {
     this.setState({
       loading: false,
     });
-    console.log(vals);
     const date = vals.date.format('YYYY-MM-DD');
     const startTime = vals.time.format('HH:mm:ss');
     const endTime = vals.endTime.format('HH:mm:ss');
@@ -90,7 +91,11 @@ class ArchiveAddressDateEditForm extends React.Component {
       resetFields,
     } = this.props.form;
     return (
-      <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+      <Form 
+        {...formItemLayout} 
+        onSubmit={this.handleSubmit} 
+        onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+      >
         <ArchiveDateTimeForm 
           townHall={townHall}
           getFieldDecorator={getFieldDecorator}
@@ -108,12 +113,16 @@ class ArchiveAddressDateEditForm extends React.Component {
           resetFields={resetFields}
           updateEvent={updateEvent}
         />
-        <Button type="primary" htmlType="submit">
-          OK
-        </Button>
-        <Button onClick={handleClose}>
-          Cancel
-        </Button>
+        <Row>
+          <Col style={{ textAlign: 'right' }}>
+            <Button type="primary" htmlType="submit">
+              OK
+            </Button>
+            <Button onClick={handleClose}>
+              Cancel
+            </Button>
+          </Col>
+        </Row>
       </Form>
     )
   }

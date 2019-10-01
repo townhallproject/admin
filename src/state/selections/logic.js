@@ -161,7 +161,6 @@ const requestArchivedTimeZoneLogic = createLogic({
     } = action.payload;
     const time = Date.parse(`${date} ${timeStart}`) / 1000;
     const loc = `${lat},${lng}`;
-    console.log(time, loc);
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
     httpClient.get(url)
       .then((r) => {
