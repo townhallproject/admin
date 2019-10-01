@@ -117,7 +117,7 @@ class ResultsTable extends React.Component {
             editable: false,
             render: (text, record) => (<Checkbox
                 key={record.validated}
-                onChange={(e) => this.handleSave(record.eventId, { validated : !record.validated })}
+                onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
                 defaultChecked={record.validated}>
             </Checkbox>)
         },
