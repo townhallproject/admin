@@ -1,11 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Input, Form, Select, Modal } from 'antd';
+import { Input, Form, Select } from 'antd';
 import { EditableContext } from './achivedResultsTable';
 import StateDistrictEditor from '../../components/StateDistrictEditor';
-import EditAddressOrDateForm from '../../components/EditAddressOrDateModal';
 import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
-import selectionStateBranch from '../../state/selections';
 import ArchiveEventsEditModal from '../../components/ArchiveEventsEditModal';
 
 const Option = Select.Option;
@@ -57,6 +54,7 @@ export default class EditableCell extends React.Component {
     const {
       inputType,
       handleSave,
+      record,
     } = this.props;
     switch (inputType) {
       case 'displayName':
@@ -129,7 +127,7 @@ export default class EditableCell extends React.Component {
       handleSave,
     } = this.props;
     this.toggleEdit();
-    handleSave(record.eventId, { [key] : value});
+    handleSave({ [key] : value}, record.eventId);
   }
 
   saveFormEntry = (e) => {
@@ -149,7 +147,7 @@ export default class EditableCell extends React.Component {
       }
       console.log('saving these values', values);
       this.toggleEdit();
-      handleSave(record.eventId, values);
+      handleSave(values, record.eventId);
     });
   };
 
