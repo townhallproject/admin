@@ -51,7 +51,7 @@ class ResultsTable extends React.Component {
             title: 'Name',
             dataIndex: 'displayName',
             key: 'displayName',
-            editable: false,
+            editable: true,
         }, 
         {
             title: 'Meeting Type',

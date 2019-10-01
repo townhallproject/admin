@@ -60,8 +60,8 @@ export default class EditableCell extends React.Component {
       case 'displayName':
         return (
           <Input 
-            onPressEnter={this.save}
-            onBlur={this.save} 
+            onPressEnter={(e) => this.saveNewValue('displayName', e.target.value)}
+            onBlur={(e) => this.saveNewValue('displayName', e.target.value)} 
           />)
       case 'meetingType':
         return (
