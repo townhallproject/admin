@@ -128,7 +128,7 @@ class ArchiveLocationForm extends React.Component {
       <FormItem>
         {getFieldDecorator('phoneNumber', {
           initialValue: '',
-        })(<Input type="tel" class="form-control" placeholder="Phone Number" />)}
+        })(<Input type="tel" placeholder="Phone Number" />)}
       </FormItem>);
   }
 
@@ -137,7 +137,6 @@ class ArchiveLocationForm extends React.Component {
       style,
       getFieldDecorator,
       tempAddress,
-      getFieldValue,
       requiredFields,
       currentTownHall,
     } = this.props;
@@ -145,7 +144,6 @@ class ArchiveLocationForm extends React.Component {
       showResponse,
       validating,
     } = this.state;
-    const meetingType = getFieldValue('meetingType');
     return (
       <React.Fragment>
         <FormItem class="general-inputs">
@@ -166,7 +164,7 @@ class ArchiveLocationForm extends React.Component {
           >
           <Switch onChange={this.toggleIncludeState} />
         </FormItem>
-        {meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
+        {currentTownHall.meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
           : (
             <FormItem
               className="general-inputs"
@@ -215,7 +213,6 @@ ArchiveLocationForm.propTypes = {
   clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
-  getFieldValue: PropTypes.func.isRequired,
   style: PropTypes.shape({}),
   tempAddress: PropTypes.string,
   tempLat: PropTypes.number,

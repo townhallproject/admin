@@ -29,9 +29,15 @@ class ArchiveAddressDateEditForm extends React.Component {
     }
     this.props.form.validateFieldsAndScroll((err, vals) => {
       if (!err) {
-        const updateObj = {
-          location: vals.location,
-          address: vals.address,
+        const updateObj = {};
+        if (vals.location) {
+          updateObj.location = vals.location;
+        }
+        if (vals.address) {
+          updateObj.address = vals.address;
+        }
+        if (vals.hasOwnProperty('phoneNumber')) {
+          updateObj.phoneNumber = vals.phoneNumber;
         }
         updateEvent(updateObj, townHall.eventId);
         this.checkData(vals);
@@ -87,7 +93,6 @@ class ArchiveAddressDateEditForm extends React.Component {
     } = this.props;
     const {
       getFieldDecorator,
-      getFieldValue,
       resetFields,
     } = this.props.form;
     return (
@@ -109,7 +114,6 @@ class ArchiveAddressDateEditForm extends React.Component {
           tempLat={tempAddress.lat}
           tempLng={tempAddress.lng}
           getFieldDecorator={getFieldDecorator}
-          getFieldValue={getFieldValue}
           resetFields={resetFields}
           updateEvent={updateEvent}
         />

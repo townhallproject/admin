@@ -165,13 +165,14 @@ const requestArchivedTimeZoneLogic = createLogic({
     httpClient.get(url)
       .then((r) => {
         const response = r.body;
-        console.log(response)
+        console.log(response);
         if (!response.timeZoneName) {
           return Error('no timezone results', response);
         }
         const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
         const newTimeStart = moment(`${date}T${timeStart}`).utcOffset(offset, true);
         const newTimeEnd = moment(`${date}T${timeEnd}`).utcOffset(offset, true);
+        console.log(newTimeStart, newTimeStart.format('x'));
         const eventData = {
           timestamp: newTimeStart.format('x'),
           timeStart: newTimeStart.format(),
