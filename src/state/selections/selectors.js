@@ -33,9 +33,10 @@ export const getDateRange = state => state.selections.dateLookupRange;
 export const getStatesToFilterArchiveBy = state => state.selections.filterByState;
 export const includeLiveEventsInLookup = state => state.selections.includeLiveEvents;
 export const getTempAddress = state => state.selections.tempAddress;
-export const getChamber = state => state.selections.chamber === null ? 'all' : state.selections.chamber;
-export const getEventTypes = state => state.selections.events;
-export const getLegislativeBody = state => state.selections.legislativeBody;
+export const getChamber = state => state.selections.filterByChamber;
+export const getEventTypes = state => state.selections.filterByEventType;
+export const getLegislativeBody = state => state.selections.filterByLegislativeBody;
+export const getNameFilter = state => state.selections.filterByName;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
@@ -164,8 +165,9 @@ export const getFilteredEvents = createSelector(
     getChamber,
     getEventTypes,
     getLegislativeBody,
+    getNameFilter,
   ], 
-  (allEvents, states, chamber, events, legislativeBody) => {
+  (allEvents, states, chamber, events, legislativeBody, name) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
 
@@ -192,12 +194,25 @@ export const getFilteredEvents = createSelector(
         return event.level === 'federal';
       }
       return event.level === 'state' && event.state === legislativeBody;
-    })
+    });
+
+    if (name) {
+      filteredEvents = filter(filteredEvents, (event) => {
+        return name === event.displayName;
+      });
+    }
     
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
 
     return filteredEvents;
 });
+
+export const getFilteredUniqueNames = createSelector([getFilteredEvents], (allEvents) => {
+  const allNames = map(allEvents, (eventData) => {
+    return eventData.displayName;
+  });
+  return [...new Set(allNames)];
+})
 
 export const getFilteredOldEventsLength = createSelector([getFilteredEvents], (filtered) => {
   return filtered.length;

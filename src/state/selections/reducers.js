@@ -13,6 +13,7 @@ import {
   CHANGE_CHAMBER_FILTER,
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
+  CHANGE_NAME_FILTER,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
@@ -26,6 +27,10 @@ const initialState = {
   currentHashLocation: '/',
   dateLookupRange: [],
   filterByState: [],
+  filterByChamber: 'all',
+  filterByEventType: [],
+  filterByLegislativeBody: 'federal',
+  filterByName: false,
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
   tempAddress: {
@@ -36,9 +41,6 @@ const initialState = {
     state: null,
     stateName: null,
   },
-  chamber: null,
-  events: [],
-  legislativeBody: 'federal',
 };
 
 const selectionReducer = (state = initialState, action) => {
@@ -46,18 +48,23 @@ const selectionReducer = (state = initialState, action) => {
     case CHANGE_CHAMBER_FILTER:
       return {
         ...state,
-        chamber: action.payload,
+        filterByChamber: action.payload,
       }
     case CHANGE_LEGISLATIVE_BODY_FILTER:
       return {
         ...state,
-        legislativeBody: action.payload,
+        filterByLegislativeBody: action.payload,
       }
     case CHANGE_EVENT_FILTER:
-        return {
-          ...state,
-          events: action.payload,
-        }
+      return {
+        ...state,
+        filterByEventType: action.payload,
+      }
+    case CHANGE_NAME_FILTER:
+      return {
+        ...state,
+        filterByName: action.payload,
+      }
     case CHANGE_EVENTS_TAB:
       return {
         ...state,

@@ -12,6 +12,7 @@ import {
     Row,
     Progress,
     Statistic,
+    AutoComplete,
 } from 'antd';
 
 import moment from 'moment';
@@ -90,11 +91,23 @@ class LookupOldEvents extends React.Component {
         this.props.changeLegislativeBodyFilter(value);
     }
 
+    handleNameFilterChange = (name) => {
+        const { changeNameFilter } = this.props;
+        changeNameFilter(name);
+    }
+
+    handleNameFilterClear = (name) => {
+        const { changeNameFilter } = this.props;
+        if (name === '' || typeof name === 'undefined') {
+            changeNameFilter(false);
+        }
+    }
+
     render() {
         const {
             filteredOldEvents,
+            filteredUniqueNames,
             archiveUrl,
-            loading,
             dataForChart,
             includeLiveEventsInLookup,
             oldEventsForDownload,
@@ -200,6 +213,18 @@ class LookupOldEvents extends React.Component {
                                 {children}
                             </Select>
                         </Row>
+                        <Row type="flex">
+                            <AutoComplete
+                                placeholder="Filter by name"
+                                dataSource={filteredUniqueNames}
+                                onSelect={this.handleNameFilterChange}
+                                allowClear={true}
+                                onChange={this.handleNameFilterClear}
+                                filterOption={(inputValue, option) => {
+                                    return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
+                                }}
+                            />
+                        </Row>
                     </React.Fragment>)
                     }
                     <Row
@@ -255,6 +280,7 @@ const mapStateToProps = state => ({
     archiveUrl: selectionStateBranch.selectors.getArchiveUrl(state),
     liveEventUrl: selectionStateBranch.selectors.getLiveEventUrl(state),
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
+    filteredUniqueNames: selectionStateBranch.selectors.getFilteredUniqueNames(state),
     dateLookupRange: selectionStateBranch.selectors.getDateRange(state),
     totalReturnedEventsLength: selectionStateBranch.selectors.getTotalUnFilteredOldEventsCount(state),
     filteredEventsLength: selectionStateBranch.selectors.getFilteredOldEventsLength(state),
@@ -278,6 +304,7 @@ const mapDispatchToProps = dispatch => ({
     changeEventFilter: (events) => dispatch(selectionStateBranch.actions.changeEventFilter(events)),
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
+    changeNameFilter: (name) => dispatch(selectionStateBranch.actions.changeNameFilter(name)),
     requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),

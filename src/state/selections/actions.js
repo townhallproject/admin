@@ -14,6 +14,7 @@ import {
   CHANGE_CHAMBER_FILTER,
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
+  CHANGE_NAME_FILTER,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -63,6 +64,11 @@ export const changeEventFilter = (events) => ({
 export const changeStateFilters = (states) => ({
   type: CHANGE_STATE_FILTERS,
   payload: states,
+});
+
+export const changeNameFilter = (name) => ({
+  type: CHANGE_NAME_FILTER,
+  payload: name,
 });
 
 export const toggleIncludeLiveEventsInLookup = (include) => ({
