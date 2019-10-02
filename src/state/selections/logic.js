@@ -38,7 +38,7 @@ const onSelectionChangeLogic = createLogic({
     dispatch(toggleIncludeLiveEventsInLookup(false))
     done();
   },
-  type: [CHANGE_FEDERAL_STATE_RADIO, CHANGE_DATE_LOOKUP],
+  type: CHANGE_FEDERAL_STATE_RADIO,
 });
 
 const requestLatLngLogic = createLogic({

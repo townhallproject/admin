@@ -43,17 +43,16 @@ class LookupOldEvents extends React.Component {
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
     }
 
-    onDateRangeChange(date, dateString) {
+    onDateRangeChange(date, dateRange) {
         const {
             changeDataLookupRange,
             requestOldEvents,
             archiveUrl,
             chamber,
         } = this.props;
-        changeDataLookupRange(dateString);
-        const dateStart = moment(dateString[0]).startOf('day').valueOf();
-        const dateEnd = moment(dateString[1]).endOf('day').valueOf();
-
+        const dateStart = moment(dateRange[0]).startOf('day').valueOf();
+        const dateEnd = moment(dateRange[1]).endOf('day').valueOf();
+        changeDataLookupRange([dateStart, dateEnd]);
         requestOldEvents({
             chamber,
             path: archiveUrl,
@@ -125,13 +124,22 @@ class LookupOldEvents extends React.Component {
             }}>
                 <Col span={12} offset={6}>
                     <Row type="flex">Search archived events by date range:</Row>
-                    <Row
-                        type="flex" 
-                    >
+                    <Row type="flex">
                         <RangePicker 
                             onChange={this.onDateRangeChange} 
                             format = "MMM D, YYYY"
-                        />  
+                        />
+                    </Row>
+                    <Row type="flex">
+                        <Col>
+                        <label>Include live events</label>
+                        </Col>
+                        <Col>
+                            <Switch 
+                                onChange={this.onIncludeLiveEvents} 
+                                checked={includeLiveEventsInLookup}
+                            />
+                        </Col>
                     </Row>
                     {totalReturnedEventsLength > 0 && (
                     <React.Fragment>
@@ -227,19 +235,6 @@ class LookupOldEvents extends React.Component {
                         </Row>
                     </React.Fragment>)
                     }
-                    <Row
-                        type="flex" 
-                    >
-                        <Col>
-                        <   label>Include live events</label>
-                        </Col>
-                        <Col>
-                            <Switch 
-                                onChange={this.onIncludeLiveEvents} 
-                                checked={includeLiveEventsInLookup}
-                            />
-                        </Col>
-                    </Row>
                     {/* <Row
                         type="flex"
                     >   <Col>

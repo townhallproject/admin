@@ -145,10 +145,17 @@ export const normalizeEventSchema = eventData => {
 export const getAllEventsForAnalysis = createSelector([
     includeLiveEventsInLookup, 
     getAllOldEventsWithUserEmails, 
-    getAllFederalAndStateLiveEvents
-  ], (
-    includeLive, oldEvents, liveEvents
-  ) => (includeLive ? [...oldEvents, ...liveEvents] : oldEvents)
+    getAllFederalAndStateLiveEvents,
+    getDateRange,
+  ], (includeLive, oldEvents, liveEvents, dateRange) => {
+    if (includeLive) {
+      liveEvents = filter(liveEvents, (event) => {
+        return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1]
+      });
+      return [...oldEvents, ...liveEvents];
+    }
+    return oldEvents;
+  }
 );
 
 export const getReturnedStateEventsLength = createSelector([getAllEventsForAnalysis], (allEvents) => {
@@ -170,40 +177,33 @@ export const getFilteredEvents = createSelector(
   (allEvents, states, chamber, events, legislativeBody, name) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
-
     if (states.length) { 
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(states, event.state);
       });
     }
-
     if (chamber !== "all") {
       filteredEvents = filter(filteredEvents, (event) => {
         return chamber === event.chamber;
       });
     }
-
     if (events.length > 0) {
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(events, event.meetingType);
       });
     }
-
     filteredEvents = filter(filteredEvents, (event) => {
       if (legislativeBody === 'federal') {
-        return event.level === 'federal';
+        return event.level === 'federal' || event.level === ' ';
       }
       return event.level === 'state' && event.state === legislativeBody;
     });
-
     if (name) {
       filteredEvents = filter(filteredEvents, (event) => {
         return name === event.displayName;
       });
     }
-    
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
-
     return filteredEvents;
 });
 
