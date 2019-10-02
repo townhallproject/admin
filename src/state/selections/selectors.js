@@ -95,6 +95,8 @@ export const getPeopleDataUrl = createSelector([getActiveFederalOrState, getMode
 export const normalizeEventSchema = eventData => {
   let normalizedEvent = {};
 
+  normalizedEvent.editable = eventData.editable;
+
   normalizedEvent.eventId = eventData.eventId;
   normalizedEvent.enteredBy = eventData.enteredBy || eventData.userEmail;  
   normalizedEvent.eventName = eventData.eventName ? eventData.eventName : ' ';
@@ -148,9 +150,17 @@ export const getAllEventsForAnalysis = createSelector([
     getAllFederalAndStateLiveEvents,
     getDateRange,
   ], (includeLive, oldEvents, liveEvents, dateRange) => {
+    oldEvents = map(oldEvents, (event) => {
+      event.editable = true;
+      return event;
+    });
     if (includeLive) {
       liveEvents = filter(liveEvents, (event) => {
         return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1]
+      });
+      liveEvents = map(liveEvents, (event) => {
+        event.editable = false;
+        return event;
       });
       return [...oldEvents, ...liveEvents];
     }
@@ -204,6 +214,7 @@ export const getFilteredEvents = createSelector(
       });
     }
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
+    console.log(filteredEvents);
     return filteredEvents;
 });
 

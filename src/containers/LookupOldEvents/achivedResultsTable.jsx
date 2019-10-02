@@ -147,14 +147,14 @@ class ResultsTable extends React.Component {
         };
 
         const columns = this.columns.map(col => {
-            if (this.props.includeLiveEventsInLookup || !col.editable) {
+            if (!col.editable) {
                 return col;
             }
             return {
                 ...col,
                 onCell: record => ({
                     record,
-                    editable: col.editable,
+                    editable: col.editable && record.editable,
                     inputType: col.key,
                     dataIndex: col.dataIndex,
                     title: col.title,
@@ -162,7 +162,6 @@ class ResultsTable extends React.Component {
                 }),
             };
         });
-
         return (
             <Table
                 components={components}
