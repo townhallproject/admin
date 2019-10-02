@@ -105,14 +105,15 @@ class ResultsTable extends React.Component {
             editable: true,
         },
         {
-            title: 'ADA',
+            title: 'ADA?',
             dataIndex: 'ada_accessible',
             key: 'ada_accessible',
             editable: false,
             render: (text, record) => (<Checkbox
                 key={record.ada_accessible}
                 onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
-                defaultChecked={record.ada_accessible}>
+                defaultChecked={record.ada_accessible}
+                disabled={!record.editable}>
             </Checkbox>)
         },
         {
@@ -123,7 +124,8 @@ class ResultsTable extends React.Component {
             render: (text, record) => (<Checkbox
                 key={record.validated}
                 onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
-                defaultChecked={record.validated}>
+                defaultChecked={record.validated}
+                disabled={!record.editable}>
             </Checkbox>)
         },
     ];
@@ -155,6 +157,7 @@ class ResultsTable extends React.Component {
                 onCell: record => ({
                     record,
                     editable: col.editable && record.editable,
+                    className: `${record.editable}-editable-cell`,
                     inputType: col.key,
                     dataIndex: col.dataIndex,
                     title: col.title,
@@ -165,7 +168,8 @@ class ResultsTable extends React.Component {
         return (
             <Table
                 components={components}
-                rowClassName={() => 'editable-row'}
+                className="archived-events-table"
+                rowClassName={(record) => `${record.editable}-editable-row`}
                 bordered
                 dataSource={this.props.filteredOldEvents}
                 columns={columns}
@@ -178,7 +182,6 @@ class ResultsTable extends React.Component {
 function mapStateToProps(state) {
     return {
         filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
-        includeLiveEventsInLookup: selectionStateBranch.selectors.includeLiveEventsInLookup(state),
     };
 }
 

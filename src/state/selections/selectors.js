@@ -214,7 +214,6 @@ export const getFilteredEvents = createSelector(
       });
     }
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
-    console.log(filteredEvents);
     return filteredEvents;
 });
 
