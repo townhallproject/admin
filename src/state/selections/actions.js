@@ -15,6 +15,7 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_ERROR_FILTER,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -45,6 +46,11 @@ export const changeDateLookup = (dates) => ({
   type: CHANGE_DATE_LOOKUP,
   payload: dates,
 });
+
+export const changeErrorFilter = (value) => ({
+  type: CHANGE_ERROR_FILTER,
+  payload: value,
+})
 
 export const changeChamberFilter = (chamber) => ({
   type: CHANGE_CHAMBER_FILTER,

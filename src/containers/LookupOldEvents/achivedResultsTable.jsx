@@ -173,6 +173,7 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
+        // expandedRowRender={(record) => record.eventId}
       />
     );
   };

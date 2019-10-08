@@ -37,6 +37,7 @@ export const getChamber = state => state.selections.filterByChamber;
 export const getEventTypes = state => state.selections.filterByEventType;
 export const getLegislativeBody = state => state.selections.filterByLegislativeBody;
 export const getNameFilter = state => state.selections.filterByName;
+export const getErrorFilter = state => state.selections.filterByError;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
@@ -123,6 +124,8 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.dateValid = eventData.dateValid || false;
   normalizedEvent.validated = eventData.validated || false;
 
+  normalizedEvent.error = eventData.error || false;
+
   normalizedEvent.notes = (() => {
     if (eventData.Notes) {
       return eventData.Notes.replace(/"/g, '\'');
@@ -172,6 +175,10 @@ export const getReturnedStateEventsLength = createSelector([getAllEventsForAnaly
   return filter(allEvents, (event) => event.level === "state").length;
 });
 
+export const getReturnedErrorEventsLength = createSelector([getAllEventsForAnalysis], (allEvents) => {
+  return filter(allEvents, (event) => event.error).length;
+});
+
 export const getTotalUnFilteredOldEventsCount = createSelector([getAllEventsForAnalysis
 ], (totalEvents) => totalEvents.length);
 
@@ -183,10 +190,14 @@ export const getFilteredEvents = createSelector(
     getEventTypes,
     getLegislativeBody,
     getNameFilter,
+    getErrorFilter,
   ], 
-  (allEvents, states, chamber, events, legislativeBody, name) => {
+  (allEvents, states, chamber, events, legislativeBody, name, errorValue) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
+    filteredEvents = filter(filteredEvents, (event) => {
+      return Boolean(errorValue) === Boolean(event.error);
+    });
     if (states.length) { 
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(states, event.state);
