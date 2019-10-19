@@ -134,9 +134,9 @@ class LookupOldEvents extends React.Component {
                     </Row>
                     <Row type="flex">
                         <Col>
-                        <label>Include live events</label>
+                            <label>Include live events</label>
                         </Col>
-                        <Col>
+                        <Col offset={1}>
                             <Switch 
                                 onChange={this.onIncludeLiveEvents} 
                                 checked={includeLiveEventsInLookup}
