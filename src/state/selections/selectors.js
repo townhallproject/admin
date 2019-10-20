@@ -97,6 +97,12 @@ export const normalizeEventSchema = eventData => {
   let normalizedEvent = {};
 
   normalizedEvent.editable = eventData.editable;
+  normalizedEvent.errorMessage = (() => {
+    if (eventData.error) {
+      return `${eventData.error.dataPath} ${eventData.error.message}`;
+    }
+    return ' ';
+  })();
 
   normalizedEvent.eventId = eventData.eventId;
   normalizedEvent.enteredBy = eventData.enteredBy || eventData.userEmail;  

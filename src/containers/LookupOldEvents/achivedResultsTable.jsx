@@ -48,6 +48,12 @@ class ResultsTable extends React.Component {
 
   columns = [
     {
+      title: 'Error',
+      dataIndex: 'errorMessage',
+      key: 'errorMessage',
+      editable: false,
+    },
+    {
       title: 'Name',
       dataIndex: 'displayName',
       key: 'displayName',
