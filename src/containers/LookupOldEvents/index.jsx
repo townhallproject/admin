@@ -42,6 +42,9 @@ class LookupOldEvents extends React.Component {
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
         this.handleErrorChange = this.handleErrorChange.bind(this);
+        this.state = {
+            showErrors: false,
+        }
     }
 
     onDateRangeChange(date, dateRange) {
@@ -80,10 +83,14 @@ class LookupOldEvents extends React.Component {
     }
 
     handleErrorChange(value) {
+
         const {
             handleChangeErrorFilter,
         } = this.props;
         handleChangeErrorFilter(value);
+        // this.setState({
+        //     showErrors: value,
+        // })
     }
 
     handleChamberChange = (value) => {
@@ -160,9 +167,6 @@ class LookupOldEvents extends React.Component {
                                 <Statistic title="Returned state events:" value={stateEventsCount} />
                             </Col>
                             <Col>
-                                <Statistic title="Returned invalid events:" value={errorEventsCount} />
-                            </Col>
-                            <Col>
                                 <Statistic title="Currently viewing:" value={filteredEventsLength} />
                             </Col>
                         </Row>
@@ -174,13 +178,15 @@ class LookupOldEvents extends React.Component {
                         </Row>
                         <Row type="flex">Filter your results:</Row>
                         <Row type="flex">
-                            <Select
-                                defaultValue="0"
-                                onChange={this.handleErrorChange}
-                            >
-                                <Option value="0">Valid Events</Option>
-                                <Option value="1">Invalid Events</Option>
-                            </Select>
+                            <Col>
+                                <label>View {errorEventsCount} invalid event
+                                {errorEventsCount.length === 1 ? 's' : ''}: </label>
+                            </Col>
+                            <Col offset={1}>
+                                <Switch 
+                                    onChange={this.handleErrorChange}
+                                />
+                            </Col>
                         </Row>
                         <Row type="flex" justify="space-between">
                             <Select
@@ -276,7 +282,9 @@ class LookupOldEvents extends React.Component {
             >
             {filteredOldEvents.length > 0 &&
                 <div>
-                    <ResultsTable />
+                    <ResultsTable 
+                        showErrors={this.state.showErrors}    
+                    />
                     <OldEventsResults
                         archiveUrl={archiveUrl}
                         dataForChart={dataForChart}

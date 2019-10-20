@@ -200,10 +200,13 @@ export const getFilteredEvents = createSelector(
   ], 
   (allEvents, states, chamber, events, legislativeBody, name, errorValue) => {
     let filteredEvents = allEvents;
+    console.log(errorValue, typeof errorValue, Boolean(errorValue));
     filteredEvents = map(filteredEvents, normalizeEventSchema);
+    console.log(filteredEvents);
     filteredEvents = filter(filteredEvents, (event) => {
       return Boolean(errorValue) === Boolean(event.error);
     });
+    console.log(filteredEvents);
     if (states.length) { 
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(states, event.state);

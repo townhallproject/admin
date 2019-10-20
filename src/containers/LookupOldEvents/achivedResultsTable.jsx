@@ -48,12 +48,6 @@ class ResultsTable extends React.Component {
 
   columns = [
     {
-      title: 'Error',
-      dataIndex: 'errorMessage',
-      key: 'errorMessage',
-      editable: false,
-    },
-    {
       title: 'Name',
       dataIndex: 'displayName',
       key: 'displayName',
@@ -147,12 +141,22 @@ class ResultsTable extends React.Component {
   };
 
   render() {
+    const { showErrors } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
         cell: EditableCell,
       },
     };
+    // console.log(showErrors);
+    // if (this.props.showErrors) {
+    //   this.columns.unshift({
+    //     title: 'Error',
+    //     dataIndex: 'errorMessage',
+    //     key: 'errorMessage',
+    //     editable: false,
+    //   })
+    // }
     const columns = this.columns.map(col => {
       if (!col.editable) {
         return col;
