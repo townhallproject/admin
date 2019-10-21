@@ -83,14 +83,13 @@ class LookupOldEvents extends React.Component {
     }
 
     handleErrorChange(value) {
-
         const {
             handleChangeErrorFilter,
         } = this.props;
         handleChangeErrorFilter(value);
-        // this.setState({
-        //     showErrors: value,
-        // })
+        this.setState({
+            showErrors: value,
+        })
     }
 
     handleChamberChange = (value) => {

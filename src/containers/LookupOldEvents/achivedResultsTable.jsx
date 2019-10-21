@@ -46,90 +46,6 @@ const iconFlagMap = {
 
 class ResultsTable extends React.Component {
 
-  columns = [
-    {
-      title: 'Name',
-      dataIndex: 'displayName',
-      key: 'displayName',
-      editable: true,
-    }, 
-    {
-      title: 'Meeting Type',
-      dataIndex: 'meetingType',
-      key: 'meetingType',
-      editable: true,
-    },
-    {
-      title: 'Icon',
-      render: (text, record) => <img
-          src={iconFlagMap[record.iconFlag]}
-          alt={record.iconFlag}
-          width={30} 
-      />,
-      key: 'iconFlag',
-      dataIndex: 'iconFlag',
-      editable: true,
-    },
-    {
-      title: 'Level',
-      dataIndex: 'level',
-      key: 'level',
-      editable: true,
-    },
-    {
-      title: 'State',
-      render: (text, record) => {
-          // record.state is required
-          if (record.district) {
-              return `${record.state}-${record.district === 'At-Large' ? '00' : record.district}`;
-          }
-          return record.state;
-      },
-      key: 'state',
-      dataIndex: 'state',
-      editable: true,
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      editable: true,
-    },
-    {
-      title: 'Date',
-      render: (text, record) => {
-          return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
-      },
-      dataIndex: 'timeStart',
-      key: 'timeStart',
-      editable: true,
-    },
-    {
-      title: 'ADA?',
-      dataIndex: 'ada_accessible',
-      key: 'ada_accessible',
-      editable: false,
-      render: (text, record) => (<Checkbox
-          key={record.ada_accessible}
-          onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
-          defaultChecked={record.ada_accessible}
-          disabled={!record.editable}>
-      </Checkbox>)
-    },
-    {
-      title: 'Researcher verified',
-      dataIndex: 'validated',
-      key: 'validated',
-      editable: false,
-      render: (text, record) => (<Checkbox
-          key={record.validated}
-          onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
-          defaultChecked={record.validated}
-          disabled={!record.editable}>
-      </Checkbox>)
-    },
-  ];
-
   constructor(props) {
       super(props);
       this.handleSave = this.handleSave.bind(this);
@@ -148,16 +64,98 @@ class ResultsTable extends React.Component {
         cell: EditableCell,
       },
     };
-    // console.log(showErrors);
-    // if (this.props.showErrors) {
-    //   this.columns.unshift({
-    //     title: 'Error',
-    //     dataIndex: 'errorMessage',
-    //     key: 'errorMessage',
-    //     editable: false,
-    //   })
-    // }
-    const columns = this.columns.map(col => {
+    let columns = [
+      {
+        title: 'Name',
+        dataIndex: 'displayName',
+        key: 'displayName',
+        editable: true,
+      }, 
+      {
+        title: 'Meeting Type',
+        dataIndex: 'meetingType',
+        key: 'meetingType',
+        editable: true,
+      },
+      {
+        title: 'Icon',
+        render: (text, record) => <img
+            src={iconFlagMap[record.iconFlag]}
+            alt={record.iconFlag}
+            width={30} 
+        />,
+        key: 'iconFlag',
+        dataIndex: 'iconFlag',
+        editable: true,
+      },
+      {
+        title: 'Level',
+        dataIndex: 'level',
+        key: 'level',
+        editable: true,
+      },
+      {
+        title: 'State',
+        render: (text, record) => {
+            // record.state is required
+            if (record.district) {
+                return `${record.state}-${record.district === 'At-Large' ? '00' : record.district}`;
+            }
+            return record.state;
+        },
+        key: 'state',
+        dataIndex: 'state',
+        editable: true,
+      },
+      {
+        title: 'Address',
+        dataIndex: 'address',
+        key: 'address',
+        editable: true,
+      },
+      {
+        title: 'Date',
+        render: (text, record) => {
+            return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
+        },
+        dataIndex: 'timeStart',
+        key: 'timeStart',
+        editable: true,
+      },
+      {
+        title: 'ADA?',
+        dataIndex: 'ada_accessible',
+        key: 'ada_accessible',
+        editable: false,
+        render: (text, record) => (<Checkbox
+            key={record.ada_accessible}
+            onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
+            defaultChecked={record.ada_accessible}
+            disabled={!record.editable}>
+        </Checkbox>)
+      },
+      {
+        title: 'Researcher verified',
+        dataIndex: 'validated',
+        key: 'validated',
+        editable: false,
+        render: (text, record) => (<Checkbox
+            key={record.validated}
+            onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
+            defaultChecked={record.validated}
+            disabled={!record.editable}>
+        </Checkbox>)
+      },
+    ];
+    if (showErrors) {
+      columns.unshift({
+        title: 'Error',
+        dataIndex: 'errorMessage',
+        key: 'errorMessage',
+        editable: false,
+      })
+    }
+    columns = columns.map(col => {
       if (!col.editable) {
         return col;
       }
