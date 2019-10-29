@@ -6,7 +6,7 @@ import {
   Checkbox,
 } from 'antd';
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import EditableCell from './editableCell';
 import eventsStateBranch from '../../state/events';
@@ -98,7 +98,7 @@ class ResultsTable extends React.Component {
     {
       title: 'Date',
       render: (text, record) => {
-          return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
+        return moment(record.timeStart).tz(record.timeZone).format('ddd, MMM D YYYY h:mm a zz');
       },
       dataIndex: 'timeStart',
       key: 'timeStart',

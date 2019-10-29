@@ -6,7 +6,6 @@ import {
   GET_URL_HASH_SUCCESS,
   SELECTION_REQUEST_FAILED,
   CHANGE_FEDERAL_STATE_RADIO,
-  CHANGE_DATE_LOOKUP,
   GENERAL_FAIL,
   CHANGE_TIME_ZONE,
   CHANGE_ARCHIVED_TIME_ZONE,
@@ -97,7 +96,6 @@ const requestTimeZoneLogic = createLogic({
     const {
       payload
     } = action;
-    console.log(payload);
     const time = Date.parse(`${payload.date} ${payload.time}`) / 1000;
     const loc = `${payload.lat},${payload.lng}`;
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
@@ -165,7 +163,6 @@ const requestArchivedTimeZoneLogic = createLogic({
     httpClient.get(url)
       .then((r) => {
         const response = r.body;
-        console.log(response);
         if (!response.timeZoneName) {
           return Error('no timezone results', response);
         }
