@@ -71,7 +71,7 @@ export const ICON_FLAGS = [
         data: 'next-gen',
     },
     {
-        text: 'mfol',
+        text: 'March For Our Lives',
         data: 'mfol',
     },
 ]
