@@ -14,6 +14,7 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_ERROR_FILTER,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
@@ -31,6 +32,7 @@ const initialState = {
   filterByEventType: [],
   filterByLegislativeBody: 'federal',
   filterByName: false,
+  filterByError: false,
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
   tempAddress: {
@@ -64,6 +66,11 @@ const selectionReducer = (state = initialState, action) => {
       return {
         ...state,
         filterByName: action.payload,
+      }
+    case CHANGE_ERROR_FILTER:
+      return {
+        ...state,
+        filterByError: action.payload,
       }
     case CHANGE_EVENTS_TAB:
       return {

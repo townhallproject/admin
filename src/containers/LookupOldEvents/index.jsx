@@ -41,6 +41,10 @@ class LookupOldEvents extends React.Component {
         this.onDateRangeChange = this.onDateRangeChange.bind(this);
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
+        this.handleErrorChange = this.handleErrorChange.bind(this);
+        this.state = {
+            showErrors: false,
+        }
     }
 
     onDateRangeChange(date, dateRange) {
@@ -77,7 +81,17 @@ class LookupOldEvents extends React.Component {
         const {
           handleChangeStateFilters
         } = this.props;
-        handleChangeStateFilters(value)
+        handleChangeStateFilters(value);
+    }
+
+    handleErrorChange(value) {
+        const {
+            handleChangeErrorFilter,
+        } = this.props;
+        handleChangeErrorFilter(value);
+        this.setState({
+            showErrors: value,
+        })
     }
 
     handleChamberChange = (value) => {
@@ -117,7 +131,8 @@ class LookupOldEvents extends React.Component {
             missingMemberCongressData,
             totalReturnedEventsLength,
             filteredEventsLength,
-            stateEventsCount
+            stateEventsCount,
+            errorEventsCount,
         } = this.props;
         return (    
             <React.Fragment>
@@ -150,7 +165,7 @@ class LookupOldEvents extends React.Component {
                                 <Statistic title="Total returned events:" value={totalReturnedEventsLength} />
                             </Col>
                             <Col>
-                                <Statistic title="Return state events:" value={stateEventsCount} />
+                                <Statistic title="Returned state events:" value={stateEventsCount} />
                             </Col>
                             <Col>
                                 <Statistic title="Currently viewing:" value={filteredEventsLength} />
@@ -163,6 +178,17 @@ class LookupOldEvents extends React.Component {
                             /> */}
                         </Row>
                         <Row type="flex">Filter your results:</Row>
+                        <Row type="flex">
+                            <Col>
+                                <label>View {errorEventsCount} invalid event
+                                {errorEventsCount.length === 1 ? 's' : ''}: </label>
+                            </Col>
+                            <Col offset={1}>
+                                <Switch 
+                                    onChange={this.handleErrorChange}
+                                />
+                            </Col>
+                        </Row>
                         <Row type="flex" justify="space-between">
                             <Select
                                 defaultValue="federal"
@@ -257,7 +283,9 @@ class LookupOldEvents extends React.Component {
             >
             {filteredOldEvents.length > 0 &&
                 <div>
-                    <ResultsTable />
+                    <ResultsTable 
+                        showErrors={this.state.showErrors}    
+                    />
                     <OldEventsResults
                         archiveUrl={archiveUrl}
                         dataForChart={dataForChart}
@@ -283,6 +311,7 @@ const mapStateToProps = state => ({
     filteredEventsLength: selectionStateBranch.selectors.getFilteredOldEventsLength(state),
     loading: eventStateBranch.selectors.getLoading(state),
     stateEventsCount: selectionStateBranch.selectors.getReturnedStateEventsLength(state),
+    errorEventsCount: selectionStateBranch.selectors.getReturnedErrorEventsLength(state),
     dataForChart: selectionStateBranch.selectors.getDataForArchiveChart(state),
     includeLiveEventsInLookup: selectionStateBranch.selectors.includeLiveEventsInLookup(state),
     oldEventsForDownload: selectionStateBranch.selectors.getEventsAsDownloadObjects(state),
@@ -298,6 +327,7 @@ const mapDispatchToProps = dispatch => ({
     requestOldEvents: ({ path, date, dates, chamber } ) => dispatch(eventStateBranch.actions.requestOldEvents({ path, date, dates, chamber })),
     resetOldEvents: () => dispatch(eventStateBranch.actions.resetOldEvents()),
     changeDataLookupRange: (dates) => dispatch(selectionStateBranch.actions.changeDateLookup(dates)),
+    handleChangeErrorFilter: (value) => dispatch(selectionStateBranch.actions.changeErrorFilter(value)),
     changeChamberFilter: (chamber) => dispatch(selectionStateBranch.actions.changeChamberFilter(chamber)),
     changeEventFilter: (events) => dispatch(selectionStateBranch.actions.changeEventFilter(events)),
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
