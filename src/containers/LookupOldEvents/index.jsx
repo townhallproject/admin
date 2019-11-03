@@ -51,11 +51,13 @@ class LookupOldEvents extends React.Component {
         const {
             changeDataLookupRange,
             requestOldEvents,
+            resetOldEvents,
             archiveUrl,
             chamber,
         } = this.props;
         const dateStart = moment(dateRange[0]).startOf('day').valueOf();
         const dateEnd = moment(dateRange[1]).endOf('day').valueOf();
+        resetOldEvents();
         changeDataLookupRange([dateStart, dateEnd]);
         requestOldEvents({
             chamber,
@@ -147,9 +149,9 @@ class LookupOldEvents extends React.Component {
                     </Row>
                     <Row type="flex">
                         <Col>
-                        <label>Include live events</label>
+                            <label>Include live events</label>
                         </Col>
-                        <Col>
+                        <Col offset={1}>
                             <Switch 
                                 onChange={this.onIncludeLiveEvents} 
                                 checked={includeLiveEventsInLookup}
@@ -323,6 +325,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     requestOldEvents: ({ path, date, dates, chamber } ) => dispatch(eventStateBranch.actions.requestOldEvents({ path, date, dates, chamber })),
+    resetOldEvents: () => dispatch(eventStateBranch.actions.resetOldEvents()),
     changeDataLookupRange: (dates) => dispatch(selectionStateBranch.actions.changeDateLookup(dates)),
     handleChangeErrorFilter: (value) => dispatch(selectionStateBranch.actions.changeErrorFilter(value)),
     changeChamberFilter: (chamber) => dispatch(selectionStateBranch.actions.changeChamberFilter(chamber)),

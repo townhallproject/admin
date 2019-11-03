@@ -97,12 +97,15 @@ const fetchFederalAndStateLiveEvents = createLogic({
       const federalSnapshot = returned[1];
       stateSnapshot.forEach((stateEndpoint) => {
         stateEndpoint.forEach((ele) => {
-          allEvents.push(ele.val());
+          const e = ele.val();
+          e.level = 'state';
+          allEvents.push(e);
         })
       })
       federalSnapshot.forEach((event) => {
-        allEvents.push(event.val());
-
+        const e = event.val();
+        e.level = 'federal';
+        allEvents.push(e);
       })
       return allEvents;
   })

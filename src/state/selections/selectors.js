@@ -126,7 +126,8 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.timestamp = eventData.timestamp || eventData.dateObj;
   normalizedEvent.timeStart = eventData.timeStart || moment(eventData.dateObj).toISOString();
   // Live events in Firebase currently store timeEnd as human-readable strings, e.g. "12:00 PM", instead of ISO-8601
-  normalizedEvent.timeEnd = eventData.timeEnd || ' ';  
+  normalizedEvent.timeEnd = eventData.timeEnd || ' ';
+  normalizedEvent.timeZone = eventData.timeZone || ' ';
   normalizedEvent.dateValid = eventData.dateValid || false;
   normalizedEvent.validated = eventData.validated || false;
 
@@ -165,7 +166,12 @@ export const getAllEventsForAnalysis = createSelector([
     });
     if (includeLive) {
       liveEvents = filter(liveEvents, (event) => {
-        return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1]
+        if (!event.dateObj && event.dateString) {
+          const date = moment(event.dateString).valueOf();
+          return date >= dateRange[0] && date <= dateRange[1]
+        } else {
+          return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1];
+        }
       });
       liveEvents = map(liveEvents, (event) => {
         event.editable = false;
