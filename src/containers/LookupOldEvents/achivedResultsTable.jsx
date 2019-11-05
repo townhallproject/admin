@@ -51,9 +51,11 @@ class ResultsTable extends React.Component {
       this.handleSave = this.handleSave.bind(this);
   }
 
-  handleSave = (editedData, eventId) => {
-      console.log(editedData)
-      this.props.updateOldEvent(editedData, eventId);
+  handleSave = (data) => {
+      console.log('saving: ', data);
+      const { validateAndSaveOldEvent } = this.props;
+      validateAndSaveOldEvent(data);
+      // this.props.updateOldEvent(data, data.eventId);
   };
 
   render() {
@@ -195,6 +197,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => ({
   updateOldEvent: (updateData, eventId) => dispatch(eventsStateBranch.actions.updateOldEvent(updateData, eventId)),
+  validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);

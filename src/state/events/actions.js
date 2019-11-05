@@ -26,6 +26,7 @@ import {
   CLEAR_EVENTS_COUNTS,
   REQUEST_TOTAL_EVENTS_COUNTS,
   REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
+  VALIDATE_AND_SAVE_OLD_EVENT,
 } from './constants';
 
 
@@ -182,4 +183,9 @@ export const clearEventsCounts = () => ({
 export const approveEventSuccess = (eventId) => ({
   type: APPROVE_EVENT_SUCCESS,
   payload: eventId,
+});
+
+export const validateAndSaveOldEvent = (data) => ({
+  type: VALIDATE_AND_SAVE_OLD_EVENT,
+  payload: data,
 });

@@ -1,7 +1,6 @@
 import { createLogic } from "redux-logic";
-import {
-  includes,
-} from 'lodash';
+import superagent from 'superagent';
+import { includes } from 'lodash';
 import moment from 'moment';
 import { 
   ARCHIVE_COLLECTION,
@@ -24,6 +23,7 @@ import {
   REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
   RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
   GENERAL_FAIL,
+  VALIDATE_AND_SAVE_OLD_EVENT,
 } from "./constants";
 import { 
   EVENTS_PATHS,
@@ -384,7 +384,23 @@ const requestTotalEventsCounts = createLogic({
       dispatch(requestFederalTotalEventsCountsSuccess(snapshot.numChildren()));
     });
   }
-})
+});
+
+const validateAndSaveOldEvent = createLogic({
+  type: VALIDATE_AND_SAVE_OLD_EVENT,
+  process(deps, dispatch, done) {
+    const { action } = deps;
+    return superagent
+      .post('http://localhost/8080/event')
+      .send(action.payload)
+      .then((res) => {
+        if (res.status === 200) {
+          return res.body;
+        } 
+        return Promise.reject();
+      });
+  },
+});
 
 
 export default [
@@ -398,4 +414,5 @@ export default [
   requestEventsCounts,
   fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
+  validateAndSaveOldEvent,
 ];
