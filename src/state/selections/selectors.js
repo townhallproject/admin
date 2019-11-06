@@ -116,7 +116,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.lat = eventData.lat || ' ';
   normalizedEvent.lng = eventData.lng || ' ';
 
-  normalizedEvent.govtrack_id = eventData.govtrack_id || -1;
+  normalizedEvent.govtrack_id = eventData.govtrack_id || 0;
   normalizedEvent.party = eventData.party || ' ';
   normalizedEvent.level = eventData.level || ' ';
   normalizedEvent.chamber = eventData.chamber || ' ';
