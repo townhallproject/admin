@@ -53,10 +53,6 @@ class ResultsTable extends React.Component {
 
   handleSave = (eventData) => {
     const { validateAndSaveOldEvent } = this.props;
-    // re-normalize archived event
-    delete eventData.editable;
-    delete eventData.error;
-    delete eventData.errorMessage;
     validateAndSaveOldEvent(eventData);
   };
 

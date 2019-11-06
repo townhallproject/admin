@@ -398,11 +398,14 @@ const validateAndSaveOldEvent = createLogic({
     failType: GENERAL_FAIL,
   },
   process(deps) {
-    const { action } = deps;
+    const { payload } = deps.action;
+    if (payload.editable) delete payload.editable;
+    if (payload.error) delete payload.error;
+    if (payload.errorMessage) delete payload.errorMessage;
     const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
     return superagent
       .post(url + 'event')
-      .send(action.payload)
+      .send(payload)
       .then((res) => {
         if (res.status === 200) {
           return res.body;

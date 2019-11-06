@@ -63,7 +63,6 @@ const eventReducer = (state = initialState, { type, payload }) => {
         } : event)
     };
     case GET_USER_EMAIL_FOR_OLD_EVENT_SUCCESS:
-      console.log(payload)
       return {
         ...state,
         allOldEvents: state.allOldEvents.map((event) => event.eventId === payload.eventId ? {
