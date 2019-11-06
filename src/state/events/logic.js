@@ -24,6 +24,7 @@ import {
   RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
   GENERAL_FAIL,
   VALIDATE_AND_SAVE_OLD_EVENT,
+  VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
 } from "./constants";
 import { 
   EVENTS_PATHS,
@@ -390,18 +391,23 @@ const requestTotalEventsCounts = createLogic({
 
 const validateAndSaveOldEvent = createLogic({
   type: VALIDATE_AND_SAVE_OLD_EVENT,
-  process(deps, dispatch, done) {
+  processOptions: {
+    successType: VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
+    failType: GENERAL_FAIL,
+  },
+  process(deps) {
     const { action } = deps;
+    console.log(action.payload);
     return superagent
       .post(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/event')
       .send(action.payload)
       .then((res) => {
         console.log(res);
-        // if (res.status === 200) {
-        //   return res.body;
-        // } 
-        // return Promise.reject();
-      }).then(done());
+        if (res.status === 200) {
+          return res.body;
+        } 
+        return Promise.reject();
+      });
   },
 });
 

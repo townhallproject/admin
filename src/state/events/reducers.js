@@ -19,6 +19,7 @@ import {
   REQUEST_STATE_TOTAL_EVENTS_COUNTS_SUCCESS,
   GENERAL_FAIL,
   RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
+  VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
 } from "./constants";
 import { filter, map } from "lodash";
 
@@ -121,6 +122,16 @@ const eventReducer = (state = initialState, { type, payload }) => {
           }
           return ele
         })
+      }
+    case VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS:
+      return {
+        ...state,
+        allOldEvents: map(state.allOldEvents, (ele) => {
+          if(ele.eventId === payload.eventId) {
+            return payload;
+          }
+          return ele;
+        }),
       }
     case REQUEST_FEDERAL_EVENTS_COUNTS_SUCCESS:
       return {
