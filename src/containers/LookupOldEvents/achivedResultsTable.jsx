@@ -133,13 +133,10 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.ada_accessible}
-            onChange={(e) => {
-              console.log(record);
-              this.handleSave({
-                ...record,
-                ada_accessible : !record.ada_accessible,
-              })}
-            }
+            onChange={(e) => this.handleSave({
+              ...record,
+              ada_accessible : !record.ada_accessible,
+            })}
             defaultChecked={record.ada_accessible}
             disabled={!record.editable}>
         </Checkbox>)
@@ -151,12 +148,10 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.validated}
-            onChange={(e) => {
-              this.handleSave({
-                ...record,
-                validated : !record.validated,
-              })}
-            }
+            onChange={(e) => this.handleSave({
+              ...record,
+              validated : !record.validated,
+            })}
             defaultChecked={record.validated}
             disabled={!record.editable}>
         </Checkbox>)

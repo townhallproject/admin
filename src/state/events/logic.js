@@ -28,6 +28,8 @@ import {
 } from "./constants";
 import { 
   EVENTS_PATHS,
+  ARCHIVE_MANAGER_URL,
+  ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
   PENDING_EVENTS_TAB,
@@ -397,8 +399,9 @@ const validateAndSaveOldEvent = createLogic({
   },
   process(deps) {
     const { action } = deps;
+    const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
     return superagent
-      .post(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/event')
+      .post(url + 'event')
       .send(action.payload)
       .then((res) => {
         if (res.status === 200) {
