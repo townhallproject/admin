@@ -130,6 +130,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.timeZone = eventData.timeZone || ' ';
   normalizedEvent.dateValid = eventData.dateValid || false;
   normalizedEvent.validated = eventData.validated || false;
+  normalizedEvent.ada_accessible = eventData.ada_accessible || false;
 
   normalizedEvent.error = eventData.error || false;
 

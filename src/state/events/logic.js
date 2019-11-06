@@ -397,12 +397,10 @@ const validateAndSaveOldEvent = createLogic({
   },
   process(deps) {
     const { action } = deps;
-    console.log(action.payload);
     return superagent
       .post(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/event')
       .send(action.payload)
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
           return res.body;
         } 
