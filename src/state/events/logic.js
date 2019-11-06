@@ -48,6 +48,8 @@ import {
   requestResearcherById,
 } from "../researchers/actions";
 
+require('dotenv').config();
+
 const fetchEvents = createLogic({
   type: REQUEST_EVENTS,
   process(deps, dispatch, done) {
@@ -391,14 +393,15 @@ const validateAndSaveOldEvent = createLogic({
   process(deps, dispatch, done) {
     const { action } = deps;
     return superagent
-      .post('http://localhost/8080/event')
+      .post(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/event')
       .send(action.payload)
       .then((res) => {
-        if (res.status === 200) {
-          return res.body;
-        } 
-        return Promise.reject();
-      });
+        console.log(res);
+        // if (res.status === 200) {
+        //   return res.body;
+        // } 
+        // return Promise.reject();
+      }).then(done());
   },
 });
 
