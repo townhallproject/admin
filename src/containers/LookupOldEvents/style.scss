@@ -3,3 +3,11 @@
         margin: 1em;
     }
 }
+.archived-events-table {
+    .ant-table-tbody > tr.true-editable-row > td.true-editable-cell:hover {
+        cursor: pointer;
+    }
+    .ant-table-tbody > tr.false-editable-row:hover > td {
+        background-color: #ffeded;
+    }
+}

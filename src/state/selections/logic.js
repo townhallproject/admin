@@ -6,15 +6,16 @@ import {
   GET_URL_HASH_SUCCESS,
   SELECTION_REQUEST_FAILED,
   CHANGE_FEDERAL_STATE_RADIO,
-  CHANGE_DATE_LOOKUP,
   GENERAL_FAIL,
   CHANGE_TIME_ZONE,
+  CHANGE_ARCHIVED_TIME_ZONE,
   SET_TEMP_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
 } from "./constants";
 import {
   resetOldEvents,
   updateExistingEvent,
+  updateOldEvent,
 } from "../events/actions";
 import { toggleIncludeLiveEventsInLookup } from "./actions";
 
@@ -36,7 +37,7 @@ const onSelectionChangeLogic = createLogic({
     dispatch(toggleIncludeLiveEventsInLookup(false))
     done();
   },
-  type: [CHANGE_FEDERAL_STATE_RADIO, CHANGE_DATE_LOOKUP],
+  type: CHANGE_FEDERAL_STATE_RADIO,
 });
 
 const requestLatLngLogic = createLogic({
@@ -138,9 +139,52 @@ const requestTimeZoneLogic = createLogic({
   }
 });
 
+const requestArchivedTimeZoneLogic = createLogic({
+  type: CHANGE_ARCHIVED_TIME_ZONE,
+  processOptions: {
+    failType: GENERAL_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      httpClient,
+    } = deps;
+    const {
+      date,
+      timeStart,
+      timeEnd,
+      lat,
+      lng,
+      eventId,
+    } = action.payload;
+    const time = Date.parse(`${date} ${timeStart}`) / 1000;
+    const loc = `${lat},${lng}`;
+    const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${loc}&timestamp=${time}&key=AIzaSyBvs-ugD9uydf8lUBwiwvN4dB5X9lbgpLw`;
+    httpClient.get(url)
+      .then((r) => {
+        const response = r.body;
+        if (!response.timeZoneName) {
+          return Error('no timezone results', response);
+        }
+        const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
+        const newTimeStart = moment(`${date}T${timeStart}`).utcOffset(offset, true);
+        const newTimeEnd = moment(`${date}T${timeEnd}`).utcOffset(offset, true);
+        console.log(newTimeStart, newTimeStart.format('x'));
+        const eventData = {
+          timestamp: newTimeStart.format('x'),
+          timeStart: newTimeStart.format(),
+          timeEnd: newTimeEnd.format(),
+        }
+        dispatch(updateOldEvent(eventData, eventId));
+        done();
+      })
+  }
+});
+
 export default [
     requestLatLngLogic,
     requestTimeZoneLogic,
+    requestArchivedTimeZoneLogic,
     getUrlLogic,
     onSelectionChangeLogic,
 ];

@@ -10,9 +10,12 @@ import {
   CLEAR_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
   CHANGE_TIME_ZONE,
+  CHANGE_ARCHIVED_TIME_ZONE,
   CHANGE_CHAMBER_FILTER,
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
+  CHANGE_NAME_FILTER,
+  CHANGE_ERROR_FILTER,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -44,6 +47,11 @@ export const changeDateLookup = (dates) => ({
   payload: dates,
 });
 
+export const changeErrorFilter = (value) => ({
+  type: CHANGE_ERROR_FILTER,
+  payload: value,
+})
+
 export const changeChamberFilter = (chamber) => ({
   type: CHANGE_CHAMBER_FILTER,
   payload: chamber,
@@ -64,6 +72,11 @@ export const changeStateFilters = (states) => ({
   payload: states,
 });
 
+export const changeNameFilter = (name) => ({
+  type: CHANGE_NAME_FILTER,
+  payload: name,
+});
+
 export const toggleIncludeLiveEventsInLookup = (include) => ({
   type: TOGGLE_INCLUDE_LIVE_EVENTS,
   payload: include,
@@ -80,5 +93,10 @@ export const clearTempAddress = () => ({
 
 export const getTimeZone = (payload) => ({
   type: CHANGE_TIME_ZONE,
+  payload,
+});
+
+export const getArchivedTimeZone = (payload) => ({
+  type: CHANGE_ARCHIVED_TIME_ZONE,
   payload,
 });

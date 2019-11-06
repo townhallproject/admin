@@ -18,7 +18,7 @@ const initialState = {
   value: undefined,
 };
 
-class LocationForm extends React.Component {
+class ArchiveLocationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = initialState;
@@ -83,12 +83,12 @@ class LocationForm extends React.Component {
   handleSearch() {
     const {
       geoCodeLocation,
-      address,
+      currentTownHall,
     } = this.props;
     const {
       value,
     } = this.state;
-    if (address === value || !value) {
+    if (currentTownHall.address === value || !value) {
       return;
     }
     geoCodeLocation(value);
@@ -106,15 +106,6 @@ class LocationForm extends React.Component {
       value: target.value,
     });
   }
-
-  handleLocationChange({ target }) {
-    this.debounceLocationChange(target.value);
-  }
-
-  debounceLocationChange = debounce((value) => {
-    const { updateEvent } = this.props;
-    updateEvent({ Location: value });
-  }, 2000);
 
   receiveTempAddress() {
     this.setState({
@@ -137,7 +128,7 @@ class LocationForm extends React.Component {
       <FormItem>
         {getFieldDecorator('phoneNumber', {
           initialValue: '',
-        })(<Input type="tel" class="form-control" placeholder="Phone Number" />)}
+        })(<Input type="tel" placeholder="Phone Number" />)}
       </FormItem>);
   }
 
@@ -146,7 +137,6 @@ class LocationForm extends React.Component {
       style,
       getFieldDecorator,
       tempAddress,
-      getFieldValue,
       requiredFields,
       currentTownHall,
     } = this.props;
@@ -154,16 +144,27 @@ class LocationForm extends React.Component {
       showResponse,
       validating,
     } = this.state;
-    const meetingType = getFieldValue('meetingType');
     return (
       <React.Fragment>
+        <FormItem class="general-inputs">
+          {getFieldDecorator('location', {
+            initialValue: currentTownHall.location,
+          })(
+            <Input
+              type="text"
+              className="input-underline"
+              id="location"
+              placeholder="Name of location (eg. Gary Recreation Center)"
+            />,
+          )}
+        </FormItem>
         <FormItem 
           label="is a presidental event"
           help="switch on if the event should be stored by the event location and not the MOC state/district"
           >
           <Switch onChange={this.toggleIncludeState} />
         </FormItem>
-        {meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
+        {currentTownHall.meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
           : (
             <FormItem
               className="general-inputs"
@@ -207,27 +208,23 @@ class LocationForm extends React.Component {
   }
 }
 
-LocationForm.propTypes = {
+ArchiveLocationForm.propTypes = {
   address: PropTypes.string,
   clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
-  getFieldValue: PropTypes.func.isRequired,
-  setFieldsValue: PropTypes.func.isRequired,
   style: PropTypes.shape({}),
   tempAddress: PropTypes.string,
   tempLat: PropTypes.number,
   tempLng: PropTypes.number,
-  tempStateInfo: PropTypes.shape({}),
 };
 
-LocationForm.defaultProps = {
+ArchiveLocationForm.defaultProps = {
   address: '',
   style: null,
   tempAddress: null,
   tempLat: 0,
   tempLng: 0,
-  tempStateInfo: null,
 };
 
-export default LocationForm;
+export default ArchiveLocationForm;

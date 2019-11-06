@@ -3,6 +3,7 @@ import { Input, Form, Select } from 'antd';
 import { EditableContext } from './achivedResultsTable';
 import StateDistrictEditor from '../../components/StateDistrictEditor';
 import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
+import ArchiveEventsEditModal from '../../components/ArchiveEventsEditModal';
 
 const Option = Select.Option;
 
@@ -13,10 +14,13 @@ export default class EditableCell extends React.Component {
     this.toggleEdit = this.toggleEdit.bind(this);
     this.saveNewValue = this.saveNewValue.bind(this);
     this.saveFormEntry = this.saveFormEntry.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   state = {
     editing: false,
+    loading: false,
+    modalVisible: false,
   };
 
   toggleEdit() {
@@ -24,11 +28,41 @@ export default class EditableCell extends React.Component {
     this.setState({ editing });
   };
 
+  showModal = () => {
+    this.setState({
+      modalVisible: true,
+      editing: true,
+    });
+  }
+
+  handleClose(e) {
+    this.setState({
+      modalVisible: false,
+      editing: false,
+    });
+  }
+
+  handleCloseOnSubmit = (e) => {
+    this.setState({
+      loading: false,
+      modalVisible: false,
+      editing: false,
+    });
+  }
+
   getInput() {
     const {
       inputType,
+      handleSave,
+      record,
     } = this.props;
     switch (inputType) {
+      case 'displayName':
+        return (
+          <Input 
+            onPressEnter={(e) => this.saveNewValue('displayName', e.target.value)}
+            onBlur={(e) => this.saveNewValue('displayName', e.target.value)} 
+          />)
       case 'meetingType':
         return (
           <Select 
@@ -74,13 +108,17 @@ export default class EditableCell extends React.Component {
             saveChanges={this.saveFormEntry}
           />
         )
-      default: 
+      case 'address':
+      case 'timeStart':
         return (
-          <Input 
-            onPressEnter={this.saveFormEntry}
-            onBlur={this.saveFormEntry} 
-          />)
-     }
+          <ArchiveEventsEditModal
+            visible={this.state.modalVisible}
+            handleClose={this.handleCloseOnSubmit}
+            townHall={record}
+            updateEvent={handleSave}
+          />
+        )
+    };
   }
 
   saveNewValue(key, value) {
@@ -89,7 +127,7 @@ export default class EditableCell extends React.Component {
       handleSave,
     } = this.props;
     this.toggleEdit();
-    handleSave(record.eventId, { [key] : value});
+    handleSave({ [key] : value}, record.eventId);
   }
 
   saveFormEntry = (e) => {
@@ -101,7 +139,6 @@ export default class EditableCell extends React.Component {
       if (error && error[e.currentTarget.id]) {
         return;
       }
-      console.log(this.form.getFieldValue('state'));
       if (Object.keys(values)[0] === 'state') {
         values = {
           state: values.state.usState,
@@ -110,7 +147,7 @@ export default class EditableCell extends React.Component {
       }
       console.log('saving these values', values);
       this.toggleEdit();
-      handleSave(record.eventId, values);
+      handleSave(values, record.eventId);
     });
   };
 
@@ -121,6 +158,7 @@ export default class EditableCell extends React.Component {
       dataIndex,
       record,
       title,
+      inputType,
     } = this.props;
     const { editing } = this.state;
     return editing ? (
@@ -135,14 +173,15 @@ export default class EditableCell extends React.Component {
               message: `${title} is required.`,
             },
           ],
-          initialValue: dataIndex === 'state' ? 
+          initialValue: inputType === 'state' ? 
             {usState: record['state'], district: record['district']} : record[dataIndex],
         })(this.getInput())}
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        onClick={this.toggleEdit}
+        onClick={(inputType === 'address' || inputType === 'timeStart') ? 
+          this.showModal : this.toggleEdit}
       >
         {children}
       </div>

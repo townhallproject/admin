@@ -97,12 +97,15 @@ const fetchFederalAndStateLiveEvents = createLogic({
       const federalSnapshot = returned[1];
       stateSnapshot.forEach((stateEndpoint) => {
         stateEndpoint.forEach((ele) => {
-          allEvents.push(ele.val());
+          const e = ele.val();
+          e.level = 'state';
+          allEvents.push(e);
         })
       })
       federalSnapshot.forEach((event) => {
-        allEvents.push(event.val());
-
+        const e = event.val();
+        e.level = 'federal';
+        allEvents.push(e);
       })
       return allEvents;
   })
@@ -287,6 +290,7 @@ const updateEventLogic = createLogic({
       action,
       firebasedb,
     } = deps;
+    console.log(action.payload);
     const { updateData, path, eventId } = action.payload;
     if(!path || !eventId) {
       return
@@ -313,6 +317,7 @@ const updateOldEventLogic = createLogic({
       eventId
     } = action.payload;
     if (!eventId) {
+      console.log('Missing eventId');
       return
     }
 
