@@ -250,7 +250,12 @@ export default class EventCard extends React.Component {
           title={`${townHall.displayName || townHall.Member} (${townHall.party}) ${townHall.state} ${townHall.district || ''}`}
         >
           <Meta
-            title={townHall.eventName || ''}
+            title={(<EditableText 
+            label="EventName"
+            content={townHall.eventName || ''}
+            updateEvent={updateEvent}
+            fieldKey='eventName'
+            />)}
             description={this.state.currentEditing === 'meetingType' ? selectMeetingType : displayMeetingType}
           />
           <label>Notes: </label>
