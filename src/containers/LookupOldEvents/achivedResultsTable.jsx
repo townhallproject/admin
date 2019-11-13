@@ -64,7 +64,6 @@ class ResultsTable extends React.Component {
       showErrors,
       allResearchers,
     } = this.props;
-    console.log(allResearchers);
     const components = {
       body: {
         row: EditableFormRow,

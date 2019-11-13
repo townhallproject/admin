@@ -16,6 +16,7 @@ import {
 } from 'antd';
 
 import moment from 'moment';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 import eventStateBranch from '../../state/events';
 import mocStateBranch from '../../state/mocs';
@@ -133,6 +134,9 @@ class LookupOldEvents extends React.Component {
             filteredEventsLength,
             stateEventsCount,
             errorEventsCount,
+            allResearchers,
+            allResearchersById,
+            allResearcherEmails,
         } = this.props;
         return (    
             <React.Fragment>
@@ -261,6 +265,18 @@ class LookupOldEvents extends React.Component {
                                 }}
                             />
                         </Row>
+                        <Row type="flex">
+                            <AutoComplete
+                                placeholder="Filter by researcher"
+                                dataSource={allResearcherEmails}
+                                // onSelect={this.handleNameFilterChange}
+                                // allowClear={true}
+                                // onChange={this.handleNameFilterClear}
+                                // filterOption={(inputValue, option) => {
+                                //     return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
+                                // }}
+                            />
+                        </Row>
                     </React.Fragment>)
                     }
                     {/* <Row
@@ -321,6 +337,9 @@ const mapStateToProps = state => ({
     chamber: selectionStateBranch.selectors.getChamber(state),
     events: selectionStateBranch.selectors.getEventTypes(state),
     legislativeBody: selectionStateBranch.selectors.getLegislativeBody(state),
+    allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
+    allResearchersById: researcherStateBranch.selectors.getAllResearchersById(state),
+    allResearcherEmails: researcherStateBranch.selectors.getAllResearcherEmails(state),
 });
 
 const mapDispatchToProps = dispatch => ({
