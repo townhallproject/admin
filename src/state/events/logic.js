@@ -154,7 +154,7 @@ const fetchOldEventsLogic = createLogic({
           const researcher = eventData.enteredBy;
           if (researcher && !includes(researcher, '@')) {
             if (!includes(allUids, researcher)) {
-              // dispatch(requestResearcherById(researcher))
+              dispatch(requestResearcherById(researcher))
             }
             allUids.push(researcher);
           }
