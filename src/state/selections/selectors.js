@@ -116,7 +116,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.lat = eventData.lat || ' ';
   normalizedEvent.lng = eventData.lng || ' ';
 
-  normalizedEvent.govtrack_id = eventData.govtrack_id || ' ';
+  normalizedEvent.govtrack_id = eventData.govtrack_id || 0;
   normalizedEvent.party = eventData.party || ' ';
   normalizedEvent.level = eventData.level || ' ';
   normalizedEvent.chamber = eventData.chamber || ' ';
@@ -130,6 +130,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.timeZone = eventData.timeZone || ' ';
   normalizedEvent.dateValid = eventData.dateValid || false;
   normalizedEvent.validated = eventData.validated || false;
+  normalizedEvent.ada_accessible = eventData.ada_accessible || false;
 
   normalizedEvent.error = eventData.error || false;
 

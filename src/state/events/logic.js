@@ -1,7 +1,6 @@
 import { createLogic } from "redux-logic";
-import {
-  includes,
-} from 'lodash';
+import superagent from 'superagent';
+import { includes } from 'lodash';
 import moment from 'moment';
 import { 
   ARCHIVE_COLLECTION,
@@ -24,9 +23,13 @@ import {
   REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
   RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
   GENERAL_FAIL,
+  VALIDATE_AND_SAVE_OLD_EVENT,
+  VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
 } from "./constants";
 import { 
   EVENTS_PATHS,
+  ARCHIVE_MANAGER_URL,
+  ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
   PENDING_EVENTS_TAB,
@@ -47,6 +50,8 @@ import {
 import {
   requestResearcherById,
 } from "../researchers/actions";
+
+require('dotenv').config();
 
 const fetchEvents = createLogic({
   type: REQUEST_EVENTS,
@@ -384,7 +389,31 @@ const requestTotalEventsCounts = createLogic({
       dispatch(requestFederalTotalEventsCountsSuccess(snapshot.numChildren()));
     });
   }
-})
+});
+
+const validateAndSaveOldEvent = createLogic({
+  type: VALIDATE_AND_SAVE_OLD_EVENT,
+  processOptions: {
+    successType: VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
+    failType: GENERAL_FAIL,
+  },
+  process(deps) {
+    const { payload } = deps.action;
+    delete payload.editable;
+    delete payload.error;
+    delete payload.errorMessage;
+    const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
+    return superagent
+      .post(url + 'event')
+      .send(payload)
+      .then((res) => {
+        if (res.status === 200) {
+          return res.body;
+        } 
+        return Promise.reject();
+      });
+  },
+});
 
 
 export default [
@@ -398,4 +427,5 @@ export default [
   requestEventsCounts,
   fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
+  validateAndSaveOldEvent,
 ];

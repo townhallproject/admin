@@ -127,7 +127,10 @@ export default class EditableCell extends React.Component {
       handleSave,
     } = this.props;
     this.toggleEdit();
-    handleSave({ [key] : value}, record.eventId);
+    handleSave({
+      ...record,
+      [key] : value,
+    });
   }
 
   saveFormEntry = (e) => {
@@ -147,7 +150,10 @@ export default class EditableCell extends React.Component {
       }
       console.log('saving these values', values);
       this.toggleEdit();
-      handleSave(values, record.eventId);
+      handleSave({
+        ...record,
+        ...values,
+      });
     });
   };
 

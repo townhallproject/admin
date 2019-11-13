@@ -45,3 +45,5 @@ export const EVENTS_PATHS = {
         FEDERAL_OR_STATE: 'STATE',
         STATUS: 'ARCHIVED'},
 };
+export const ARCHIVE_MANAGER_URL = "https://archive-manager.herokuapp.com/";
+export const ARCHIVE_MANAGER_DEV_URL = "http://localhost:5000/";

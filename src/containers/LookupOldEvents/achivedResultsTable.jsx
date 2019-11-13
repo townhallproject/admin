@@ -51,9 +51,9 @@ class ResultsTable extends React.Component {
       this.handleSave = this.handleSave.bind(this);
   }
 
-  handleSave = (editedData, eventId) => {
-      console.log(editedData)
-      this.props.updateOldEvent(editedData, eventId);
+  handleSave = (eventData) => {
+    const { validateAndSaveOldEvent } = this.props;
+    validateAndSaveOldEvent(eventData);
   };
 
   render() {
@@ -129,7 +129,10 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.ada_accessible}
-            onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
+            onChange={(e) => this.handleSave({
+              ...record,
+              ada_accessible : !record.ada_accessible,
+            })}
             defaultChecked={record.ada_accessible}
             disabled={!record.editable}>
         </Checkbox>)
@@ -141,7 +144,10 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.validated}
-            onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
+            onChange={(e) => this.handleSave({
+              ...record,
+              validated : !record.validated,
+            })}
             defaultChecked={record.validated}
             disabled={!record.editable}>
         </Checkbox>)
@@ -194,7 +200,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
-  updateOldEvent: (updateData, eventId) => dispatch(eventsStateBranch.actions.updateOldEvent(updateData, eventId)),
+  validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);

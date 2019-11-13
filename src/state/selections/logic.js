@@ -15,7 +15,7 @@ import {
 import {
   resetOldEvents,
   updateExistingEvent,
-  updateOldEvent,
+  validateAndSaveOldEvent,
 } from "../events/actions";
 import { toggleIncludeLiveEventsInLookup } from "./actions";
 
@@ -156,6 +156,7 @@ const requestArchivedTimeZoneLogic = createLogic({
       lat,
       lng,
       eventId,
+      townHall,
     } = action.payload;
     const time = Date.parse(`${date} ${timeStart}`) / 1000;
     const loc = `${lat},${lng}`;
@@ -171,11 +172,14 @@ const requestArchivedTimeZoneLogic = createLogic({
         const newTimeEnd = moment(`${date}T${timeEnd}`).utcOffset(offset, true);
         console.log(newTimeStart, newTimeStart.format('x'));
         const eventData = {
-          timestamp: newTimeStart.format('x'),
+          timestamp: parseInt(newTimeStart.format('x'), 10),
           timeStart: newTimeStart.format(),
           timeEnd: newTimeEnd.format(),
         }
-        dispatch(updateOldEvent(eventData, eventId));
+        dispatch(validateAndSaveOldEvent({
+          ...townHall,
+          ...eventData,
+        }));
         done();
       })
   }
