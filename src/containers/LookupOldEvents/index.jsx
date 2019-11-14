@@ -119,6 +119,18 @@ class LookupOldEvents extends React.Component {
         }
     }
 
+    handleResearcherFilterChange = (email) => {
+        const { changeResearcherFilter } = this.props;
+        changeResearcherFilter(email);
+    }
+
+    handleResearcherFilterClear = (email) => {
+        const { changeResearcherFilter } = this.props;
+        if (email === '' || typeof email === 'undefined') {
+            changeResearcherFilter(false);
+        }
+    }
+
     render() {
         const {
             filteredOldEvents,
@@ -269,12 +281,12 @@ class LookupOldEvents extends React.Component {
                             <AutoComplete
                                 placeholder="Filter by researcher"
                                 dataSource={allResearcherEmails}
-                                // onSelect={this.handleNameFilterChange}
-                                // allowClear={true}
-                                // onChange={this.handleNameFilterClear}
-                                // filterOption={(inputValue, option) => {
-                                //     return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
-                                // }}
+                                onSelect={this.handleResearcherFilterChange}
+                                allowClear={true}
+                                onChange={this.handleResearcherFilterClear}
+                                filterOption={(inputValue, option) => {
+                                    return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
+                                }}
                             />
                         </Row>
                     </React.Fragment>)
@@ -338,7 +350,7 @@ const mapStateToProps = state => ({
     events: selectionStateBranch.selectors.getEventTypes(state),
     legislativeBody: selectionStateBranch.selectors.getLegislativeBody(state),
     allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
-    allResearchersById: researcherStateBranch.selectors.getAllResearchersById(state),
+    allResearchersById: researcherStateBranch.selectors.getResearchersEmailById(state),
     allResearcherEmails: researcherStateBranch.selectors.getAllResearcherEmails(state),
 });
 
@@ -352,6 +364,7 @@ const mapDispatchToProps = dispatch => ({
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
     changeNameFilter: (name) => dispatch(selectionStateBranch.actions.changeNameFilter(name)),
+    changeResearcherFilter: (email) => dispatch(selectionStateBranch.actions.changeResearcherFilter(email)),
     requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),

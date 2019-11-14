@@ -63,6 +63,7 @@ class ResultsTable extends React.Component {
     const { 
       showErrors,
       allResearchers,
+      researchersEmailById,
     } = this.props;
     const components = {
       body: {
@@ -197,8 +198,7 @@ class ResultsTable extends React.Component {
           return (
             <div>
               Event ID: {record.eventId} <br />
-              Entered By: {allResearchers.filter((user) => user.uid === record.enteredBy)[0] ? 
-                allResearchers.filter((user) => user.uid === record.enteredBy)[0].email : record.enteredBy}
+              Entered By: {researchersEmailById[record.enteredBy] || 'unknown'}
             </div>
           )
         }}
@@ -211,6 +211,7 @@ function mapStateToProps(state) {
   return {
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
     allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
+    researchersEmailById: researcherStateBranch.selectors.getResearchersEmailById(state),
   };
 }
 

@@ -15,6 +15,7 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
 } from "./constants";
 
@@ -76,6 +77,11 @@ export const changeNameFilter = (name) => ({
   type: CHANGE_NAME_FILTER,
   payload: name,
 });
+
+export const changeResearcherFilter = (email) => ({
+  type: CHANGE_RESEARCHER_FILTER,
+  payload: email,
+})
 
 export const toggleIncludeLiveEventsInLookup = (include) => ({
   type: TOGGLE_INCLUDE_LIVE_EVENTS,

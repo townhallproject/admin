@@ -11,7 +11,7 @@ export const getAllResearcherEmails = createSelector([getAllResearchers], (allRe
   return allResearchers.filter((r) => r.email).map((r) => r.email);
 });
 
-export const getAllResearchersById = createSelector([getAllResearchers], (allResearchers) => {
+export const getResearchersEmailById = createSelector([getAllResearchers], (allResearchers) => {
   return allResearchers.reduce((obj, r) => {
     if (r.uid) return Object.assign(obj, {[r.uid]: r.email});
     else return obj;
