@@ -13,23 +13,36 @@ class ArchiveAddressDateEditForm extends React.Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.checkData = this.checkData.bind(this);
+    this.setAddressConfirm = this.setAddressConfirm.bind(this);
+    this.state = {
+      addressConfirm: true,
+    }
+  }
+
+  setAddressConfirm(val) {
+    this.setState({
+      addressConfirm: val,
+    });
   }
 
   handleSubmit(e) {
     const {
       townHall,
+      moc,
       updateEvent,
       tempAddress,
+      clearTempAddress,
       handleClose,
-      eventMoc,
+      defaultUsState,
     } = this.props;
     e.preventDefault();
-    if (tempAddress.address) {
+    if (!this.state.addressConfirm) {
       console.log('still have address')
       return;
     }
     this.props.form.validateFieldsAndScroll((err, vals) => {
       if (!err) {
+        clearTempAddress();
         const updateObj = {};
         console.log(vals);
         if (vals.location) {
@@ -37,8 +50,10 @@ class ArchiveAddressDateEditForm extends React.Component {
         }
         if (vals.presidential) {
           updateObj.chamber = 'nationwide';
+          updateObj.state = defaultUsState;
         } else {
-          updateObj.chamber = eventMoc.chamber;
+          updateObj.chamber = moc.chamber;
+          updateObj.state = moc.state;
         }
         if (vals.address) {
           updateObj.address = vals.address;
@@ -101,11 +116,13 @@ class ArchiveAddressDateEditForm extends React.Component {
       clearTempAddress,
       updateEvent,
       handleClose,
+      defaultUsState,
     } = this.props;
     const {
       getFieldDecorator,
       resetFields,
       setFieldsValue,
+      getFieldValue,
     } = this.props.form;
     return (
       <Form 
@@ -127,8 +144,10 @@ class ArchiveAddressDateEditForm extends React.Component {
           tempLng={tempAddress.lng}
           getFieldDecorator={getFieldDecorator}
           setFieldsValue={setFieldsValue}
+          getFieldValue={getFieldValue}
           resetFields={resetFields}
           updateEvent={updateEvent}
+          setAddressConfirm={this.setAddressConfirm}
         />
         <Row>
           <Col style={{ textAlign: 'right' }}>

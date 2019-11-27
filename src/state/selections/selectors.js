@@ -39,6 +39,10 @@ export const getLegislativeBody = state => state.selections.filterByLegislativeB
 export const getNameFilter = state => state.selections.filterByName;
 export const getErrorFilter = state => state.selections.filterByError;
 
+export const getDefaultUsState = createSelector([getTempAddress], (tempAddress) => {
+  return tempAddress.usState;
+});
+
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
     return `state_townhalls/${federalOrState}`;

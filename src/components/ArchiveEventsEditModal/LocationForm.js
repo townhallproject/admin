@@ -6,7 +6,7 @@ import {
   Switch,
   Button,
 } from 'antd';
-import { includes, debounce } from 'lodash';
+import { includes } from 'lodash';
 
 
 const { Search } = Input;
@@ -31,6 +31,15 @@ class ArchiveLocationForm extends React.Component {
     this.receiveTempAddress = this.receiveTempAddress.bind(this);
     this.toggleIncludeState = this.toggleIncludeState.bind(this);
     this.discardTempAddress = this.discardTempAddress.bind(this);
+  }
+
+  componentDidMount() {
+    const {
+      geoCodeLocation,
+      getFieldValue,
+    } = this.props;
+    console.log(getFieldValue('address'));
+    geoCodeLocation(getFieldValue('address'));
   }
 
   componentDidUpdate(prevProps) {
@@ -58,6 +67,7 @@ class ArchiveLocationForm extends React.Component {
       clearTempAddress,
       currentTownHall,
       setFieldsValue,
+      setAddressConfirm,
     } = this.props;
 
     // if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
@@ -72,19 +82,24 @@ class ArchiveLocationForm extends React.Component {
     //   lng: tempLng,
     //   address: tempAddress
     // });
+    this.setState({
+      showResponse: false,
+    });
     setFieldsValue({'address': tempAddress})
-    clearTempAddress();
+    // clearTempAddress();
+    setAddressConfirm(true);
   }
 
   discardTempAddress() {
     const {
       clearTempAddress,
       resetFields,
+      setAddressConfirm,
     } = this.props;
     this.setState({
       showResponse: false,
     });
-    clearTempAddress();
+    setAddressConfirm(true);
     resetFields(['address']);
   }
 
@@ -92,6 +107,7 @@ class ArchiveLocationForm extends React.Component {
     const {
       geoCodeLocation,
       currentTownHall,
+      setAddressConfirm,
     } = this.props;
     const {
       value,
@@ -100,6 +116,7 @@ class ArchiveLocationForm extends React.Component {
       return;
     }
     geoCodeLocation(value);
+    setAddressConfirm(false);
     this.setState({
       showResponse: true,
       validating: 'validating',
@@ -238,7 +255,7 @@ class ArchiveLocationForm extends React.Component {
 
 ArchiveLocationForm.propTypes = {
   address: PropTypes.string,
-  clearTempAddress: PropTypes.func.isRequired,
+  // clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
   style: PropTypes.shape({}),

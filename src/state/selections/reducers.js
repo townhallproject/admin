@@ -119,6 +119,7 @@ const selectionReducer = (state = initialState, action) => {
           lat: action.payload.lat,
           lng: action.payload.lng,
           address: action.payload.address,
+          usState: action.payload.state,
         }
       };
     case CLEAR_ADDRESS:

@@ -57,7 +57,6 @@ export default class EditableCell extends React.Component {
       record,
       moc,
     } = this.props;
-    console.log(moc);
     switch (inputType) {
       case 'displayName':
         return (
@@ -117,6 +116,7 @@ export default class EditableCell extends React.Component {
             visible={this.state.modalVisible}
             handleClose={this.handleCloseOnSubmit}
             townHall={record}
+            moc={moc}
             updateEvent={handleSave}
           />
         )
