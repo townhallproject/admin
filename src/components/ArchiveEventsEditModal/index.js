@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Modal } from 'antd';
 import ArchiveEditForm from './forms';
 import selectionStateBranch from '../../state/selections';
+import mocsStateBranch from '../../state/mocs';
 
 class ArchiveEventsEditModal extends React.Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class ArchiveEventsEditModal extends React.Component {
       clearTempAddress,
       updateEvent,
       setTimeZone,
+      eventMocs,
     } = this.props;
     return (
       <Modal
@@ -46,6 +48,7 @@ class ArchiveEventsEditModal extends React.Component {
           setTimeZone={setTimeZone}
           updateEvent={updateEvent}
           handleClose={handleClose}
+          eventMoc={eventMocs[townHall.govtrack_id]}
         />
       </Modal>
     )
@@ -55,6 +58,7 @@ class ArchiveEventsEditModal extends React.Component {
 const mapStateToProps = state => ({
   pathForEvents: selectionStateBranch.selectors.getEventsToShowUrl(state),
   tempAddress: selectionStateBranch.selectors.getTempAddress(state),
+  eventMocs: mocsStateBranch.selectors.getEventMocs(state),
 });
 
 const mapDispatchToProps = dispatch => ({

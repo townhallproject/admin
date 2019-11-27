@@ -11,6 +11,7 @@ import moment from 'moment-timezone';
 import EditableCell from './editableCell';
 import eventsStateBranch from '../../state/events';
 import selectionStateBranch from '../../state/selections';
+import mocsStateBranch from '../../state/mocs';
 
 import activism from '../../assets/img/icon-flags/activism.svg';
 import campaign from '../../assets/img/icon-flags/campaign.svg';
@@ -51,13 +52,23 @@ class ResultsTable extends React.Component {
       this.handleSave = this.handleSave.bind(this);
   }
 
+  componentDidMount() {
+    const {
+      getAllMocData,
+    } = this.props;
+    getAllMocData();
+  }
+
   handleSave = (eventData) => {
     const { validateAndSaveOldEvent } = this.props;
     validateAndSaveOldEvent(eventData);
   };
 
   render() {
-    const { showErrors } = this.props;
+    const {
+      showErrors,
+      allMocs,
+    } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -187,20 +198,21 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
+        allMocs={allMocs}
         // expandedRowRender={(record) => record.eventId}
       />
     );
   };
 };
     
-function mapStateToProps(state) {
-  return {
-    filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
-  };
-}
+const mapStateToProps = (state) => ({
+  filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
+  allMocs: mocsStateBranch.selectors.getAllMocs(state),
+})
 
 const mapDispatchToProps = dispatch => ({
   validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
+  requestAllMocData: () => dispatch(mocsStateBranch.actions.requestAllMocData()),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);

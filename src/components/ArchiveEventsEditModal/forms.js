@@ -21,6 +21,7 @@ class ArchiveAddressDateEditForm extends React.Component {
       updateEvent,
       tempAddress,
       handleClose,
+      eventMoc,
     } = this.props;
     e.preventDefault();
     if (tempAddress.address) {
@@ -30,8 +31,14 @@ class ArchiveAddressDateEditForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err, vals) => {
       if (!err) {
         const updateObj = {};
+        console.log(vals);
         if (vals.location) {
           updateObj.location = vals.location;
+        }
+        if (vals.presidential) {
+          updateObj.chamber = 'nationwide';
+        } else {
+          updateObj.chamber = eventMoc.chamber;
         }
         if (vals.address) {
           updateObj.address = vals.address;
@@ -98,6 +105,7 @@ class ArchiveAddressDateEditForm extends React.Component {
     const {
       getFieldDecorator,
       resetFields,
+      setFieldsValue,
     } = this.props.form;
     return (
       <Form 
@@ -118,6 +126,7 @@ class ArchiveAddressDateEditForm extends React.Component {
           tempLat={tempAddress.lat}
           tempLng={tempAddress.lng}
           getFieldDecorator={getFieldDecorator}
+          setFieldsValue={setFieldsValue}
           resetFields={resetFields}
           updateEvent={updateEvent}
         />

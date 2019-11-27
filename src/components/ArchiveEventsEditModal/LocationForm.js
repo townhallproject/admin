@@ -16,6 +16,8 @@ const initialState = {
   showResponse: false,
   validating: '',
   value: undefined,
+  eventState: undefined,
+  includeState: false,
 };
 
 class ArchiveLocationForm extends React.Component {
@@ -55,20 +57,22 @@ class ArchiveLocationForm extends React.Component {
       tempLng,
       clearTempAddress,
       currentTownHall,
+      setFieldsValue,
     } = this.props;
 
-    if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
-      updateEvent({
-        ...currentTownHall,
-        ...tempAddressFullData,
-      })
-    }
-    updateEvent({
-      ...currentTownHall,
-      lat: tempLat,
-      lng: tempLng,
-      address: tempAddress
-    });
+    // if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
+    //   updateEvent({
+    //     ...currentTownHall,
+    //     ...tempAddressFullData,
+    //   })
+    // }
+    // updateEvent({
+    //   ...currentTownHall,
+    //   lat: tempLat,
+    //   lng: tempLng,
+    //   address: tempAddress
+    // });
+    setFieldsValue({'address': tempAddress})
     clearTempAddress();
   }
 
@@ -118,7 +122,19 @@ class ArchiveLocationForm extends React.Component {
   }
 
   toggleIncludeState(value) {
-    console.log(value)
+    console.log(value);
+    const {
+      currentTownHall,
+      geoCodeLocation,
+      tempAddressFullData,
+    } = this.props;
+    // if user has not searched new address...
+    // if (!this.state.value && value) {
+    //   geoCodeLocation(currentTownHall.address);
+    //   this.setState({
+    //     eventState: tempAddressFullData.state,
+    //   });
+    // }
     this.setState({
       includeState: value,
     })
@@ -150,7 +166,10 @@ class ArchiveLocationForm extends React.Component {
     } = this.state;
     return (
       <React.Fragment>
-        <FormItem class="general-inputs">
+        <FormItem 
+          class="general-inputs"
+          label="Location"
+        >
           {getFieldDecorator('location', {
             initialValue: currentTownHall.location,
           })(
@@ -165,8 +184,13 @@ class ArchiveLocationForm extends React.Component {
         <FormItem 
           label="is a presidental event"
           help="switch on if the event should be stored by the event location and not the MOC state/district"
-          >
-          <Switch onChange={this.toggleIncludeState} />
+        >
+          {getFieldDecorator('presidential', {
+            valuePropName: 'checked',
+            initialValue: currentTownHall.chamber === 'nationwide' ? true : false,
+          })(
+            <Switch onChange={this.toggleIncludeState} />
+          )}
         </FormItem>
         {currentTownHall.meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
           : (
