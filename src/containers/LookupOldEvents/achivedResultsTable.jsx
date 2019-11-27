@@ -54,9 +54,9 @@ class ResultsTable extends React.Component {
 
   componentDidMount() {
     const {
-      getAllMocData,
+      requestAllMocData,
     } = this.props;
-    getAllMocData();
+    requestAllMocData();
   }
 
   handleSave = (eventData) => {
@@ -180,6 +180,7 @@ class ResultsTable extends React.Component {
         ...col,
         onCell: record => ({
           record,
+          moc: allMocs[record.govtrack_id],
           editable: col.editable && record.editable,
           className: `${record.editable}-editable-cell`,
           inputType: col.key,
@@ -198,8 +199,6 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
-        allMocs={allMocs}
-        // expandedRowRender={(record) => record.eventId}
       />
     );
   };

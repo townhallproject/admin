@@ -18,6 +18,8 @@ import {
   UPDATE_DISPLAY_NAME_FAIL,
   ADD_STATE_LEG,
   ADD_STATE_LEG_SUCCESS,
+  GET_ALL_MOC_DATA,
+  GET_ALL_MOC_DATA_SUCCESS,
 } from "./constants";
 import {
   updateInOfficeSuccess,
@@ -26,6 +28,24 @@ import {
 import Candidate from './candidate-model';
 import { map } from "lodash";
 import StateLeg from "./state-leg-model";
+
+const fetchAllMocData = createLogic({
+  type: GET_ALL_MOC_DATA,
+  processOptions: {
+    successType: GET_ALL_MOC_DATA_SUCCESS,
+    failType: GET_MOCS_FAILED,
+  },
+  process(deps) {
+    const {
+      action,
+      firebasedb,
+    } = deps;
+    return firebasedb.ref('mocData').once('value')
+      .then((snapshot) => {
+        return snapshot.val();
+      })
+  }
+});
 
 const fetchMocs = createLogic({
   type: GET_MOCS,
@@ -180,6 +200,7 @@ const updateDisplayNameLogic = createLogic({
 
 export default [
   addStateLegLogic,
+  fetchAllMocData,
   fetchMocs,
   addCandidateLogic,
   requestCongressLogic,

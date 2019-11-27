@@ -55,7 +55,9 @@ export default class EditableCell extends React.Component {
       inputType,
       handleSave,
       record,
+      moc,
     } = this.props;
+    console.log(moc);
     switch (inputType) {
       case 'displayName':
         return (

@@ -9,11 +9,13 @@ import {
   UPDATE_IN_OFFICE_FAIL,
   UPDATE_DISPLAY_NAME_SUCCESS,
   UPDATE_DISPLAY_NAME_FAIL,
+  GET_ALL_MOC_DATA_SUCCESS,
 } from "./constants";
 import { map } from 'lodash';
 
 const initialState = {
   allMocIds: [],
+  allMocData: [],
   116: [],
   115: [],
   error: null,
@@ -88,6 +90,11 @@ const mocReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload,
+      }
+    case GET_ALL_MOC_DATA_SUCCESS:
+      return {
+        ...state,
+        allMocData: action.payload,
       }
     default:
       return state;
