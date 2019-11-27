@@ -186,7 +186,7 @@ export default class MocTable extends React.Component {
         <Table 
           columns={columns}
           dataSource={mocs}
-          rowKey={'govtrack_id'}
+          rowKey='id'
         />
         <Modal
           title={this.state.modalRecord.displayName + ' | ' + this.state.modalRecord.title}

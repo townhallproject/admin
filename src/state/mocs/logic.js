@@ -24,7 +24,10 @@ import {
   updateDisplayNameSuccess,
 } from './actions';
 import Candidate from './candidate-model';
-import { map } from "lodash";
+import {
+  map,
+  filter
+} from "lodash";
 import StateLeg from "./state-leg-model";
 
 const fetchMocs = createLogic({
@@ -47,16 +50,18 @@ const requestCongressLogic = createLogic({
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    return firebasedb.ref(`moc_by_congress/${action.payload}`).once('value')
+    return firestore.collection(`${action.payload}th_congress`).get()
       .then((snapshot) => {
-          const allIds = snapshot.val();
-          const allDataRequests = map(allIds, (id) => firebasedb.ref(`mocData/${id}`).once('value'));
+
+          const allIds = snapshot.docs.map(doc => doc.data().id);
+          const allDataRequests = map(allIds, (id) => firestore.collection('office_people').doc(id).get());
           return Promise.all(allDataRequests).then(allData => {
-            const allReturnedData =  map(allData, (snapshot => (snapshot.val())))
+            const allReturnedData = map(allData, (doc => (doc.data())))
+            const mocs = filter(allReturnedData)
             return {
-              mocs: allReturnedData,
+              mocs,
               key: action.payload,
             }
           })
