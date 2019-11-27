@@ -4,13 +4,11 @@ import {
 } from 'react-redux';
 import { map } from 'lodash';
 import {
-    Button,
     Col,
     Switch,
     DatePicker,
     Select,
     Row,
-    Progress,
     Statistic,
     AutoComplete,
 } from 'antd';

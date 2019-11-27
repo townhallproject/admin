@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Modal } from 'antd';
-import ArchiveEditForm from './forms';
+import ArchiveEditForm from './ArchiveEditForm';
 import selectionStateBranch from '../../state/selections';
 
 class ArchiveEventsEditModal extends React.Component {

@@ -8,7 +8,7 @@ import {
 import ArchiveLocationForm from './LocationForm';
 import ArchiveDateTimeForm from './DateTimeForm';
 
-class ArchiveAddressDateEditForm extends React.Component {
+class ArchiveEditForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,7 +30,6 @@ class ArchiveAddressDateEditForm extends React.Component {
       townHall,
       moc,
       updateEvent,
-      tempAddress,
       clearTempAddress,
       handleClose,
       defaultUsState,
@@ -113,10 +112,8 @@ class ArchiveAddressDateEditForm extends React.Component {
       townHall,
       tempAddress,
       setTempAddress,
-      clearTempAddress,
       updateEvent,
       handleClose,
-      defaultUsState,
     } = this.props;
     const {
       getFieldDecorator,
@@ -139,7 +136,6 @@ class ArchiveAddressDateEditForm extends React.Component {
           geoCodeLocation={setTempAddress}
           tempAddress={tempAddress.address}
           tempAddressFullData={tempAddress}
-          clearTempAddress={clearTempAddress}
           tempLat={tempAddress.lat}
           tempLng={tempAddress.lng}
           getFieldDecorator={getFieldDecorator}
@@ -166,6 +162,6 @@ class ArchiveAddressDateEditForm extends React.Component {
 
 const WrappedArchiveAddressDateEditForm = Form.create({ 
   name: 'address-date-form'
-})(ArchiveAddressDateEditForm);
+})(ArchiveEditForm);
 
 export default WrappedArchiveAddressDateEditForm;

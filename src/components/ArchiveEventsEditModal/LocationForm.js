@@ -38,7 +38,6 @@ class ArchiveLocationForm extends React.Component {
       geoCodeLocation,
       getFieldValue,
     } = this.props;
-    console.log(getFieldValue('address'));
     geoCodeLocation(getFieldValue('address'));
   }
 
@@ -59,40 +58,19 @@ class ArchiveLocationForm extends React.Component {
   clearAddressTimeout() {
     clearTimeout(this.confirmingTime);
     const {
-      updateEvent,
-      tempAddressFullData,
       tempAddress,
-      tempLat,
-      tempLng,
-      clearTempAddress,
-      currentTownHall,
       setFieldsValue,
       setAddressConfirm,
     } = this.props;
-
-    // if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
-    //   updateEvent({
-    //     ...currentTownHall,
-    //     ...tempAddressFullData,
-    //   })
-    // }
-    // updateEvent({
-    //   ...currentTownHall,
-    //   lat: tempLat,
-    //   lng: tempLng,
-    //   address: tempAddress
-    // });
     this.setState({
       showResponse: false,
     });
-    setFieldsValue({'address': tempAddress})
-    // clearTempAddress();
+    setFieldsValue({'address': tempAddress});
     setAddressConfirm(true);
   }
 
   discardTempAddress() {
     const {
-      clearTempAddress,
       resetFields,
       setAddressConfirm,
     } = this.props;
@@ -139,19 +117,6 @@ class ArchiveLocationForm extends React.Component {
   }
 
   toggleIncludeState(value) {
-    console.log(value);
-    const {
-      currentTownHall,
-      geoCodeLocation,
-      tempAddressFullData,
-    } = this.props;
-    // if user has not searched new address...
-    // if (!this.state.value && value) {
-    //   geoCodeLocation(currentTownHall.address);
-    //   this.setState({
-    //     eventState: tempAddressFullData.state,
-    //   });
-    // }
     this.setState({
       includeState: value,
     })
@@ -255,7 +220,6 @@ class ArchiveLocationForm extends React.Component {
 
 ArchiveLocationForm.propTypes = {
   address: PropTypes.string,
-  // clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
   style: PropTypes.shape({}),
