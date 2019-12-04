@@ -160,7 +160,7 @@ export default class MocTable extends React.Component {
             <Checkbox 
               key={record.govtrack_id}
               onChange={(e) => this.updateMissingMember(e, record.govtrack_id)} 
-              defaultChecked={record.missing_member && record.missing_member[116]}>
+              defaultChecked={record.missing_member}>
                   Missing
             </Checkbox>
           </span>
@@ -246,7 +246,7 @@ export default class MocTable extends React.Component {
             <tr>
               <th>Missing Member</th>
               <td>{this.state.modalRecord.missing_member ? 
-                this.state.modalRecord.missing_member[116] ? 'Yes' : 'No' 
+                this.state.modalRecord.missing_member ? 'Yes' : 'No' 
                   : ''}</td>
             </tr>
             <tr>

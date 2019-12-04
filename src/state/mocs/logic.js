@@ -18,6 +18,7 @@ import {
   UPDATE_DISPLAY_NAME_FAIL,
   ADD_STATE_LEG,
   ADD_STATE_LEG_SUCCESS,
+  REQUEST_STATE_LEG,
 } from "./constants";
 import {
   updateInOfficeSuccess,
@@ -65,6 +66,34 @@ const requestCongressLogic = createLogic({
               key: action.payload,
             }
           })
+
+      })
+  }
+})
+
+const requestStateLeg = createLogic({
+  type: REQUEST_STATE_LEG,
+  processOptions: {
+    successType: GET_CONGRESS_BY_SESSION_SUCCESS,
+  },
+  process(deps) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    return firestore.collection(`${action.payload}_state_legislature`).get()
+      .then((snapshot) => {
+        console.log(action.payload)
+        const allIds = snapshot.docs.map(doc => doc.data().id);
+        const allDataRequests = map(allIds, (id) => firestore.collection('office_people').doc(id).get());
+        return Promise.all(allDataRequests).then(allData => {
+          const allReturnedData = map(allData, (doc => (doc.data())))
+          const mocs = filter(allReturnedData)
+          return {
+            mocs,
+            key: action.payload,
+          }
+        })
 
       })
   }
@@ -191,4 +220,5 @@ export default [
   updateMissingMemberLogic,
   updateInOfficeLogic,
   updateDisplayNameLogic,
+  requestStateLeg,
 ];

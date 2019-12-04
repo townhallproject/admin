@@ -9,6 +9,7 @@ import {
   UPDATE_IN_OFFICE_FAIL,
   UPDATE_DISPLAY_NAME_SUCCESS,
   UPDATE_DISPLAY_NAME_FAIL,
+  CHANGE_SELECTED_STATE,
 } from "./constants";
 import { map } from 'lodash';
 
@@ -17,6 +18,7 @@ const initialState = {
   116: [],
   115: [],
   error: null,
+  selectedStateLeg: ''
 };
 
 const mocReducer = (state = initialState, action) => {
@@ -26,6 +28,11 @@ const mocReducer = (state = initialState, action) => {
         ...state,
         allMocIds: map(action.payload.data),
         error: null
+      };
+    case CHANGE_SELECTED_STATE: 
+      return {
+        ...state,
+        selectedStateLeg: action.payload,
       };
     case GET_MOCS_FAILED:
       console.log(`GET_MOCS_FAILED: ${action.payload}`);

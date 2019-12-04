@@ -11,10 +11,17 @@ import {
   UPDATE_IN_OFFICE_SUCCESS,
   UPDATE_DISPLAY_NAME,
   UPDATE_DISPLAY_NAME_SUCCESS,
+  CHANGE_SELECTED_STATE,
+  REQUEST_STATE_LEG,
 } from './constants';
 
 export const requestMocIds = () => ({
   type: GET_MOCS
+});
+
+export const changeSelectedState = value => ({
+  type: CHANGE_SELECTED_STATE,
+  payload: value
 });
 
 export const getMocsSuccess = mocs => ({
@@ -50,6 +57,11 @@ export const saveCandidateFailed = (error) => ({
 export const getCongressBySession = (congressId) => ({
   type: GET_CONGRESS_BY_SESSION,
   payload: congressId
+})
+
+export const getStateLeg = (usState) => ({
+  type: REQUEST_STATE_LEG,
+  payload: usState
 })
 
 export const updateMissingMember = (id, missingMember) => ({
