@@ -15,7 +15,9 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
+  CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -77,6 +79,11 @@ export const changeNameFilter = (name) => ({
   payload: name,
 });
 
+export const changeResearcherFilter = (email) => ({
+  type: CHANGE_RESEARCHER_FILTER,
+  payload: email,
+})
+
 export const toggleIncludeLiveEventsInLookup = (include) => ({
   type: TOGGLE_INCLUDE_LIVE_EVENTS,
   payload: include,
@@ -100,3 +107,8 @@ export const getArchivedTimeZone = (payload) => ({
   type: CHANGE_ARCHIVED_TIME_ZONE,
   payload,
 });
+
+export const changeEventDateLookupType = (payload) => ({
+  type: CHANGE_EVENT_DATE_LOOKUP_TYPE,
+  payload,
+})

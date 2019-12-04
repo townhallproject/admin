@@ -47,7 +47,6 @@ class MoCLookUpDashboard extends React.Component {
       updateInOfficeValue,
       updateDisplayNameValue,
     } = this.props;
-    console.log(keySavePath)
     const { TabPane } = Tabs;
     return (
       <div>

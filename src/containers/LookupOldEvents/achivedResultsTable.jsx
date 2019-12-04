@@ -4,12 +4,15 @@ import {
   Table,
   Form,
   Checkbox,
+  Row,
+  Col,
 } from 'antd';
 
 import moment from 'moment-timezone';
 
 import EditableCell from './editableCell';
 import eventsStateBranch from '../../state/events';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 import mocsStateBranch from '../../state/mocs';
 
@@ -68,6 +71,9 @@ class ResultsTable extends React.Component {
     const {
       showErrors,
       allMocs,
+      showErrors,
+      allResearchers,
+      researchersEmailById,
     } = this.props;
     const components = {
       body: {
@@ -199,15 +205,27 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
+        expandedRowRender={(record) => {
+          return (
+            <div>
+              Event ID: {record.eventId} <br />
+              Entered By: {researchersEmailById[record.enteredBy] || 'unknown'}
+            </div>
+          )
+        }}
       />
     );
   };
 };
     
-const mapStateToProps = (state) => ({
-  filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
-  allMocs: mocsStateBranch.selectors.getAllMocs(state),
-})
+function mapStateToProps(state) {
+  return {
+    filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
+    allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
+    researchersEmailById: researcherStateBranch.selectors.getResearchersEmailById(state),
+    allMocs: mocsStateBranch.selectors.getAllMocs(state),
+  };
+}
 
 const mapDispatchToProps = dispatch => ({
   validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),

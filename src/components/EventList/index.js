@@ -31,13 +31,13 @@ class EventList extends React.Component {
       clearTempAddress,
       setTimeZone,
     } = this.props;
-    const sameUser = townHall.userEmail === currentUserEmail || townHall.enteredBy === currentUserId;
+    // const sameUser = townHall.userEmail === currentUserEmail || townHall.enteredBy === currentUserId;
     return (
       <List.Item>
         <EventCard 
           townHall={townHall}
           pending={pending}
-          canApprove={!sameUser || isAdmin}
+          canApprove={true}
           loading={loading}
           setTempAddress={setTempAddress}
           tempAddress={tempAddress}

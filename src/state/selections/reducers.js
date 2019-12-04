@@ -14,14 +14,18 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
+  CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
   FEDERAL_RADIO_BUTTON,
+  DATE_TIMESTAMP,
  } from "../../constants";
 
 const initialState = {
+  dateLookupType: DATE_TIMESTAMP,
   selectedEventTab: PENDING_EVENTS_TAB,
   federalOrState: FEDERAL_RADIO_BUTTON,
   mode: '',
@@ -32,6 +36,7 @@ const initialState = {
   filterByEventType: [],
   filterByLegislativeBody: 'federal',
   filterByName: false,
+  filterByResearcher: false,
   filterByError: false,
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
@@ -66,6 +71,11 @@ const selectionReducer = (state = initialState, action) => {
       return {
         ...state,
         filterByName: action.payload,
+      }
+    case CHANGE_RESEARCHER_FILTER:
+      return {
+        ...state,
+        filterByResearcher: action.payload,
       }
     case CHANGE_ERROR_FILTER:
       return {
@@ -131,6 +141,11 @@ const selectionReducer = (state = initialState, action) => {
       console.error(action.payload)
       return {
         ...state,
+      }
+    case CHANGE_EVENT_DATE_LOOKUP_TYPE: 
+      return {
+        ...state,
+        dateLookupType: action.payload,
       }
     default:
       return state;
