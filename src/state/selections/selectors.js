@@ -25,7 +25,13 @@ import {
 import {
   getCurrentUser,
 } from '../users/selectors';
-import { get116thCongress } from '../mocs/selectors';
+import {
+  get116thCongress
+} from '../mocs/selectors';
+import {
+  getResearchersEmailById,
+} from '../researchers/selectors';
+
 
 export const getPendingOrLiveTab = state => state.selections.selectedEventTab;
 export const getActiveFederalOrState = state => state.selections.federalOrState;
@@ -40,6 +46,7 @@ export const getChamber = state => state.selections.filterByChamber;
 export const getEventTypes = state => state.selections.filterByEventType;
 export const getLegislativeBody = state => state.selections.filterByLegislativeBody;
 export const getNameFilter = state => state.selections.filterByName;
+export const getResearcherFilter = state => state.selections.filterByResearcher;
 export const getErrorFilter = state => state.selections.filterByError;
 export const getDateLookupType = state => state.selections.dateLookupType;
 
@@ -229,9 +236,11 @@ export const getFilteredEvents = createSelector(
     getEventTypes,
     getLegislativeBody,
     getNameFilter,
+    getResearcherFilter,
+    getResearchersEmailById,
     getErrorFilter,
   ], 
-  (allEvents, states, chamber, events, legislativeBody, name, errorValue) => {
+  (allEvents, states, chamber, events, legislativeBody, name, researcherEmail, researchersEmailById, errorValue) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
     filteredEvents = filter(filteredEvents, (event) => {
@@ -262,6 +271,11 @@ export const getFilteredEvents = createSelector(
       filteredEvents = filter(filteredEvents, (event) => {
         return name === event.displayName;
       });
+    }
+    if (researcherEmail) {
+      filteredEvents = filter(filteredEvents, (event) => {
+        return researcherEmail === researchersEmailById[event.enteredBy];
+      })
     }
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
     return filteredEvents;

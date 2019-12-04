@@ -14,6 +14,7 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
+  CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
   CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
@@ -35,6 +36,7 @@ const initialState = {
   filterByEventType: [],
   filterByLegislativeBody: 'federal',
   filterByName: false,
+  filterByResearcher: false,
   filterByError: false,
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
@@ -69,6 +71,11 @@ const selectionReducer = (state = initialState, action) => {
       return {
         ...state,
         filterByName: action.payload,
+      }
+    case CHANGE_RESEARCHER_FILTER:
+      return {
+        ...state,
+        filterByResearcher: action.payload,
       }
     case CHANGE_ERROR_FILTER:
       return {

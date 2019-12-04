@@ -4,12 +4,15 @@ import {
   Table,
   Form,
   Checkbox,
+  Row,
+  Col,
 } from 'antd';
 
 import moment from 'moment-timezone';
 
 import EditableCell from './editableCell';
 import eventsStateBranch from '../../state/events';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 
 import activism from '../../assets/img/icon-flags/activism.svg';
@@ -57,7 +60,11 @@ class ResultsTable extends React.Component {
   };
 
   render() {
-    const { showErrors } = this.props;
+    const { 
+      showErrors,
+      allResearchers,
+      researchersEmailById,
+    } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -187,7 +194,14 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
-        // expandedRowRender={(record) => record.eventId}
+        expandedRowRender={(record) => {
+          return (
+            <div>
+              Event ID: {record.eventId} <br />
+              Entered By: {researchersEmailById[record.enteredBy] || 'unknown'}
+            </div>
+          )
+        }}
       />
     );
   };
@@ -196,6 +210,8 @@ class ResultsTable extends React.Component {
 function mapStateToProps(state) {
   return {
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
+    allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
+    researchersEmailById: researcherStateBranch.selectors.getResearchersEmailById(state),
   };
 }
 

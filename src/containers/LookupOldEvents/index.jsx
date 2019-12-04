@@ -16,6 +16,7 @@ import {
 } from 'antd';
 
 import moment from 'moment';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 import eventStateBranch from '../../state/events';
 import mocStateBranch from '../../state/mocs';
@@ -119,6 +120,18 @@ class LookupOldEvents extends React.Component {
         }
     }
 
+    handleResearcherFilterChange = (email) => {
+        const { changeResearcherFilter } = this.props;
+        changeResearcherFilter(email);
+    }
+
+    handleResearcherFilterClear = (email) => {
+        const { changeResearcherFilter } = this.props;
+        if (email === '' || typeof email === 'undefined') {
+            changeResearcherFilter(false);
+        }
+    }
+    
     handleChangeDateSearchType({target}) {
         const { changeDateSearchType } = this.props;
         changeDateSearchType(target.value)
@@ -140,6 +153,7 @@ class LookupOldEvents extends React.Component {
             filteredEventsLength,
             stateEventsCount,
             errorEventsCount,
+            allResearcherEmails,
             dateLookupType,
         } = this.props;
         return (    
@@ -200,7 +214,7 @@ class LookupOldEvents extends React.Component {
                         <Row type="flex">
                             <Col>
                                 <label>View {errorEventsCount} invalid event
-                                {errorEventsCount.length === 1 ? 's' : ''}: </label>
+                                {errorEventsCount.length === 1 ? '' : 's'}: </label>
                             </Col>
                             <Col offset={1}>
                                 <Switch 
@@ -231,12 +245,12 @@ class LookupOldEvents extends React.Component {
                                 <Option value="citywide">Citywide</Option>
                             </Select>
                         </Row>
-                        <Row type="flex">
+                        <Row type="flex" justify="space-between">
                             <Select
                                 placeholder="Filter by event type"
                                 defaultValue={[]}
                                 onChange={this.handleEventTypeChange}
-                                style={{ width: '100%' }}
+                                style={{ width: '48%' }}
                                 mode="multiple"
                             >
                                 <Option value='No events'>No Events</Option>
@@ -254,21 +268,17 @@ class LookupOldEvents extends React.Component {
                                 <Option value='H.R. 1 Town Hall'>H.R. 1 Town Hall</Option>
                                 <Option value='Gun Safety Activist Event'>Gun Safety Activist Event</Option>
                             </Select>
-                        </Row>
-                        <Row
-                            type="flex" 
-                        >
                             <Select
                                 mode="multiple"
                                 placeholder="Filter by state"
                                 onChange={this.handleAddState}
-                                style={{ width: '100%' }}
+                                style={{ width: '48%' }}
                                 disabled={this.props.legislativeBody !== 'federal'}
                             >
                                 {children}
                             </Select>
                         </Row>
-                        <Row type="flex">
+                        <Row type="flex" justify="space-between">
                             <AutoComplete
                                 placeholder="Filter by name"
                                 dataSource={filteredUniqueNames}
@@ -278,6 +288,18 @@ class LookupOldEvents extends React.Component {
                                 filterOption={(inputValue, option) => {
                                     return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
                                 }}
+                                style={{ width: '48%' }}
+                            />
+                            <AutoComplete
+                                placeholder="Filter by researcher"
+                                dataSource={allResearcherEmails}
+                                onSelect={this.handleResearcherFilterChange}
+                                allowClear={true}
+                                onChange={this.handleResearcherFilterClear}
+                                filterOption={(inputValue, option) => {
+                                    return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
+                                }}
+                                style={{ width: '48%' }}
                             />
                         </Row>
                     </React.Fragment>)
@@ -340,6 +362,7 @@ const mapStateToProps = state => ({
     chamber: selectionStateBranch.selectors.getChamber(state),
     events: selectionStateBranch.selectors.getEventTypes(state),
     legislativeBody: selectionStateBranch.selectors.getLegislativeBody(state),
+    allResearcherEmails: researcherStateBranch.selectors.getAllResearcherEmails(state),
     dateLookupType: selectionStateBranch.selectors.getDateLookupType(state),
 });
 
@@ -353,6 +376,7 @@ const mapDispatchToProps = dispatch => ({
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
     changeNameFilter: (name) => dispatch(selectionStateBranch.actions.changeNameFilter(name)),
+    changeResearcherFilter: (email) => dispatch(selectionStateBranch.actions.changeResearcherFilter(email)),
     requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),
