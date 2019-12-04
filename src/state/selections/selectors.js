@@ -179,9 +179,11 @@ export const getAllEventsForAnalysis = createSelector([
           console.log(date, date >= dateRange[0] && date <= dateRange[1]);
           return date >= dateRange[0] && date <= dateRange[1]
  
-        }
-        console.log('no date created')
-        return true;
+        } 
+        let date = moment(event.lastUpdated).valueOf();
+        console.log('using last updated', date >= dateRange[0] && date <= dateRange[1])
+        return date >= dateRange[0] && date <= dateRange[1]
+   
       })
     }
 
