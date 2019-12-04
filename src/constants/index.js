@@ -20,6 +20,10 @@ export const MOC_DOWNLOAD_ACCESS = 'mocDownload';
 export const ADMIN_ACCESS = 'isAdmin';
 export const MODERATOR_ACCESS = 'moderator';
 export const ACCESS_KEYS = [RSVP_DOWNLOAD_ACCESS, EVENT_DOWNLOAD_ACCESS, MOC_DOWNLOAD_ACCESS, ADMIN_ACCESS];
+export const DATE_OBJ = "dateObj";
+export const DATE_CREATED = "dateCreated";
+export const DATE_TIMESTAMP = "timestamp";
+
 export const ACCESS_LEVELS_MAP = {
     [RSVP_DOWNLOAD_ACCESS]: 'download RSVPs',
     [EVENT_DOWNLOAD_ACCESS]: 'download Events',

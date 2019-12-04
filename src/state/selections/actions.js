@@ -17,6 +17,7 @@ import {
   CHANGE_NAME_FILTER,
   CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
+  CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 
 export const changeActiveEventTab = tab => ({
@@ -106,3 +107,8 @@ export const getArchivedTimeZone = (payload) => ({
   type: CHANGE_ARCHIVED_TIME_ZONE,
   payload,
 });
+
+export const changeEventDateLookupType = (payload) => ({
+  type: CHANGE_EVENT_DATE_LOOKUP_TYPE,
+  payload,
+})

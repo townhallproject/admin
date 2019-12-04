@@ -32,7 +32,7 @@ import {
   ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
-  PENDING_EVENTS_TAB,
+  PENDING_EVENTS_TAB, DATE_TIMESTAMP, DATE_CREATED,
 } from '../../constants'
 import {
   addAllOldEventsToState,
@@ -50,6 +50,7 @@ import {
 import {
   requestResearcherById,
 } from "../researchers/actions";
+import { getDateLookupType } from "../selections/selectors";
 
 require('dotenv').config();
 
@@ -130,17 +131,25 @@ const fetchOldEventsLogic = createLogic({
     const {
       payload
     } = action;
-    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
     let fsRef = firestore.collection(ARCHIVE_COLLECTION);
+    const state = getState();
+    const dateKey = getDateLookupType(state);
+    let fsQueryRef;
+    if (dateKey === DATE_CREATED) {
+      fsQueryRef = fsRef
+      .orderBy('timestamp')
+    } else {
+      fsQueryRef = fsRef
+        .where('timestamp', '>=', payload.dates[0])
+        .where('timestamp', '<=', payload.dates[1])
+        .orderBy('timestamp')
 
+    }
     dispatch(setLoading(true))
     const allEvents = [];
     const allUids = [];
-
-    let fsQueryRef = fsRef
-      .where('timestamp', '>=', payload.dates[0])
-      .where('timestamp', '<=', payload.dates[1])
-      .orderBy('timestamp')
+    
+    console.log('startAt', dateKey, payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
       
     fsQueryRef.get()
       .then(snapshot => {

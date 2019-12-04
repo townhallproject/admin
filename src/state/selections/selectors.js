@@ -12,7 +12,10 @@ import {
   LIVE_EVENTS_TAB, 
   PENDING_EVENTS_TAB, 
   STATES_LEGS, 
-  FEDERAL_RADIO_BUTTON
+  FEDERAL_RADIO_BUTTON,
+  DATE_TIMESTAMP,
+  DATE_OBJ,
+  DATE_CREATED
 } from '../../constants';
 import {
   getAllOldEventsWithUserEmails,
@@ -45,6 +48,7 @@ export const getLegislativeBody = state => state.selections.filterByLegislativeB
 export const getNameFilter = state => state.selections.filterByName;
 export const getResearcherFilter = state => state.selections.filterByResearcher;
 export const getErrorFilter = state => state.selections.filterByError;
+export const getDateLookupType = state => state.selections.dateLookupType;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
@@ -167,19 +171,41 @@ export const getAllEventsForAnalysis = createSelector([
     getAllOldEventsWithUserEmails, 
     getAllFederalAndStateLiveEvents,
     getDateRange,
-  ], (includeLive, oldEvents, liveEvents, dateRange) => {
+    getDateLookupType,
+  ], (includeLive, oldEvents, liveEvents, dateRange, dateLookupType) => {
     oldEvents = map(oldEvents, (event) => {
       event.editable = true;
       return event;
     });
+    
+    if (dateLookupType === DATE_CREATED) {
+      oldEvents = filter(oldEvents, (event) => {
+        if (event[DATE_CREATED]){
+          console.log('date created', event[DATE_CREATED])
+          let date = moment(event[DATE_CREATED]).valueOf();
+          console.log(date, date >= dateRange[0] && date <= dateRange[1]);
+          return date >= dateRange[0] && date <= dateRange[1]
+ 
+        } 
+        let date = moment(event.lastUpdated).valueOf();
+        console.log('using last updated', date >= dateRange[0] && date <= dateRange[1])
+        return date >= dateRange[0] && date <= dateRange[1]
+   
+      })
+    }
+
     if (includeLive) {
       liveEvents = filter(liveEvents, (event) => {
-        if (!event.dateObj && event.dateString) {
-          const date = moment(event.dateString).valueOf();
-          return date >= dateRange[0] && date <= dateRange[1]
+        const dateKey = dateLookupType === DATE_TIMESTAMP ? DATE_OBJ : dateLookupType;
+        let date;
+        if (event[dateKey] && moment(event[dateKey]).isValid()) {
+          date = moment(event[dateKey]).valueOf();
+        } else if (!event[dateKey] && event.dateString && dateKey === DATE_OBJ) {
+          date = moment(event.dateString).valueOf();
         } else {
-          return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1];
+          return false;
         }
+        return date >= dateRange[0] && date <= dateRange[1]
       });
       liveEvents = map(liveEvents, (event) => {
         event.editable = false;

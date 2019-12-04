@@ -4,7 +4,7 @@ import {
 } from 'react-redux';
 import { map } from 'lodash';
 import {
-    Button,
+    Radio,
     Col,
     Switch,
     DatePicker,
@@ -26,7 +26,7 @@ import "./style.scss";
 
 import OldEventsResults from './results';
 import ResultsTable from './achivedResultsTable';
-import { LEGISLATIVE_BODIES } from '../../constants';
+import { LEGISLATIVE_BODIES, DATE_OBJ, DATE_CREATED, DATE_TIMESTAMP } from '../../constants';
 
 const {
   RangePicker,
@@ -43,6 +43,7 @@ class LookupOldEvents extends React.Component {
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
         this.handleErrorChange = this.handleErrorChange.bind(this);
+        this.handleChangeDateSearchType = this.handleChangeDateSearchType.bind(this);
         this.state = {
             showErrors: false,
         }
@@ -130,6 +131,12 @@ class LookupOldEvents extends React.Component {
             changeResearcherFilter(false);
         }
     }
+    
+    handleChangeDateSearchType({target}) {
+        const { changeDateSearchType } = this.props;
+        changeDateSearchType(target.value)
+    }
+
 
     render() {
         const {
@@ -147,6 +154,7 @@ class LookupOldEvents extends React.Component {
             stateEventsCount,
             errorEventsCount,
             allResearcherEmails,
+            dateLookupType,
         } = this.props;
         return (    
             <React.Fragment>
@@ -155,6 +163,17 @@ class LookupOldEvents extends React.Component {
             }}>
                 <Col span={12} offset={6}>
                     <Row type="flex">Search archived events by date range:</Row>
+                    <Row type="flex">
+                        <Col>
+                            <label>Include live events</label>
+                        </Col>
+                        <Col offset={1}>
+                                <Radio.Group value={dateLookupType} onChange={this.handleChangeDateSearchType}>
+                                    <Radio.Button value={DATE_TIMESTAMP}>By event date</Radio.Button>
+                                    <Radio.Button value={DATE_CREATED}>By date created</Radio.Button>
+                                </Radio.Group>
+                        </Col>
+                    </Row>
                     <Row type="flex">
                         <RangePicker 
                             onChange={this.onDateRangeChange} 
@@ -344,6 +363,7 @@ const mapStateToProps = state => ({
     events: selectionStateBranch.selectors.getEventTypes(state),
     legislativeBody: selectionStateBranch.selectors.getLegislativeBody(state),
     allResearcherEmails: researcherStateBranch.selectors.getAllResearcherEmails(state),
+    dateLookupType: selectionStateBranch.selectors.getDateLookupType(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -360,6 +380,7 @@ const mapDispatchToProps = dispatch => ({
     requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),
+    changeDateSearchType: (type) => dispatch(selectionStateBranch.actions.changeEventDateLookupType(type)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LookupOldEvents);

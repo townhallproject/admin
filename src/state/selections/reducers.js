@@ -16,13 +16,16 @@ import {
   CHANGE_NAME_FILTER,
   CHANGE_RESEARCHER_FILTER,
   CHANGE_ERROR_FILTER,
+  CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
   FEDERAL_RADIO_BUTTON,
+  DATE_TIMESTAMP,
  } from "../../constants";
 
 const initialState = {
+  dateLookupType: DATE_TIMESTAMP,
   selectedEventTab: PENDING_EVENTS_TAB,
   federalOrState: FEDERAL_RADIO_BUTTON,
   mode: '',
@@ -137,6 +140,11 @@ const selectionReducer = (state = initialState, action) => {
       console.error(action.payload)
       return {
         ...state,
+      }
+    case CHANGE_EVENT_DATE_LOOKUP_TYPE: 
+      return {
+        ...state,
+        dateLookupType: action.payload,
       }
     default:
       return state;
