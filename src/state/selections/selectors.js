@@ -135,7 +135,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.district = eventData.district;
   
   normalizedEvent.timestamp = eventData.timestamp || eventData.dateObj;
-  normalizedEvent.timeStart = eventData.timeStart || moment(eventData.dateObj).toISOString();
+  normalizedEvent.timeStart = eventData.timeZone ? moment(eventData.timeStart).tz(eventData.timeZone).format('MMMM Do YYYY, h:mm a z') : eventData.timeStart || moment(eventData.dateObj).toISOString();
   // Live events in Firebase currently store timeEnd as human-readable strings, e.g. "12:00 PM", instead of ISO-8601
   normalizedEvent.timeEnd = eventData.timeEnd || ' ';
   normalizedEvent.timeZone = eventData.timeZone || ' ';
