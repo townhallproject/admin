@@ -50,6 +50,10 @@ export const getResearcherFilter = state => state.selections.filterByResearcher;
 export const getErrorFilter = state => state.selections.filterByError;
 export const getDateLookupType = state => state.selections.dateLookupType;
 
+export const getDefaultUsState = createSelector([getTempAddress], (tempAddress) => {
+  return tempAddress.usState;
+});
+
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
     return `state_townhalls/${federalOrState}`;

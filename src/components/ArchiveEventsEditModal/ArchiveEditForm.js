@@ -8,30 +8,51 @@ import {
 import ArchiveLocationForm from './LocationForm';
 import ArchiveDateTimeForm from './DateTimeForm';
 
-class ArchiveAddressDateEditForm extends React.Component {
+class ArchiveEditForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.checkData = this.checkData.bind(this);
+    this.setAddressConfirm = this.setAddressConfirm.bind(this);
+    this.state = {
+      addressConfirm: true,
+    }
+  }
+
+  setAddressConfirm(val) {
+    this.setState({
+      addressConfirm: val,
+    });
   }
 
   handleSubmit(e) {
     const {
       townHall,
+      moc,
       updateEvent,
-      tempAddress,
+      clearTempAddress,
       handleClose,
+      defaultUsState,
     } = this.props;
     e.preventDefault();
-    if (tempAddress.address) {
+    if (!this.state.addressConfirm) {
       console.log('still have address')
       return;
     }
     this.props.form.validateFieldsAndScroll((err, vals) => {
       if (!err) {
+        clearTempAddress();
         const updateObj = {};
+        console.log(vals);
         if (vals.location) {
           updateObj.location = vals.location;
+        }
+        if (vals.presidential) {
+          updateObj.chamber = 'nationwide';
+          updateObj.state = defaultUsState;
+        } else {
+          updateObj.chamber = moc.chamber;
+          updateObj.state = moc.state;
         }
         if (vals.address) {
           updateObj.address = vals.address;
@@ -91,13 +112,14 @@ class ArchiveAddressDateEditForm extends React.Component {
       townHall,
       tempAddress,
       setTempAddress,
-      clearTempAddress,
       updateEvent,
       handleClose,
     } = this.props;
     const {
       getFieldDecorator,
       resetFields,
+      setFieldsValue,
+      getFieldValue,
     } = this.props.form;
     return (
       <Form 
@@ -114,12 +136,14 @@ class ArchiveAddressDateEditForm extends React.Component {
           geoCodeLocation={setTempAddress}
           tempAddress={tempAddress.address}
           tempAddressFullData={tempAddress}
-          clearTempAddress={clearTempAddress}
           tempLat={tempAddress.lat}
           tempLng={tempAddress.lng}
           getFieldDecorator={getFieldDecorator}
+          setFieldsValue={setFieldsValue}
+          getFieldValue={getFieldValue}
           resetFields={resetFields}
           updateEvent={updateEvent}
+          setAddressConfirm={this.setAddressConfirm}
         />
         <Row>
           <Col style={{ textAlign: 'right' }}>
@@ -138,6 +162,6 @@ class ArchiveAddressDateEditForm extends React.Component {
 
 const WrappedArchiveAddressDateEditForm = Form.create({ 
   name: 'address-date-form'
-})(ArchiveAddressDateEditForm);
+})(ArchiveEditForm);
 
 export default WrappedArchiveAddressDateEditForm;

@@ -10,7 +10,6 @@ import {
     DatePicker,
     Select,
     Row,
-    Progress,
     Statistic,
     AutoComplete,
 } from 'antd';

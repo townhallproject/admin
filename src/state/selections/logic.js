@@ -61,7 +61,6 @@ const requestLatLngLogic = createLogic({
         address: payload,
       })
       .then((r) => {
-        console.log(r.body.results[0]);
         const {
           results,
         } = r.body;

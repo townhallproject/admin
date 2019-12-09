@@ -6,7 +6,7 @@ import {
   Switch,
   Button,
 } from 'antd';
-import { includes, debounce } from 'lodash';
+import { includes } from 'lodash';
 
 
 const { Search } = Input;
@@ -16,6 +16,8 @@ const initialState = {
   showResponse: false,
   validating: '',
   value: undefined,
+  eventState: undefined,
+  includeState: false,
 };
 
 class ArchiveLocationForm extends React.Component {
@@ -29,6 +31,14 @@ class ArchiveLocationForm extends React.Component {
     this.receiveTempAddress = this.receiveTempAddress.bind(this);
     this.toggleIncludeState = this.toggleIncludeState.bind(this);
     this.discardTempAddress = this.discardTempAddress.bind(this);
+  }
+
+  componentDidMount() {
+    const {
+      geoCodeLocation,
+      getFieldValue,
+    } = this.props;
+    geoCodeLocation(getFieldValue('address'));
   }
 
   componentDidUpdate(prevProps) {
@@ -48,39 +58,26 @@ class ArchiveLocationForm extends React.Component {
   clearAddressTimeout() {
     clearTimeout(this.confirmingTime);
     const {
-      updateEvent,
-      tempAddressFullData,
       tempAddress,
-      tempLat,
-      tempLng,
-      clearTempAddress,
-      currentTownHall,
-    } = this.props;
-
-    if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
-      updateEvent({
-        ...currentTownHall,
-        ...tempAddressFullData,
-      })
-    }
-    updateEvent({
-      ...currentTownHall,
-      lat: tempLat,
-      lng: tempLng,
-      address: tempAddress
-    });
-    clearTempAddress();
-  }
-
-  discardTempAddress() {
-    const {
-      clearTempAddress,
-      resetFields,
+      setFieldsValue,
+      setAddressConfirm,
     } = this.props;
     this.setState({
       showResponse: false,
     });
-    clearTempAddress();
+    setFieldsValue({'address': tempAddress});
+    setAddressConfirm(true);
+  }
+
+  discardTempAddress() {
+    const {
+      resetFields,
+      setAddressConfirm,
+    } = this.props;
+    this.setState({
+      showResponse: false,
+    });
+    setAddressConfirm(true);
     resetFields(['address']);
   }
 
@@ -88,6 +85,7 @@ class ArchiveLocationForm extends React.Component {
     const {
       geoCodeLocation,
       currentTownHall,
+      setAddressConfirm,
     } = this.props;
     const {
       value,
@@ -96,6 +94,7 @@ class ArchiveLocationForm extends React.Component {
       return;
     }
     geoCodeLocation(value);
+    setAddressConfirm(false);
     this.setState({
       showResponse: true,
       validating: 'validating',
@@ -118,7 +117,6 @@ class ArchiveLocationForm extends React.Component {
   }
 
   toggleIncludeState(value) {
-    console.log(value)
     this.setState({
       includeState: value,
     })
@@ -150,7 +148,10 @@ class ArchiveLocationForm extends React.Component {
     } = this.state;
     return (
       <React.Fragment>
-        <FormItem class="general-inputs">
+        <FormItem 
+          class="general-inputs"
+          label="Location"
+        >
           {getFieldDecorator('location', {
             initialValue: currentTownHall.location,
           })(
@@ -165,8 +166,13 @@ class ArchiveLocationForm extends React.Component {
         <FormItem 
           label="is a presidental event"
           help="switch on if the event should be stored by the event location and not the MOC state/district"
-          >
-          <Switch onChange={this.toggleIncludeState} />
+        >
+          {getFieldDecorator('presidential', {
+            valuePropName: 'checked',
+            initialValue: currentTownHall.chamber === 'nationwide' ? true : false,
+          })(
+            <Switch onChange={this.toggleIncludeState} />
+          )}
         </FormItem>
         {currentTownHall.meetingType === 'Tele-Town Hall' ? this.renderTeleInputs()
           : (
@@ -214,7 +220,6 @@ class ArchiveLocationForm extends React.Component {
 
 ArchiveLocationForm.propTypes = {
   address: PropTypes.string,
-  clearTempAddress: PropTypes.func.isRequired,
   geoCodeLocation: PropTypes.func.isRequired,
   getFieldDecorator: PropTypes.func.isRequired,
   style: PropTypes.shape({}),

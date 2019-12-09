@@ -14,6 +14,7 @@ import EditableCell from './editableCell';
 import eventsStateBranch from '../../state/events';
 import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
+import mocsStateBranch from '../../state/mocs';
 
 import activism from '../../assets/img/icon-flags/activism.svg';
 import campaign from '../../assets/img/icon-flags/campaign.svg';
@@ -54,13 +55,22 @@ class ResultsTable extends React.Component {
       this.handleSave = this.handleSave.bind(this);
   }
 
+  componentDidMount() {
+    const {
+      requestAllMocData,
+    } = this.props;
+    requestAllMocData();
+  }
+
   handleSave = (eventData) => {
     const { validateAndSaveOldEvent } = this.props;
     validateAndSaveOldEvent(eventData);
   };
 
   render() {
-    const { 
+    const {
+      showErrors,
+      allMocs,
       showErrors,
       allResearchers,
       researchersEmailById,
@@ -176,6 +186,7 @@ class ResultsTable extends React.Component {
         ...col,
         onCell: record => ({
           record,
+          moc: allMocs[record.govtrack_id],
           editable: col.editable && record.editable,
           className: `${record.editable}-editable-cell`,
           inputType: col.key,
@@ -212,11 +223,13 @@ function mapStateToProps(state) {
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
     allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
     researchersEmailById: researcherStateBranch.selectors.getResearchersEmailById(state),
+    allMocs: mocsStateBranch.selectors.getAllMocs(state),
   };
 }
 
 const mapDispatchToProps = dispatch => ({
   validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
+  requestAllMocData: () => dispatch(mocsStateBranch.actions.requestAllMocData()),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);

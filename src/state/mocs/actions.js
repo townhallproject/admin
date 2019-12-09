@@ -11,7 +11,12 @@ import {
   UPDATE_IN_OFFICE_SUCCESS,
   UPDATE_DISPLAY_NAME,
   UPDATE_DISPLAY_NAME_SUCCESS,
+  GET_ALL_MOC_DATA
 } from './constants';
+
+export const requestAllMocData = () => ({
+  type: GET_ALL_MOC_DATA
+});
 
 export const requestMocIds = () => ({
   type: GET_MOCS
