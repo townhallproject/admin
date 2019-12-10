@@ -10,7 +10,6 @@ import {
     DatePicker,
     Select,
     Row,
-    Progress,
     Statistic,
     AutoComplete,
 } from 'antd';
@@ -24,7 +23,7 @@ import { statesAb } from '../../assets/data/states';
 
 import "./style.scss";
 
-import OldEventsResults from './results';
+import OldEventsResults from './OldEventsResults';
 import ArchivedResultsTable from './ArchivedResultsTable';
 import { LEGISLATIVE_BODIES, DATE_CREATED, DATE_TIMESTAMP } from '../../constants';
 

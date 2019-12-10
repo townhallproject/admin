@@ -6,8 +6,6 @@ import {
   Checkbox,
 } from 'antd';
 
-import moment from 'moment-timezone';
-
 import EditableCell from './EditableCell';
 import eventsStateBranch from '../../state/events';
 import researcherStateBranch from '../../state/researchers';

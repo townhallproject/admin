@@ -2,13 +2,7 @@ import React from 'react';
 import {
     Button,
     Row,
-    Col,
 } from 'antd';
-import {
-    VictoryBar,
-    VictoryChart,
-    VictoryStack,
-} from 'victory';
 import {
     CSVLink,
 } from 'react-csv';
@@ -16,12 +10,12 @@ import {
 
 import "./style.scss";
 
-const colors = {
-    R: "#ff4741",
-    D: "#3facef",
-    I: 'purple',
-    None: 'gray',
-}
+// const colors = {
+//     R: "#ff4741",
+//     D: "#3facef",
+//     I: 'purple',
+//     None: 'gray',
+// }
 
 class OldEventsResults extends React.Component {
 

@@ -61,7 +61,6 @@ const mapDispatchToProps = dispatch => ({
   setTempAddress: (address) => dispatch(selectionStateBranch.actions.setTempAddress(address)),
   clearTempAddress: () => dispatch(selectionStateBranch.actions.clearTempAddress()),
   setTimeZone: (payload) => dispatch(selectionStateBranch.actions.getArchivedTimeZone(payload)),
-  setTempAddress: (address) => dispatch(selectionStateBranch.actions.setTempAddress(address)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArchiveEventsEditModal);

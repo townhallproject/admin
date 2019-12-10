@@ -32,7 +32,7 @@ import {
   ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
-  PENDING_EVENTS_TAB, DATE_TIMESTAMP, DATE_CREATED,
+  PENDING_EVENTS_TAB, DATE_CREATED,
 } from '../../constants'
 import {
   addAllOldEventsToState,
