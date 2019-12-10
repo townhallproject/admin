@@ -47,7 +47,6 @@ export const getEventTypes = state => state.selections.filterByEventType;
 export const getLegislativeBody = state => state.selections.filterByLegislativeBody;
 export const getNameFilter = state => state.selections.filterByName;
 export const getResearcherFilter = state => state.selections.filterByResearcher;
-export const getErrorFilter = state => state.selections.filterByError;
 export const getDateLookupType = state => state.selections.dateLookupType;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
@@ -238,14 +237,11 @@ export const getFilteredEvents = createSelector(
     getNameFilter,
     getResearcherFilter,
     getResearchersEmailById,
-    getErrorFilter,
   ], 
-  (allEvents, states, chamber, events, legislativeBody, name, researcherEmail, researchersEmailById, errorValue) => {
+  (allEvents, states, chamber, events, legislativeBody, name, researcherEmail, researchersEmailById) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
-    filteredEvents = filter(filteredEvents, (event) => {
-      return Boolean(errorValue) === Boolean(event.error);
-    });
+
     if (states.length) { 
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(states, event.state);

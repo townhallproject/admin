@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Form, Select } from 'antd';
-import { EditableContext } from './achivedResultsTable';
+import { EditableContext } from './ArchivedResultsTable';
 import StateDistrictEditor from '../../components/StateDistrictEditor';
 import { MEETING_TYPE_OPTIONS, ICON_FLAGS } from '../../constants';
 import ArchiveEventsEditModal from '../../components/ArchiveEventsEditModal';

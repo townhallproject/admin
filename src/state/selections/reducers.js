@@ -15,7 +15,6 @@ import {
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
   CHANGE_RESEARCHER_FILTER,
-  CHANGE_ERROR_FILTER,
   CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 import { 
@@ -76,11 +75,6 @@ const selectionReducer = (state = initialState, action) => {
       return {
         ...state,
         filterByResearcher: action.payload,
-      }
-    case CHANGE_ERROR_FILTER:
-      return {
-        ...state,
-        filterByError: action.payload,
       }
     case CHANGE_EVENTS_TAB:
       return {

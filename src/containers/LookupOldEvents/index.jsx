@@ -10,7 +10,6 @@ import {
     DatePicker,
     Select,
     Row,
-    Progress,
     Statistic,
     AutoComplete,
 } from 'antd';
@@ -24,9 +23,9 @@ import { statesAb } from '../../assets/data/states';
 
 import "./style.scss";
 
-import OldEventsResults from './results';
-import ResultsTable from './achivedResultsTable';
-import { LEGISLATIVE_BODIES, DATE_OBJ, DATE_CREATED, DATE_TIMESTAMP } from '../../constants';
+import OldEventsResults from './OldEventsResults';
+import ArchivedResultsTable from './ArchivedResultsTable';
+import { LEGISLATIVE_BODIES, DATE_CREATED, DATE_TIMESTAMP } from '../../constants';
 
 const {
   RangePicker,
@@ -42,11 +41,7 @@ class LookupOldEvents extends React.Component {
         this.onDateRangeChange = this.onDateRangeChange.bind(this);
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
-        this.handleErrorChange = this.handleErrorChange.bind(this);
         this.handleChangeDateSearchType = this.handleChangeDateSearchType.bind(this);
-        this.state = {
-            showErrors: false,
-        }
     }
 
     onDateRangeChange(date, dateRange) {
@@ -84,16 +79,6 @@ class LookupOldEvents extends React.Component {
           handleChangeStateFilters
         } = this.props;
         handleChangeStateFilters(value);
-    }
-
-    handleErrorChange(value) {
-        const {
-            handleChangeErrorFilter,
-        } = this.props;
-        handleChangeErrorFilter(value);
-        this.setState({
-            showErrors: value,
-        })
     }
 
     handleChamberChange = (value) => {
@@ -152,7 +137,6 @@ class LookupOldEvents extends React.Component {
             totalReturnedEventsLength,
             filteredEventsLength,
             stateEventsCount,
-            errorEventsCount,
             allResearcherEmails,
             dateLookupType,
         } = this.props;
@@ -177,7 +161,7 @@ class LookupOldEvents extends React.Component {
                     <Row type="flex">
                         <RangePicker 
                             onChange={this.onDateRangeChange} 
-                            format = "MMM D, YYYY"
+                            format={"MMM D, YYYY"}
                         />
                     </Row>
                     <Row type="flex">
@@ -211,17 +195,6 @@ class LookupOldEvents extends React.Component {
                             /> */}
                         </Row>
                         <Row type="flex">Filter your results:</Row>
-                        <Row type="flex">
-                            <Col>
-                                <label>View {errorEventsCount} invalid event
-                                {errorEventsCount.length === 1 ? '' : 's'}: </label>
-                            </Col>
-                            <Col offset={1}>
-                                <Switch 
-                                    onChange={this.handleErrorChange}
-                                />
-                            </Col>
-                        </Row>
                         <Row type="flex" justify="space-between">
                             <Select
                                 defaultValue="federal"
@@ -304,15 +277,6 @@ class LookupOldEvents extends React.Component {
                         </Row>
                     </React.Fragment>)
                     }
-                    {/* <Row
-                        type="flex"
-                    >   <Col>
-                            <span>Download complete</span>
-                        </Col>
-                        <Col span={12}>
-                            <Progress percent={emailCoverage} />
-                        </Col>
-                    </Row> */}
                 </Col>
             </Row>
             <Row
@@ -324,9 +288,7 @@ class LookupOldEvents extends React.Component {
             >
             {filteredOldEvents.length > 0 &&
                 <div>
-                    <ResultsTable 
-                        showErrors={this.state.showErrors}    
-                    />
+                    <ArchivedResultsTable />
                     <OldEventsResults
                         archiveUrl={archiveUrl}
                         dataForChart={dataForChart}
@@ -370,7 +332,6 @@ const mapDispatchToProps = dispatch => ({
     requestOldEvents: ({ path, date, dates, chamber } ) => dispatch(eventStateBranch.actions.requestOldEvents({ path, date, dates, chamber })),
     resetOldEvents: () => dispatch(eventStateBranch.actions.resetOldEvents()),
     changeDataLookupRange: (dates) => dispatch(selectionStateBranch.actions.changeDateLookup(dates)),
-    handleChangeErrorFilter: (value) => dispatch(selectionStateBranch.actions.changeErrorFilter(value)),
     changeChamberFilter: (chamber) => dispatch(selectionStateBranch.actions.changeChamberFilter(chamber)),
     changeEventFilter: (events) => dispatch(selectionStateBranch.actions.changeEventFilter(events)),
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),

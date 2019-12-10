@@ -16,9 +16,6 @@ class EventList extends React.Component {
     const {
       archiveEvent,
       approveEvent,
-      currentUserId,
-      currentUserEmail,
-      isAdmin,
       pathForArchive,
       pending,
       deleteEvent,
