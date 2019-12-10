@@ -4,13 +4,11 @@ import {
   Table,
   Form,
   Checkbox,
-  Row,
-  Col,
 } from 'antd';
 
 import moment from 'moment-timezone';
 
-import EditableCell from './editableCell';
+import EditableCell from './EditableCell';
 import eventsStateBranch from '../../state/events';
 import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
@@ -47,7 +45,7 @@ const iconFlagMap = {
   staff: staff,
 };
 
-class ResultsTable extends React.Component {
+class ArchivedResultsTable extends React.Component {
 
   constructor(props) {
       super(props);
@@ -61,8 +59,6 @@ class ResultsTable extends React.Component {
 
   render() {
     const { 
-      showErrors,
-      allResearchers,
       researchersEmailById,
     } = this.props;
     const components = {
@@ -72,6 +68,12 @@ class ResultsTable extends React.Component {
       },
     };
     let columns = [
+      {
+        title: 'Error',
+        dataIndex: 'errorMessage',
+        key: 'errorMessage',
+        editable: false,
+      },
       {
         title: 'Name',
         dataIndex: 'displayName',
@@ -122,9 +124,6 @@ class ResultsTable extends React.Component {
       },
       {
         title: 'Date',
-        render: (text, record) => {
-            return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
-        },
         dataIndex: 'timeStart',
         key: 'timeStart',
         editable: true,
@@ -160,14 +159,7 @@ class ResultsTable extends React.Component {
         </Checkbox>)
       },
     ];
-    if (showErrors) {
-      columns.unshift({
-        title: 'Error',
-        dataIndex: 'errorMessage',
-        key: 'errorMessage',
-        editable: false,
-      })
-    }
+
     columns = columns.map(col => {
       if (!col.editable) {
         return col;
@@ -219,4 +211,4 @@ const mapDispatchToProps = dispatch => ({
   validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
 });
   
-export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(ArchivedResultsTable);

@@ -16,7 +16,6 @@ import {
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
   CHANGE_RESEARCHER_FILTER,
-  CHANGE_ERROR_FILTER,
   CHANGE_EVENT_DATE_LOOKUP_TYPE,
 } from "./constants";
 
@@ -48,11 +47,6 @@ export const changeDateLookup = (dates) => ({
   type: CHANGE_DATE_LOOKUP,
   payload: dates,
 });
-
-export const changeErrorFilter = (value) => ({
-  type: CHANGE_ERROR_FILTER,
-  payload: value,
-})
 
 export const changeChamberFilter = (chamber) => ({
   type: CHANGE_CHAMBER_FILTER,
