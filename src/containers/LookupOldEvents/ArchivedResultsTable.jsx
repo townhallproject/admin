@@ -6,7 +6,7 @@ import {
   Checkbox,
 } from 'antd';
 
-import EditableCell from './EditableCell';
+import EditableCell from './EditableTableCell';
 import eventsStateBranch from '../../state/events';
 import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
