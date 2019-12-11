@@ -32,7 +32,7 @@ import {
   ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
-  PENDING_EVENTS_TAB, DATE_CREATED,
+  PENDING_EVENTS_TAB, DATE_CREATED, FEDERAL_RADIO_BUTTON,
 } from '../../constants'
 import {
   addAllOldEventsToState,
@@ -50,7 +50,7 @@ import {
 import {
   requestResearcherById,
 } from "../researchers/actions";
-import { getDateLookupType } from "../selections/selectors";
+import { getDateLookupType, getActiveFederalOrState } from "../selections/selectors";
 
 require('dotenv').config();
 
@@ -227,40 +227,49 @@ const archiveEventLogic = createLogic({
       const {
         action,
         firebasedb,
+        getState,
       } = deps;
 
       const {
         townHall,
         path,
-        archivePath
       } = action.payload;
+      const level = getActiveFederalOrState(getState()) === FEDERAL_RADIO_BUTTON ? FEDERAL_RADIO_BUTTON : 'state';
       const cleanTownHall = {
         ...townHall,
+        level: townHall.level || level,
         userEmail: null,
+      }
+      console.log(cleanTownHall.eventId, level)
+      if (!cleanTownHall.level) {
+        return alert('Needs to have a level')
       }
       const oldTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
       const oldTownHallID = firebasedb.ref(`/townHallIds/${cleanTownHall.eventId}`);
-      const dateKey = cleanTownHall.dateObj ? moment(cleanTownHall.dateObj).format('YYYY-MM') : 'no_date';
       dispatch(setLoading(true));
-      console.log(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`)
-      firebasedb.ref(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`).update(cleanTownHall)
-        .then(() => {
-            const removed = oldTownHall.remove();
-            if (removed) {
-              oldTownHallID.update({
-                status: 'archived',
-                archive_path: `${archivePath}/${dateKey}`,
-              })
-              .then(() => {
-                dispatch(archiveEventSuccess(cleanTownHall.eventId));
-                dispatch(setLoading(false));
-                done();
-              })
-            }
-        })
-        .catch(e => {
-          console.log(e)
-        })
+      const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
+          return superagent
+            .post(url + 'event')
+            .send(cleanTownHall)
+            .then((res) => {
+              if (res.status === 200) {
+                return res.body;
+              }
+              return Promise.reject();
+            }).then(() => {
+               return oldTownHall.remove()
+            }).then(() => {
+                return oldTownHallID.update({
+                    status: 'archived',
+                    archive_path: 'archived_town_halls',
+                  })
+            }).then(() => {
+                  dispatch(archiveEventSuccess(cleanTownHall.eventId));
+                  dispatch(setLoading(false));
+                  done();
+            }).catch(e => {
+                console.log(e)
+            })
       }
 })
 
@@ -315,35 +324,35 @@ const updateEventLogic = createLogic({
   }
 })
 
-const updateOldEventLogic = createLogic({
-  type: UPDATE_OLD_EVENT,
-  processOptions: {
-    successType: UPDATE_OLD_EVENT_SUCCESS,
-    failType: UPDATE_EVENT_FAIL,
-  },
-  process(deps) {
-    const {
-      action,
-      firestore,
-    } = deps;
-    const {
-      updateData,
-      eventId
-    } = action.payload;
-    if (!eventId) {
-      console.log('Missing eventId');
-      return
-    }
+// const updateOldEventLogic = createLogic({
+//   type: UPDATE_OLD_EVENT,
+//   processOptions: {
+//     successType: UPDATE_OLD_EVENT_SUCCESS,
+//     failType: UPDATE_EVENT_FAIL,
+//   },
+//   process(deps) {
+//     const {
+//       action,
+//       firestore,
+//     } = deps;
+//     const {
+//       updateData,
+//       eventId
+//     } = action.payload;
+//     if (!eventId) {
+//       console.log('Missing eventId');
+//       return
+//     }
 
-    let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
-    return eventRef.update(updateData).then(() => {
-      return {...updateData, eventId}
-    })
-    .catch(err => {
-      console.log(`Error updating old event: ${err}`);
-    });
-  }
-})
+//     let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
+//     return eventRef.update(updateData).then(() => {
+//       return {...updateData, eventId}
+//     })
+//     .catch(err => {
+//       console.log(`Error updating old event: ${err}`);
+//     });
+//   }
+// })
 
 const requestEventsCounts = createLogic({
   type: REQUEST_EVENTS_COUNTS,
@@ -413,7 +422,7 @@ const validateAndSaveOldEvent = createLogic({
     delete payload.errorMessage;
     const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
     return superagent
-      .post(url + 'event')
+      .patch(url + 'event')
       .send(payload)
       .then((res) => {
         if (res.status === 200) {
@@ -432,7 +441,7 @@ export default [
   fetchEvents,
   deleteEvent,
   updateEventLogic,
-  updateOldEventLogic,
+  // updateOldEventLogic,
   requestEventsCounts,
   fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
