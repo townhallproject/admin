@@ -72,11 +72,12 @@ export const updateMissingMember = (id, missingMember) => ({
   }
 })
 
-export const updateInOffice = (id, inOffice) => ({
+export const updateInOffice = (id, inOffice, chamber) => ({
   type: UPDATE_IN_OFFICE,
   payload: {
     id,
     inOffice,
+    chamber,
   }
 })
 

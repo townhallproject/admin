@@ -23,9 +23,10 @@ export default class MocTable extends React.Component {
     updateMissingMemberValue(id, target.checked);
   }
 
-  updateInOffice({target}, id) {
+  updateInOffice({target}, id, chamber) {
     const { updateInOfficeValue } = this.props;
-    updateInOfficeValue(id, target.checked);
+    console.log(chamber)
+    updateInOfficeValue(id, target.checked, chamber);
   }
 
   updateDisplayName({target}, id) {
@@ -115,7 +116,7 @@ export default class MocTable extends React.Component {
         render: (mocs, record) => (
           <Input 
             defaultValue={record.displayName}
-            onChange={(e) => this.updateDisplayName(e, record.govtrack_id)}
+            onChange={(e) => this.updateDisplayName(e, record.id)}
           />
         ),
         ...this.getColumnSearchProps('displayName'),
@@ -144,8 +145,8 @@ export default class MocTable extends React.Component {
         render: (mocs, record) => (
           <span>
             <Checkbox 
-              key={record.govtrack_id}
-              onChange={(e) => this.updateInOffice(e, record.govtrack_id)} 
+              key={record.id}
+              onChange={(e) => this.updateInOffice(e, record.id, record.chamber)} 
               defaultChecked={record.in_office}>
                 In Office
             </Checkbox>
@@ -158,8 +159,8 @@ export default class MocTable extends React.Component {
         render: (mocs, record) => (
           <span>
             <Checkbox 
-              key={record.govtrack_id}
-              onChange={(e) => this.updateMissingMember(e, record.govtrack_id)} 
+              key={record.id}
+              onChange={(e) => this.updateMissingMember(e, record.id)} 
               defaultChecked={record.missing_member}>
                   Missing
             </Checkbox>
@@ -176,6 +177,16 @@ export default class MocTable extends React.Component {
               onClick={() => this.viewRecord(record)}
               size="small"
             >Details
+            </Button>
+            <Button
+              onClick={() => this.viewRecord(record)}
+              size="small"
+            >Add campaign
+            </Button>
+            <Button
+              onClick={() => this.viewRecord(record)}
+              size="small"
+            >View campaign(s)
             </Button>
           </span>
         ),

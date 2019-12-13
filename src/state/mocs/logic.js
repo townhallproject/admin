@@ -30,6 +30,7 @@ import {
   filter
 } from "lodash";
 import StateLeg from "./state-leg-model";
+import moment from "moment";
 
 const fetchMocs = createLogic({
   type: GET_MOCS,
@@ -176,19 +177,37 @@ const updateInOfficeLogic = createLogic({
   process(deps, dispatch, done) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    const id = action.payload.id;
-    const inOffice = action.payload.inOffice;
-    const p1 = firebasedb.ref(`mocData/${id}/in_office`).set(inOffice);
-    const p2 = firebasedb.ref(`mocData/${id}/last_updated`).update({
-      by: 'admin',
-      time: Date.now(),
-    });
-    Promise.all([p1, p2]).then(() => {
-      dispatch(updateInOfficeSuccess(id, inOffice));
-      done();
-    });
+
+    let updates = firestore.batch();
+
+    const { id, inOffice, chamber } = action.payload;
+    const data = {
+      in_office: inOffice
+    };
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+    updates.update(ref1, {
+      ...data,
+      current_office_index: null,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+    const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
+    const ref2 = firestore.collection(chamberCollection).doc(id);
+    updates.update(ref2, data)
+
+    const congressCollection = '116th_congress'
+    const congressCollectionRef = firestore.collection(congressCollection).doc(id);
+    updates.update(congressCollectionRef, data);
+
+ 
+      return updates.commit().then(function () {
+        console.log('successfully updated name', id)
+      }).catch(console.log)
+  
   }
 })
 

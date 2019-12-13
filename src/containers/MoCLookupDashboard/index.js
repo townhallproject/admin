@@ -138,7 +138,7 @@ const mapDispatchToProps = dispatch => ({
     changeMode: (value) => dispatch(selectionStateBranch.actions.changeMode(value)),
     changeSelectedState: (value) => dispatch(mocStateBranch.actions.changeSelectedState(value)),
     updateMissingMemberValue: (id, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, missingMember)),
-    updateInOfficeValue: (id, inOffice) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice)),
+    updateInOfficeValue: (id, inOffice, chamber) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice, chamber)),
     updateDisplayNameValue: (id, displayName) => dispatch(mocStateBranch.actions.updateDisplayName(id, displayName)),
 });
 
