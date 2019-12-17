@@ -18,9 +18,10 @@ export default class MocTable extends React.Component {
     modalRecord: {},
   }
 
-  updateMissingMember({target}, id) {
+  updateMissingMember({target}, record) {
     const { updateMissingMemberValue } = this.props;
-    updateMissingMemberValue(id, target.checked);
+    console.log(record)
+    // updateMissingMemberValue(id, target.checked);
   }
 
   updateInOffice({target}, id, chamber) {
@@ -160,7 +161,7 @@ export default class MocTable extends React.Component {
           <span>
             <Checkbox 
               key={record.id}
-              onChange={(e) => this.updateMissingMember(e, record.id)} 
+              onChange={(e) => this.updateMissingMember(e, record)} 
               defaultChecked={record.missing_member}>
                   Missing
             </Checkbox>

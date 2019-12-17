@@ -163,9 +163,9 @@ const updateMissingMemberLogic = createLogic({
       action,
       firebasedb,
     } = deps;
-    return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
-      116: action.payload.missingMember,
-    }).then(() => action)
+    // return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
+    //   116: action.payload.missingMember,
+    // }).then(() => action)
   }
 })
 
@@ -202,11 +202,11 @@ const updateInOfficeLogic = createLogic({
     const congressCollection = '116th_congress'
     const congressCollectionRef = firestore.collection(congressCollection).doc(id);
     updates.update(congressCollectionRef, data);
-
  
-      return updates.commit().then(function () {
-        console.log('successfully updated name', id)
-      }).catch(console.log)
+    return updates.commit().then(function () {
+      console.log('successfully updated name', id);
+      done();
+    }).catch(console.log)
   
   }
 })
