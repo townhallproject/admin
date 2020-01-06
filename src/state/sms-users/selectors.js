@@ -5,6 +5,7 @@ import {
   map,
   find,
 } from "lodash";
+import { getFilterSMSToLastWeek } from "../selections/selectors";
 
 export const getTotalSMSUsers = state => state.smsUsers.totalSmsUsers;
 export const getUserCache = state => state.smsUsers.userCache;
@@ -18,15 +19,19 @@ export const getUsersWithReplies = createSelector([getUsersWithMessages], (users
   return filter(users, (ele) => ele.messages.length > 1);
 })
 
-export const getRecentConversations = createSelector([getUsersWithReplies], (filtered) => {
-    return filter(filtered, (user) => {
-      const date = moment(user.messages[0].time_stamp);
-      const aWeekAgo = moment().subtract(1, 'week');
-      return date.isAfter(aWeekAgo);
-    })
+export const getConversationsToShow = createSelector([getFilterSMSToLastWeek, getUsersWithReplies], (shouldFilterByDate, filtered) => {
+    if (shouldFilterByDate) {
+
+      return filter(filtered, (user) => {
+        const date = moment(user.messages[0].time_stamp);
+        const aWeekAgo = moment().subtract(1, 'week');
+        return date.isAfter(aWeekAgo);
+      })
+    }
+    return filtered;
 })
 
-export const getPotentialVolsWithReplyData = createSelector([getRecentConversations, getPotentialVols], (usersWithMessages, potentialVols) => {
+export const getPotentialVolsWithReplyData = createSelector([getConversationsToShow, getPotentialVols], (usersWithMessages, potentialVols) => {
   const vols =  map(potentialVols, vol => {
     const data = find(usersWithMessages, (user) => user.phoneNumber === vol.phoneNumber);
     if (data) {

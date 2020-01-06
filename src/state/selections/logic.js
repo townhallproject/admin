@@ -11,11 +11,11 @@ import {
   CHANGE_ARCHIVED_TIME_ZONE,
   SET_TEMP_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
-} from "./constants";
+} from "./reducers";
 import {
   resetOldEvents,
   updateExistingEvent,
-  updateOldEvent,
+  validateAndSaveOldEvent,
 } from "../events/actions";
 import { toggleIncludeLiveEventsInLookup } from "./actions";
 
@@ -102,7 +102,6 @@ const requestTimeZoneLogic = createLogic({
     httpClient.get(url)
       .then((r) => {
         const response = r.body;
-        console.log(response)
         if (!response.timeZoneName) {
           return Error('no timezone results', response);
         }
@@ -125,7 +124,6 @@ const requestTimeZoneLogic = createLogic({
         }
 
         const dateObj = moment(`${payload.date} ${payload.time} ${utcoffset}`).utc().valueOf();
-        console.log(dateObj, moment(dateObj).format());
 
         const path = payload.pathForEvents;
         const eventId = payload.eventId;
@@ -155,7 +153,7 @@ const requestArchivedTimeZoneLogic = createLogic({
       timeEnd,
       lat,
       lng,
-      eventId,
+      townHall,
     } = action.payload;
     const time = Date.parse(`${date} ${timeStart}`) / 1000;
     const loc = `${lat},${lng}`;
@@ -169,13 +167,16 @@ const requestArchivedTimeZoneLogic = createLogic({
         const offset = response.rawOffset / 60 / 60 + response.dstOffset / 60 / 60;
         const newTimeStart = moment(`${date}T${timeStart}`).utcOffset(offset, true);
         const newTimeEnd = moment(`${date}T${timeEnd}`).utcOffset(offset, true);
-        console.log(newTimeStart, newTimeStart.format('x'));
         const eventData = {
-          timestamp: newTimeStart.format('x'),
+          timestamp: parseInt(newTimeStart.format('x'), 10),
           timeStart: newTimeStart.format(),
           timeEnd: newTimeEnd.format(),
+          timeZone: response.timeZoneName,
         }
-        dispatch(updateOldEvent(eventData, eventId));
+        dispatch(validateAndSaveOldEvent({
+          ...townHall,
+          ...eventData,
+        }));
         done();
       })
   }

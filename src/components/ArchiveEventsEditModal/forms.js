@@ -39,7 +39,10 @@ class ArchiveAddressDateEditForm extends React.Component {
         if (vals.hasOwnProperty('phoneNumber')) {
           updateObj.phoneNumber = vals.phoneNumber;
         }
-        updateEvent(updateObj, townHall.eventId);
+        updateEvent({
+          ...townHall,
+          ...updateObj,
+        });
         this.checkData(vals);
         handleClose();
       }
@@ -69,6 +72,7 @@ class ArchiveAddressDateEditForm extends React.Component {
       lat: townHall.lat,
       lng: townHall.lng,
       eventId: townHall.eventId,
+      townHall: townHall,
     });
   }
 

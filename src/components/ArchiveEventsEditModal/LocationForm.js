@@ -58,13 +58,17 @@ class ArchiveLocationForm extends React.Component {
     } = this.props;
 
     if (this.state.includeState && tempAddressFullData.state && tempAddressFullData.stateName) {
-      updateEvent(tempAddressFullData, currentTownHall.eventId)
+      updateEvent({
+        ...currentTownHall,
+        ...tempAddressFullData,
+      })
     }
     updateEvent({
+      ...currentTownHall,
       lat: tempLat,
       lng: tempLng,
       address: tempAddress
-    }, currentTownHall.eventId);
+    });
     clearTempAddress();
   }
 

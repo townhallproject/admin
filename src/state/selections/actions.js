@@ -15,8 +15,10 @@ import {
   CHANGE_EVENT_FILTER,
   CHANGE_LEGISLATIVE_BODY_FILTER,
   CHANGE_NAME_FILTER,
-  CHANGE_ERROR_FILTER,
-} from "./constants";
+  CHANGE_RESEARCHER_FILTER,
+  CHANGE_EVENT_DATE_LOOKUP_TYPE,
+  TOGGLE_FILTER_SMS_TO_LAST_WEEK,
+} from "./reducers";
 
 export const changeActiveEventTab = tab => ({
   type: CHANGE_EVENTS_TAB,
@@ -47,11 +49,6 @@ export const changeDateLookup = (dates) => ({
   payload: dates,
 });
 
-export const changeErrorFilter = (value) => ({
-  type: CHANGE_ERROR_FILTER,
-  payload: value,
-})
-
 export const changeChamberFilter = (chamber) => ({
   type: CHANGE_CHAMBER_FILTER,
   payload: chamber,
@@ -77,6 +74,11 @@ export const changeNameFilter = (name) => ({
   payload: name,
 });
 
+export const changeResearcherFilter = (email) => ({
+  type: CHANGE_RESEARCHER_FILTER,
+  payload: email,
+})
+
 export const toggleIncludeLiveEventsInLookup = (include) => ({
   type: TOGGLE_INCLUDE_LIVE_EVENTS,
   payload: include,
@@ -100,3 +102,13 @@ export const getArchivedTimeZone = (payload) => ({
   type: CHANGE_ARCHIVED_TIME_ZONE,
   payload,
 });
+
+export const changeEventDateLookupType = (payload) => ({
+  type: CHANGE_EVENT_DATE_LOOKUP_TYPE,
+  payload,
+})
+
+export const toggleFilterSmsToLastWeek = (payload) => ({
+  type: TOGGLE_FILTER_SMS_TO_LAST_WEEK,
+  payload,
+})

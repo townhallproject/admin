@@ -1,7 +1,6 @@
 import { createLogic } from "redux-logic";
-import {
-  includes,
-} from 'lodash';
+import superagent from 'superagent';
+import { includes } from 'lodash';
 import moment from 'moment';
 import { 
   ARCHIVE_COLLECTION,
@@ -24,12 +23,16 @@ import {
   REQUEST_LIVE_EVENTS_FOR_ARCHIVE,
   RECEIVE_ALL_LIVE_EVENTS_FOR_ANALYSIS,
   GENERAL_FAIL,
+  VALIDATE_AND_SAVE_OLD_EVENT,
+  VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
 } from "./constants";
 import { 
   EVENTS_PATHS,
+  ARCHIVE_MANAGER_URL,
+  ARCHIVE_MANAGER_DEV_URL,
 } from '../constants';
 import {
-  PENDING_EVENTS_TAB,
+  PENDING_EVENTS_TAB, DATE_CREATED, FEDERAL_RADIO_BUTTON,
 } from '../../constants'
 import {
   addAllOldEventsToState,
@@ -47,6 +50,9 @@ import {
 import {
   requestResearcherById,
 } from "../researchers/actions";
+import { getDateLookupType, getActiveFederalOrState } from "../selections/selectors";
+
+require('dotenv').config();
 
 const fetchEvents = createLogic({
   type: REQUEST_EVENTS,
@@ -125,17 +131,25 @@ const fetchOldEventsLogic = createLogic({
     const {
       payload
     } = action;
-    console.log('startAt', payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
     let fsRef = firestore.collection(ARCHIVE_COLLECTION);
+    const state = getState();
+    const dateKey = getDateLookupType(state);
+    let fsQueryRef;
+    if (dateKey === DATE_CREATED) {
+      fsQueryRef = fsRef
+      .orderBy('timestamp')
+    } else {
+      fsQueryRef = fsRef
+        .where('timestamp', '>=', payload.dates[0])
+        .where('timestamp', '<=', payload.dates[1])
+        .orderBy('timestamp')
 
+    }
     dispatch(setLoading(true))
     const allEvents = [];
     const allUids = [];
-
-    let fsQueryRef = fsRef
-      .where('timestamp', '>=', payload.dates[0])
-      .where('timestamp', '<=', payload.dates[1])
-      .orderBy('timestamp')
+    
+    console.log('startAt', dateKey, payload.dates[0], 'endtAt', payload.dates[1], `${payload.path}/`)
       
     fsQueryRef.get()
       .then(snapshot => {
@@ -149,7 +163,7 @@ const fetchOldEventsLogic = createLogic({
           const researcher = eventData.enteredBy;
           if (researcher && !includes(researcher, '@')) {
             if (!includes(allUids, researcher)) {
-              // dispatch(requestResearcherById(researcher))
+              dispatch(requestResearcherById(researcher))
             }
             allUids.push(researcher);
           }
@@ -213,40 +227,49 @@ const archiveEventLogic = createLogic({
       const {
         action,
         firebasedb,
+        getState,
       } = deps;
 
       const {
         townHall,
         path,
-        archivePath
       } = action.payload;
+      const level = getActiveFederalOrState(getState()) === FEDERAL_RADIO_BUTTON ? FEDERAL_RADIO_BUTTON : 'state';
       const cleanTownHall = {
         ...townHall,
+        level: townHall.level || level,
         userEmail: null,
+      }
+      console.log(cleanTownHall.eventId, level)
+      if (!cleanTownHall.level) {
+        return alert('Needs to have a level')
       }
       const oldTownHall = firebasedb.ref(`${path}/${cleanTownHall.eventId}`);
       const oldTownHallID = firebasedb.ref(`/townHallIds/${cleanTownHall.eventId}`);
-      const dateKey = cleanTownHall.dateObj ? moment(cleanTownHall.dateObj).format('YYYY-MM') : 'no_date';
       dispatch(setLoading(true));
-      console.log(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`)
-      firebasedb.ref(`${archivePath}/${dateKey}/${cleanTownHall.eventId}`).update(cleanTownHall)
-        .then(() => {
-            const removed = oldTownHall.remove();
-            if (removed) {
-              oldTownHallID.update({
-                status: 'archived',
-                archive_path: `${archivePath}/${dateKey}`,
-              })
-              .then(() => {
-                dispatch(archiveEventSuccess(cleanTownHall.eventId));
-                dispatch(setLoading(false));
-                done();
-              })
-            }
-        })
-        .catch(e => {
-          console.log(e)
-        })
+      const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
+          return superagent
+            .post(url + 'event')
+            .send(cleanTownHall)
+            .then((res) => {
+              if (res.status === 200) {
+                return res.body;
+              }
+              return Promise.reject();
+            }).then(() => {
+               return oldTownHall.remove()
+            }).then(() => {
+                return oldTownHallID.update({
+                    status: 'archived',
+                    archive_path: 'archived_town_halls',
+                  })
+            }).then(() => {
+                  dispatch(archiveEventSuccess(cleanTownHall.eventId));
+                  dispatch(setLoading(false));
+                  done();
+            }).catch(e => {
+                console.log(e)
+            })
       }
 })
 
@@ -301,35 +324,35 @@ const updateEventLogic = createLogic({
   }
 })
 
-const updateOldEventLogic = createLogic({
-  type: UPDATE_OLD_EVENT,
-  processOptions: {
-    successType: UPDATE_OLD_EVENT_SUCCESS,
-    failType: UPDATE_EVENT_FAIL,
-  },
-  process(deps) {
-    const {
-      action,
-      firestore,
-    } = deps;
-    const {
-      updateData,
-      eventId
-    } = action.payload;
-    if (!eventId) {
-      console.log('Missing eventId');
-      return
-    }
+// const updateOldEventLogic = createLogic({
+//   type: UPDATE_OLD_EVENT,
+//   processOptions: {
+//     successType: UPDATE_OLD_EVENT_SUCCESS,
+//     failType: UPDATE_EVENT_FAIL,
+//   },
+//   process(deps) {
+//     const {
+//       action,
+//       firestore,
+//     } = deps;
+//     const {
+//       updateData,
+//       eventId
+//     } = action.payload;
+//     if (!eventId) {
+//       console.log('Missing eventId');
+//       return
+//     }
 
-    let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
-    return eventRef.update(updateData).then(() => {
-      return {...updateData, eventId}
-    })
-    .catch(err => {
-      console.log(`Error updating old event: ${err}`);
-    });
-  }
-})
+//     let eventRef = firestore.collection(ARCHIVE_COLLECTION).doc(eventId);
+//     return eventRef.update(updateData).then(() => {
+//       return {...updateData, eventId}
+//     })
+//     .catch(err => {
+//       console.log(`Error updating old event: ${err}`);
+//     });
+//   }
+// })
 
 const requestEventsCounts = createLogic({
   type: REQUEST_EVENTS_COUNTS,
@@ -384,7 +407,31 @@ const requestTotalEventsCounts = createLogic({
       dispatch(requestFederalTotalEventsCountsSuccess(snapshot.numChildren()));
     });
   }
-})
+});
+
+const validateAndSaveOldEvent = createLogic({
+  type: VALIDATE_AND_SAVE_OLD_EVENT,
+  processOptions: {
+    successType: VALIDATE_AND_SAVE_OLD_EVENT_SUCCESS,
+    failType: GENERAL_FAIL,
+  },
+  process(deps) {
+    const { payload } = deps.action;
+    delete payload.editable;
+    delete payload.error;
+    delete payload.errorMessage;
+    const url = process.env.NODE_ENV === 'production' ? ARCHIVE_MANAGER_URL : ARCHIVE_MANAGER_DEV_URL;
+    return superagent
+      .patch(url + 'event')
+      .send(payload)
+      .then((res) => {
+        if (res.status === 200) {
+          return res.body;
+        } 
+        return Promise.reject();
+      });
+  },
+});
 
 
 export default [
@@ -394,8 +441,9 @@ export default [
   fetchEvents,
   deleteEvent,
   updateEventLogic,
-  updateOldEventLogic,
+  // updateOldEventLogic,
   requestEventsCounts,
   fetchFederalAndStateLiveEvents,
   requestTotalEventsCounts,
+  validateAndSaveOldEvent,
 ];

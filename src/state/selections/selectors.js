@@ -7,12 +7,15 @@ import {
   reduce,
   uniq,
 } from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { 
   LIVE_EVENTS_TAB, 
   PENDING_EVENTS_TAB, 
   STATES_LEGS, 
-  FEDERAL_RADIO_BUTTON
+  FEDERAL_RADIO_BUTTON,
+  DATE_TIMESTAMP,
+  DATE_OBJ,
+  DATE_CREATED
 } from '../../constants';
 import {
   getAllOldEventsWithUserEmails,
@@ -22,7 +25,13 @@ import {
 import {
   getCurrentUser,
 } from '../users/selectors';
-import { get116thCongress } from '../mocs/selectors';
+import {
+  get116thCongress
+} from '../mocs/selectors';
+import {
+  getResearchersEmailById,
+} from '../researchers/selectors';
+
 
 export const getPendingOrLiveTab = state => state.selections.selectedEventTab;
 export const getActiveFederalOrState = state => state.selections.federalOrState;
@@ -37,7 +46,9 @@ export const getChamber = state => state.selections.filterByChamber;
 export const getEventTypes = state => state.selections.filterByEventType;
 export const getLegislativeBody = state => state.selections.filterByLegislativeBody;
 export const getNameFilter = state => state.selections.filterByName;
-export const getErrorFilter = state => state.selections.filterByError;
+export const getResearcherFilter = state => state.selections.filterByResearcher;
+export const getDateLookupType = state => state.selections.dateLookupType;
+export const getFilterSMSToLastWeek = state => state.selections.filterSMSToLastWeek;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {
@@ -116,7 +127,7 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.lat = eventData.lat || ' ';
   normalizedEvent.lng = eventData.lng || ' ';
 
-  normalizedEvent.govtrack_id = eventData.govtrack_id || ' ';
+  normalizedEvent.govtrack_id = eventData.govtrack_id || 0;
   normalizedEvent.party = eventData.party || ' ';
   normalizedEvent.level = eventData.level || ' ';
   normalizedEvent.chamber = eventData.chamber || ' ';
@@ -124,12 +135,13 @@ export const normalizeEventSchema = eventData => {
   normalizedEvent.district = eventData.district;
   
   normalizedEvent.timestamp = eventData.timestamp || eventData.dateObj;
-  normalizedEvent.timeStart = eventData.timeStart || moment(eventData.dateObj).toISOString();
+  normalizedEvent.timeStart = eventData.timeZone ? moment(eventData.timeStart).tz(eventData.timeZone).format('MMMM Do YYYY, h:mm a z') : eventData.timeStart || moment(eventData.dateObj).toISOString();
   // Live events in Firebase currently store timeEnd as human-readable strings, e.g. "12:00 PM", instead of ISO-8601
   normalizedEvent.timeEnd = eventData.timeEnd || ' ';
   normalizedEvent.timeZone = eventData.timeZone || ' ';
   normalizedEvent.dateValid = eventData.dateValid || false;
   normalizedEvent.validated = eventData.validated || false;
+  normalizedEvent.ada_accessible = eventData.ada_accessible || false;
 
   normalizedEvent.error = eventData.error || false;
 
@@ -159,19 +171,41 @@ export const getAllEventsForAnalysis = createSelector([
     getAllOldEventsWithUserEmails, 
     getAllFederalAndStateLiveEvents,
     getDateRange,
-  ], (includeLive, oldEvents, liveEvents, dateRange) => {
+    getDateLookupType,
+  ], (includeLive, oldEvents, liveEvents, dateRange, dateLookupType) => {
     oldEvents = map(oldEvents, (event) => {
       event.editable = true;
       return event;
     });
+    
+    if (dateLookupType === DATE_CREATED) {
+      oldEvents = filter(oldEvents, (event) => {
+        if (event[DATE_CREATED]){
+          console.log('date created', event[DATE_CREATED])
+          let date = moment(event[DATE_CREATED]).valueOf();
+          console.log(date, date >= dateRange[0] && date <= dateRange[1]);
+          return date >= dateRange[0] && date <= dateRange[1]
+ 
+        } 
+        let date = moment(event.lastUpdated).valueOf();
+        console.log('using last updated', date >= dateRange[0] && date <= dateRange[1])
+        return date >= dateRange[0] && date <= dateRange[1]
+   
+      })
+    }
+
     if (includeLive) {
       liveEvents = filter(liveEvents, (event) => {
-        if (!event.dateObj && event.dateString) {
-          const date = moment(event.dateString).valueOf();
-          return date >= dateRange[0] && date <= dateRange[1]
+        const dateKey = dateLookupType === DATE_TIMESTAMP ? DATE_OBJ : dateLookupType;
+        let date;
+        if (event[dateKey] && moment(event[dateKey]).isValid()) {
+          date = moment(event[dateKey]).valueOf();
+        } else if (!event[dateKey] && event.dateString && dateKey === DATE_OBJ) {
+          date = moment(event.dateString).valueOf();
         } else {
-          return event.dateObj >= dateRange[0] && event.dateObj <= dateRange[1];
+          return false;
         }
+        return date >= dateRange[0] && date <= dateRange[1]
       });
       liveEvents = map(liveEvents, (event) => {
         event.editable = false;
@@ -202,14 +236,13 @@ export const getFilteredEvents = createSelector(
     getEventTypes,
     getLegislativeBody,
     getNameFilter,
-    getErrorFilter,
+    getResearcherFilter,
+    getResearchersEmailById,
   ], 
-  (allEvents, states, chamber, events, legislativeBody, name, errorValue) => {
+  (allEvents, states, chamber, events, legislativeBody, name, researcherEmail, researchersEmailById) => {
     let filteredEvents = allEvents;
     filteredEvents = map(filteredEvents, normalizeEventSchema);
-    filteredEvents = filter(filteredEvents, (event) => {
-      return Boolean(errorValue) === Boolean(event.error);
-    });
+
     if (states.length) { 
       filteredEvents = filter(filteredEvents, (event) => {
         return includes(states, event.state);
@@ -235,6 +268,11 @@ export const getFilteredEvents = createSelector(
       filteredEvents = filter(filteredEvents, (event) => {
         return name === event.displayName;
       });
+    }
+    if (researcherEmail) {
+      filteredEvents = filter(filteredEvents, (event) => {
+        return researcherEmail === researchersEmailById[event.enteredBy];
+      })
     }
     filteredEvents = orderBy(filteredEvents, ['timestamp'], ['desc']);
     return filteredEvents;

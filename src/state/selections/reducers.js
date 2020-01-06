@@ -1,27 +1,47 @@
-import {
-  CHANGE_EVENTS_TAB, 
-  CHANGE_FEDERAL_STATE_RADIO, 
-  GET_URL_HASH_SUCCESS,
-  CHANGE_DATE_LOOKUP,
-  CHANGE_STATE_FILTERS,
-  TOGGLE_INCLUDE_LIVE_EVENTS,
-  CHANGE_MODE, 
-  CHANGE_MOC_END_POINT,
-  GENERAL_FAIL,
-  CLEAR_ADDRESS,
-  SET_TEMP_ADDRESS,
-  CHANGE_CHAMBER_FILTER,
-  CHANGE_EVENT_FILTER,
-  CHANGE_LEGISLATIVE_BODY_FILTER,
-  CHANGE_NAME_FILTER,
-  CHANGE_ERROR_FILTER,
-} from "./constants";
 import { 
   PENDING_EVENTS_TAB, 
   FEDERAL_RADIO_BUTTON,
+  DATE_TIMESTAMP,
  } from "../../constants";
 
+
+ import {
+   makeConstant
+ } from "../../utils";
+ const STATE_BRANCH = 'SELECTIONS';
+
+export const CHANGE_EVENTS_TAB = "CHANGE_EVENTS_TAB";
+export const CHANGE_FEDERAL_STATE_RADIO = "CHANGE_FEDERAL_STATE_RADIO";
+export const GET_URL_HASH = "GET_URL_HASH";
+export const GET_URL_HASH_SUCCESS = "GET_URL_HASH_SUCCESS";
+export const SELECTION_REQUEST_FAILED = "SELECTION_REQUEST_FAILED";
+export const CHANGE_FEDERAL_STATE_RADIO_OLD_EVENT = "CHANGE_FEDERAL_STATE_RADIO_OLD_EVENT";
+export const CHANGE_DATE_LOOKUP = "CHANGE_DATE_LOOKUP";
+export const CHANGE_STATE_FILTERS = "CHANGE_STATE_FILTERS";
+export const TOGGLE_INCLUDE_LIVE_EVENTS = "TOGGLE_INCLUDE_LIVE_EVENTS";
+export const CHANGE_MODE = "CHANGE_MODE";
+export const CHANGE_MOC_END_POINT = makeConstant(STATE_BRANCH, "CHANGE_MOC_END_POINT");
+export const SET_TEMP_ADDRESS = makeConstant(STATE_BRANCH, "SET_TEMP_ADDRESS");
+export const GEOCODE_TEMP_ADDRESS = makeConstant(STATE_BRANCH, "GEOCODE_TEMP_ADDRESS");
+export const GENERAL_FAIL = makeConstant(STATE_BRANCH, "GENERAL_FAIL");
+export const CHANGE_TIME_ZONE = makeConstant(STATE_BRANCH, "CHANGE_TIME_ZONE");
+export const CHANGE_ARCHIVED_TIME_ZONE = makeConstant(STATE_BRANCH, "CHANGE_ARCHIVED_TIME_ZONE");
+export const CHANGE_TIME_ZONE_SUCCESS = makeConstant(STATE_BRANCH, "CHANGE_TIME_ZONE_SUCCESS");
+export const SET_START_TIME = makeConstant(STATE_BRANCH, "SET_START_TIME");
+export const SET_END_TIME = makeConstant(STATE_BRANCH, "SET_END_TIME");
+export const SET_DATE = makeConstant(STATE_BRANCH, "SET_DATE");
+export const SET_TIME_ZONE = makeConstant(STATE_BRANCH, "SET_TIME_ZONE");
+export const CLEAR_ADDRESS = makeConstant(STATE_BRANCH, "CLEAR_ADDRESS");
+export const CHANGE_CHAMBER_FILTER = makeConstant(STATE_BRANCH, "CHANGE_CHAMBER_FILTER");
+export const CHANGE_EVENT_FILTER = makeConstant(STATE_BRANCH, "CHANGE_EVENT_FILTER");
+export const CHANGE_LEGISLATIVE_BODY_FILTER = makeConstant(STATE_BRANCH, "CHANGE_LEGISLATIVE_BODY_FILTER");
+export const CHANGE_NAME_FILTER = makeConstant(STATE_BRANCH, "CHANGE_NAME_FILTER");
+export const CHANGE_RESEARCHER_FILTER = makeConstant(STATE_BRANCH, "CHANGE_RESEARCHER_FILTER");
+export const CHANGE_EVENT_DATE_LOOKUP_TYPE = makeConstant(STATE_BRANCH, "CHANGE_EVENT_DATE_LOOKUP_TYPE");
+export const TOGGLE_FILTER_SMS_TO_LAST_WEEK = makeConstant(STATE_BRANCH, "TOGGLE_FILTER_SMS_TO_LAST_WEEK")
+
 const initialState = {
+  dateLookupType: DATE_TIMESTAMP,
   selectedEventTab: PENDING_EVENTS_TAB,
   federalOrState: FEDERAL_RADIO_BUTTON,
   mode: '',
@@ -32,9 +52,11 @@ const initialState = {
   filterByEventType: [],
   filterByLegislativeBody: 'federal',
   filterByName: false,
+  filterByResearcher: false,
   filterByError: false,
   includeLiveEvents: false,
   mocFederalOrState: FEDERAL_RADIO_BUTTON,
+  filterSMSToLastWeek: true,
   tempAddress: {
     usState: null,
     lat: null,
@@ -67,10 +89,10 @@ const selectionReducer = (state = initialState, action) => {
         ...state,
         filterByName: action.payload,
       }
-    case CHANGE_ERROR_FILTER:
+    case CHANGE_RESEARCHER_FILTER:
       return {
         ...state,
-        filterByError: action.payload,
+        filterByResearcher: action.payload,
       }
     case CHANGE_EVENTS_TAB:
       return {
@@ -130,6 +152,16 @@ const selectionReducer = (state = initialState, action) => {
       console.error(action.payload)
       return {
         ...state,
+      }
+    case CHANGE_EVENT_DATE_LOOKUP_TYPE: 
+      return {
+        ...state,
+        dateLookupType: action.payload,
+      }
+    case TOGGLE_FILTER_SMS_TO_LAST_WEEK: 
+      return {
+        ...state,
+        filterSMSToLastWeek: action.payload,
       }
     default:
       return state;

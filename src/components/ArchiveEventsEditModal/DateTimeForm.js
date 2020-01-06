@@ -10,7 +10,6 @@ import {
 } from 'antd';
 
 const FormItem = Form.Item;
-const timeFormats = ['hh:mm A', 'h:mm A'];
 const archiveEventsTimeFormat = 'YYYY-MM-DDTHH:mm:ssZZ'
 
 class ArchiveDateTimeForm extends React.Component {

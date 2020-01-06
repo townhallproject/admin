@@ -4,18 +4,18 @@ import {
 } from 'react-redux';
 import { map } from 'lodash';
 import {
-    Button,
+    Radio,
     Col,
     Switch,
     DatePicker,
     Select,
     Row,
-    Progress,
     Statistic,
     AutoComplete,
 } from 'antd';
 
 import moment from 'moment';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 import eventStateBranch from '../../state/events';
 import mocStateBranch from '../../state/mocs';
@@ -23,9 +23,9 @@ import { statesAb } from '../../assets/data/states';
 
 import "./style.scss";
 
-import OldEventsResults from './results';
-import ResultsTable from './achivedResultsTable';
-import { LEGISLATIVE_BODIES } from '../../constants';
+import OldEventsResults from './OldEventsResults';
+import ArchivedResultsTable from './ArchivedResultsTable';
+import { LEGISLATIVE_BODIES, DATE_CREATED, DATE_TIMESTAMP } from '../../constants';
 
 const {
   RangePicker,
@@ -41,10 +41,7 @@ class LookupOldEvents extends React.Component {
         this.onDateRangeChange = this.onDateRangeChange.bind(this);
         this.handleAddState = this.handleAddState.bind(this);
         this.onIncludeLiveEvents = this.onIncludeLiveEvents.bind(this);
-        this.handleErrorChange = this.handleErrorChange.bind(this);
-        this.state = {
-            showErrors: false,
-        }
+        this.handleChangeDateSearchType = this.handleChangeDateSearchType.bind(this);
     }
 
     onDateRangeChange(date, dateRange) {
@@ -84,16 +81,6 @@ class LookupOldEvents extends React.Component {
         handleChangeStateFilters(value);
     }
 
-    handleErrorChange(value) {
-        const {
-            handleChangeErrorFilter,
-        } = this.props;
-        handleChangeErrorFilter(value);
-        this.setState({
-            showErrors: value,
-        })
-    }
-
     handleChamberChange = (value) => {
         this.props.changeChamberFilter(value === 'all' ? null : value);
     }
@@ -118,6 +105,24 @@ class LookupOldEvents extends React.Component {
         }
     }
 
+    handleResearcherFilterChange = (email) => {
+        const { changeResearcherFilter } = this.props;
+        changeResearcherFilter(email);
+    }
+
+    handleResearcherFilterClear = (email) => {
+        const { changeResearcherFilter } = this.props;
+        if (email === '' || typeof email === 'undefined') {
+            changeResearcherFilter(false);
+        }
+    }
+    
+    handleChangeDateSearchType({target}) {
+        const { changeDateSearchType } = this.props;
+        changeDateSearchType(target.value)
+    }
+
+
     render() {
         const {
             filteredOldEvents,
@@ -132,7 +137,8 @@ class LookupOldEvents extends React.Component {
             totalReturnedEventsLength,
             filteredEventsLength,
             stateEventsCount,
-            errorEventsCount,
+            allResearcherEmails,
+            dateLookupType,
         } = this.props;
         return (    
             <React.Fragment>
@@ -142,9 +148,20 @@ class LookupOldEvents extends React.Component {
                 <Col span={12} offset={6}>
                     <Row type="flex">Search archived events by date range:</Row>
                     <Row type="flex">
+                        <Col>
+                            <label>Include live events</label>
+                        </Col>
+                        <Col offset={1}>
+                                <Radio.Group value={dateLookupType} onChange={this.handleChangeDateSearchType}>
+                                    <Radio.Button value={DATE_TIMESTAMP}>By event date</Radio.Button>
+                                    <Radio.Button value={DATE_CREATED}>By date created</Radio.Button>
+                                </Radio.Group>
+                        </Col>
+                    </Row>
+                    <Row type="flex">
                         <RangePicker 
                             onChange={this.onDateRangeChange} 
-                            format = "MMM D, YYYY"
+                            format={"MMM D, YYYY"}
                         />
                     </Row>
                     <Row type="flex">
@@ -178,17 +195,6 @@ class LookupOldEvents extends React.Component {
                             /> */}
                         </Row>
                         <Row type="flex">Filter your results:</Row>
-                        <Row type="flex">
-                            <Col>
-                                <label>View {errorEventsCount} invalid event
-                                {errorEventsCount.length === 1 ? 's' : ''}: </label>
-                            </Col>
-                            <Col offset={1}>
-                                <Switch 
-                                    onChange={this.handleErrorChange}
-                                />
-                            </Col>
-                        </Row>
                         <Row type="flex" justify="space-between">
                             <Select
                                 defaultValue="federal"
@@ -212,12 +218,12 @@ class LookupOldEvents extends React.Component {
                                 <Option value="citywide">Citywide</Option>
                             </Select>
                         </Row>
-                        <Row type="flex">
+                        <Row type="flex" justify="space-between">
                             <Select
                                 placeholder="Filter by event type"
                                 defaultValue={[]}
                                 onChange={this.handleEventTypeChange}
-                                style={{ width: '100%' }}
+                                style={{ width: '48%' }}
                                 mode="multiple"
                             >
                                 <Option value='No events'>No Events</Option>
@@ -235,21 +241,17 @@ class LookupOldEvents extends React.Component {
                                 <Option value='H.R. 1 Town Hall'>H.R. 1 Town Hall</Option>
                                 <Option value='Gun Safety Activist Event'>Gun Safety Activist Event</Option>
                             </Select>
-                        </Row>
-                        <Row
-                            type="flex" 
-                        >
                             <Select
                                 mode="multiple"
                                 placeholder="Filter by state"
                                 onChange={this.handleAddState}
-                                style={{ width: '100%' }}
+                                style={{ width: '48%' }}
                                 disabled={this.props.legislativeBody !== 'federal'}
                             >
                                 {children}
                             </Select>
                         </Row>
-                        <Row type="flex">
+                        <Row type="flex" justify="space-between">
                             <AutoComplete
                                 placeholder="Filter by name"
                                 dataSource={filteredUniqueNames}
@@ -259,19 +261,22 @@ class LookupOldEvents extends React.Component {
                                 filterOption={(inputValue, option) => {
                                     return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
                                 }}
+                                style={{ width: '48%' }}
+                            />
+                            <AutoComplete
+                                placeholder="Filter by researcher"
+                                dataSource={allResearcherEmails}
+                                onSelect={this.handleResearcherFilterChange}
+                                allowClear={true}
+                                onChange={this.handleResearcherFilterClear}
+                                filterOption={(inputValue, option) => {
+                                    return option.props.children.toUpperCase().includes(inputValue.toUpperCase());
+                                }}
+                                style={{ width: '48%' }}
                             />
                         </Row>
                     </React.Fragment>)
                     }
-                    {/* <Row
-                        type="flex"
-                    >   <Col>
-                            <span>Download complete</span>
-                        </Col>
-                        <Col span={12}>
-                            <Progress percent={emailCoverage} />
-                        </Col>
-                    </Row> */}
                 </Col>
             </Row>
             <Row
@@ -283,9 +288,7 @@ class LookupOldEvents extends React.Component {
             >
             {filteredOldEvents.length > 0 &&
                 <div>
-                    <ResultsTable 
-                        showErrors={this.state.showErrors}    
-                    />
+                    <ArchivedResultsTable />
                     <OldEventsResults
                         archiveUrl={archiveUrl}
                         dataForChart={dataForChart}
@@ -321,21 +324,24 @@ const mapStateToProps = state => ({
     chamber: selectionStateBranch.selectors.getChamber(state),
     events: selectionStateBranch.selectors.getEventTypes(state),
     legislativeBody: selectionStateBranch.selectors.getLegislativeBody(state),
+    allResearcherEmails: researcherStateBranch.selectors.getAllResearcherEmails(state),
+    dateLookupType: selectionStateBranch.selectors.getDateLookupType(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     requestOldEvents: ({ path, date, dates, chamber } ) => dispatch(eventStateBranch.actions.requestOldEvents({ path, date, dates, chamber })),
     resetOldEvents: () => dispatch(eventStateBranch.actions.resetOldEvents()),
     changeDataLookupRange: (dates) => dispatch(selectionStateBranch.actions.changeDateLookup(dates)),
-    handleChangeErrorFilter: (value) => dispatch(selectionStateBranch.actions.changeErrorFilter(value)),
     changeChamberFilter: (chamber) => dispatch(selectionStateBranch.actions.changeChamberFilter(chamber)),
     changeEventFilter: (events) => dispatch(selectionStateBranch.actions.changeEventFilter(events)),
     changeLegislativeBodyFilter: (legislativeBody) => dispatch(selectionStateBranch.actions.changeLegislativeBodyFilter(legislativeBody)),
     handleChangeStateFilters: (states) => dispatch(selectionStateBranch.actions.changeStateFilters(states)),
     changeNameFilter: (name) => dispatch(selectionStateBranch.actions.changeNameFilter(name)),
+    changeResearcherFilter: (email) => dispatch(selectionStateBranch.actions.changeResearcherFilter(email)),
     requestLiveEvents: () => dispatch(eventStateBranch.actions.requestAllLiveEventsForAnalysis()),
     toggleIncludeLiveEventsInLookup: (checked) => dispatch(selectionStateBranch.actions.toggleIncludeLiveEventsInLookup(checked)),
     getMocReport: (congressId) => dispatch(mocStateBranch.actions.getCongressBySession(congressId)),
+    changeDateSearchType: (type) => dispatch(selectionStateBranch.actions.changeEventDateLookupType(type)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LookupOldEvents);

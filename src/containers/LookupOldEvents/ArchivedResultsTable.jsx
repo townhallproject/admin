@@ -6,10 +6,9 @@ import {
   Checkbox,
 } from 'antd';
 
-import moment from 'moment-timezone';
-
-import EditableCell from './editableCell';
+import EditableCell from './EditableTableCell';
 import eventsStateBranch from '../../state/events';
+import researcherStateBranch from '../../state/researchers';
 import selectionStateBranch from '../../state/selections';
 
 import activism from '../../assets/img/icon-flags/activism.svg';
@@ -44,20 +43,22 @@ const iconFlagMap = {
   staff: staff,
 };
 
-class ResultsTable extends React.Component {
+class ArchivedResultsTable extends React.Component {
 
   constructor(props) {
       super(props);
       this.handleSave = this.handleSave.bind(this);
   }
 
-  handleSave = (editedData, eventId) => {
-      console.log(editedData)
-      this.props.updateOldEvent(editedData, eventId);
+  handleSave = (eventData) => {
+    const { validateAndSaveOldEvent } = this.props;
+    validateAndSaveOldEvent(eventData);
   };
 
   render() {
-    const { showErrors } = this.props;
+    const { 
+      researchersEmailById,
+    } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -65,6 +66,12 @@ class ResultsTable extends React.Component {
       },
     };
     let columns = [
+      {
+        title: 'Error',
+        dataIndex: 'errorMessage',
+        key: 'errorMessage',
+        editable: false,
+      },
       {
         title: 'Name',
         dataIndex: 'displayName',
@@ -115,9 +122,6 @@ class ResultsTable extends React.Component {
       },
       {
         title: 'Date',
-        render: (text, record) => {
-            return moment.parseZone(record.timeStart).format('ddd, MMM D YYYY h:mm a');
-        },
         dataIndex: 'timeStart',
         key: 'timeStart',
         editable: true,
@@ -129,7 +133,10 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.ada_accessible}
-            onChange={(e) => this.handleSave({ ada_accessible : !record.ada_accessible }, record.eventId)}
+            onChange={(e) => this.handleSave({
+              ...record,
+              ada_accessible : !record.ada_accessible,
+            })}
             defaultChecked={record.ada_accessible}
             disabled={!record.editable}>
         </Checkbox>)
@@ -141,20 +148,16 @@ class ResultsTable extends React.Component {
         editable: false,
         render: (text, record) => (<Checkbox
             key={record.validated}
-            onChange={(e) => this.handleSave({ validated : !record.validated }, record.eventId)}
+            onChange={(e) => this.handleSave({
+              ...record,
+              validated : !record.validated,
+            })}
             defaultChecked={record.validated}
             disabled={!record.editable}>
         </Checkbox>)
       },
     ];
-    if (showErrors) {
-      columns.unshift({
-        title: 'Error',
-        dataIndex: 'errorMessage',
-        key: 'errorMessage',
-        editable: false,
-      })
-    }
+
     columns = columns.map(col => {
       if (!col.editable) {
         return col;
@@ -181,7 +184,14 @@ class ResultsTable extends React.Component {
         dataSource={this.props.filteredOldEvents}
         columns={columns}
         rowKey={(record) => `${record.eventId}-editable-${record.editable}`}
-        // expandedRowRender={(record) => record.eventId}
+        expandedRowRender={(record) => {
+          return (
+            <div>
+              Event ID: {record.eventId} <br />
+              Entered By: {researchersEmailById[record.enteredBy] || 'unknown'}
+            </div>
+          )
+        }}
       />
     );
   };
@@ -190,11 +200,13 @@ class ResultsTable extends React.Component {
 function mapStateToProps(state) {
   return {
     filteredOldEvents: selectionStateBranch.selectors.getFilteredEvents(state),
+    allResearchers: researcherStateBranch.selectors.getAllResearchers(state),
+    researchersEmailById: researcherStateBranch.selectors.getResearchersEmailById(state),
   };
 }
 
 const mapDispatchToProps = dispatch => ({
-  updateOldEvent: (updateData, eventId) => dispatch(eventsStateBranch.actions.updateOldEvent(updateData, eventId)),
+  validateAndSaveOldEvent: (data) => dispatch(eventsStateBranch.actions.validateAndSaveOldEvent(data)),
 });
   
-export default connect(mapStateToProps, mapDispatchToProps)(ResultsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(ArchivedResultsTable);
