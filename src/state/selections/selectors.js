@@ -48,6 +48,7 @@ export const getLegislativeBody = state => state.selections.filterByLegislativeB
 export const getNameFilter = state => state.selections.filterByName;
 export const getResearcherFilter = state => state.selections.filterByResearcher;
 export const getDateLookupType = state => state.selections.dateLookupType;
+export const getFilterSMSToLastWeek = state => state.selections.filterSMSToLastWeek;
 
 export const getLiveEventUrl = createSelector([getActiveFederalOrState], (federalOrState) => {
   if (federalOrState !== FEDERAL_RADIO_BUTTON) {

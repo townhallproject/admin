@@ -17,7 +17,8 @@ import {
   CHANGE_NAME_FILTER,
   CHANGE_RESEARCHER_FILTER,
   CHANGE_EVENT_DATE_LOOKUP_TYPE,
-} from "./constants";
+  TOGGLE_FILTER_SMS_TO_LAST_WEEK,
+} from "./reducers";
 
 export const changeActiveEventTab = tab => ({
   type: CHANGE_EVENTS_TAB,
@@ -104,5 +105,10 @@ export const getArchivedTimeZone = (payload) => ({
 
 export const changeEventDateLookupType = (payload) => ({
   type: CHANGE_EVENT_DATE_LOOKUP_TYPE,
+  payload,
+})
+
+export const toggleFilterSmsToLastWeek = (payload) => ({
+  type: TOGGLE_FILTER_SMS_TO_LAST_WEEK,
   payload,
 })

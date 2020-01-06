@@ -11,7 +11,7 @@ import {
   CHANGE_ARCHIVED_TIME_ZONE,
   SET_TEMP_ADDRESS,
   GEOCODE_TEMP_ADDRESS,
-} from "./constants";
+} from "./reducers";
 import {
   resetOldEvents,
   updateExistingEvent,
