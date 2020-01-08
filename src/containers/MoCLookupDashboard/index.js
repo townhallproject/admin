@@ -73,7 +73,7 @@ class MoCLookUpDashboard extends React.Component {
               updateDisplayNameValue={updateDisplayNameValue}
 
             />
-          </TabPane>}
+          </TabPane>
           <TabPane tab="Current State Legs" key="stateLegs">
                 <RadioGroup
                         defaultValue={radioValue}

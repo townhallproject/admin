@@ -9,6 +9,7 @@ import {
     Modal,
 } from 'antd';
 import debounce from 'lodash/debounce';
+import ModalSwitcher from './ModalSwitcher';
 
 export default class MocTable extends React.Component {
 
@@ -93,10 +94,28 @@ export default class MocTable extends React.Component {
     this.setState({ searchText: '' });
   };
 
-  viewRecord = (record) => {
+  viewRecord(record) {
     this.setState({ 
       modalVisible: true,
       modalRecord: record,
+      type: 'viewDetails'
+    });
+  };
+
+  viewCampaigns(record) {
+    console.log(record)
+    this.setState({
+      modalVisible: true,
+      modalRecord: record,
+      type: 'viewCampaigns'
+    })
+  }
+
+  addCampaign(record) {
+    this.setState({
+      modalVisible: true,
+      modalRecord: record,
+      type: 'addCampaign'
     });
   };
 
@@ -106,6 +125,10 @@ export default class MocTable extends React.Component {
 
   handleModalOk = () => {
     this.handleModalCancel();
+  }
+
+  changeCampaignStatus(value, index, memberId) {
+    console.log(value, index, memberId)
   }
   
   render() {
@@ -185,7 +208,7 @@ export default class MocTable extends React.Component {
             >Add campaign
             </Button>
             <Button
-              onClick={() => this.viewRecord(record)}
+              onClick={() => this.viewCampaigns(record)}
               size="small"
             >View campaign(s)
             </Button>
@@ -200,130 +223,14 @@ export default class MocTable extends React.Component {
           dataSource={mocs}
           rowKey='id'
         />
-        <Modal
-          title={this.state.modalRecord.displayName + ' | ' + this.state.modalRecord.title}
-          visible={this.state.modalVisible}
-          onOk={this.handleModalOk}
-          onCancel={this.handleModalCancel}
-          width={600}
-          footer={[
-            <Button key="submit" type="primary" onClick={this.handleModalOk}>
-              OK
-            </Button>,
-          ]}
-        >
-          <h2>Personal Details</h2>
-          <table>
-            <tbody>
-            <tr>
-              <th>Party</th>
-              <td>{this.state.modalRecord.party}</td>
-            </tr>
-            <tr>
-              <th>State</th>
-              <td>{this.state.modalRecord.state}</td>
-            </tr>
-            <tr>
-              <th>Chamber</th>
-              <td>{this.state.modalRecord.chamber}</td>
-            </tr>
-            <tr>
-              <th>District</th>
-              <td>{this.state.modalRecord.district}</td>
-            </tr>
-            <tr>
-              <th>Next Election</th>
-              <td>{this.state.modalRecord.next_election}</td>
-            </tr>
-            <tr>
-              <th>Seniority</th>
-              <td>{this.state.modalRecord.seniority}</td>
-            </tr>
-            <tr>
-              <th>State Rank</th>
-              <td>{this.state.modalRecord.state_rank}</td>
-            </tr>
-            <tr>
-              <th>Date of Birth</th>
-              <td>{this.state.modalRecord.date_of_birth}</td>
-            </tr>
-            <tr>
-              <th>Gender</th>
-              <td>{this.state.modalRecord.gender}</td>
-            </tr>
-            <tr>
-              <th>In Office</th>
-              <td>{this.state.modalRecord.in_office ? 'Yes' : 'No'}</td>
-            </tr>
-            <tr>
-              <th>Missing Member</th>
-              <td>{this.state.modalRecord.missing_member ? 
-                this.state.modalRecord.missing_member ? 'Yes' : 'No' 
-                  : ''}</td>
-            </tr>
-            <tr>
-              <th>Votes With Party</th>
-              <td>{this.state.modalRecord.votes_with_party_pct}%</td>
-            </tr>
-            <tr>
-              <th>Missed Votes</th>
-              <td>{this.state.modalRecord.missed_votes_pct}%</td>
-            </tr>
-            <tr>
-              <th>FEC Candidate ID</th>
-              <td>{this.state.modalRecord.fec_candidate_id}</td>
-            </tr>
-            </tbody>
-          </table>
-
-          <h2>Contact Info</h2>
-          <table>
-            <tbody>
-            <tr>
-              <th>Phone</th>
-              <td>{this.state.modalRecord.phone}</td>
-            </tr>
-            <tr>
-              <th>Fax</th>
-              <td>{this.state.modalRecord.fax}</td>
-            </tr>
-            <tr>
-              <th>Office</th>
-              <td>{this.state.modalRecord.office}</td>
-            </tr>
-            <tr>
-              <th>Address</th>
-              <td>{this.state.modalRecord.address}</td>
-            </tr>
-            </tbody>
-          </table>
-
-          <h2>Media</h2>
-          <table>
-            <tbody>
-            <tr>
-              <th>Website</th>
-              <td><a href={this.state.modalRecord.url}>{this.state.modalRecord.url}</a></td>
-            </tr>
-            <tr>
-              <th>RSS URL</th>
-              <td><a href={this.state.modalRecord.rss_url}>{this.state.modalRecord.rss_url}</a></td>
-            </tr>
-            <tr>
-              <th>Facebook Account</th>
-              <td>{this.state.modalRecord.facebook_account}</td>
-            </tr>
-            <tr>
-              <th>Twitter Account</th>
-              <td>{this.state.modalRecord.twitter_account}</td>
-            </tr>
-            <tr>
-              <th>YouTube Account</th>
-              <td>{this.state.modalRecord.youtube_account}</td>
-            </tr>
-            </tbody>
-          </table>
-        </Modal>
+        <ModalSwitcher 
+          type={this.state.type}
+          modalRecord={this.state.modalRecord}
+          modalVisible={this.state.modalVisible}
+          handleModalCancel={this.handleModalCancel}
+          handleModalOk={this.handleModalOk}
+          changeCampaignStatus={this.changeCampaignStatus}
+        />
       </div>
     )
   }

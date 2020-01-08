@@ -5,6 +5,7 @@ import AddPersonForm from '../AddPersonForm';
 
 export default class MocTable extends React.Component {
     render() {
+        const { radioValue, saveCandidate, keySavePath } = this.props;
         return (
             <Modal
                 title={this.state.modalRecord.displayName + ' | ' + this.state.modalRecord.title}
@@ -19,7 +20,7 @@ export default class MocTable extends React.Component {
                 ]}
             >
                 <AddPersonForm
-                    usState={radioValue !== 'federal' ? radioValue : ''}
+                    usState={this.props.radioValue !== 'federal' ? radioValue : ''}
                     savePerson={saveCandidate}
                     keySavePath={keySavePath}
                     roleLabel={"Running For (prefix)"}

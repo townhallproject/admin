@@ -24,6 +24,8 @@ export const DATE_OBJ = "dateObj";
 export const DATE_CREATED = "dateCreated";
 export const DATE_TIMESTAMP = "timestamp";
 
+export const CAMPAIGN_STATUS_OPTIONS = ["Nominee", "Lost Primary", "Active Primary Candidate", "Winner", "Lost General"];
+
 export const ACCESS_LEVELS_MAP = {
     [RSVP_DOWNLOAD_ACCESS]: 'download RSVPs',
     [EVENT_DOWNLOAD_ACCESS]: 'download Events',
