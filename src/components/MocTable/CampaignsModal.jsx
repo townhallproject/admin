@@ -6,6 +6,7 @@ const { Option } = Select;
 
 export default (props) => {
     const { modalRecord, modalVisible, handleModalOk, handleModalCancel, changeCampaignStatus } = props;
+    const campaigns = modalRecord.campaigns || [];
     return (
         <Modal
             title={modalRecord.displayName + ' | ' + modalRecord.title}
@@ -20,7 +21,7 @@ export default (props) => {
             ]}
         >
             <h2>Campaigns</h2>
-            {modalRecord.campaigns.map((campaign, index) => {
+            {campaigns.map((campaign, index) => {
                 return (
                     <table>
                         <tbody>
@@ -46,7 +47,6 @@ export default (props) => {
                             </tr>
                             <tr>
                                 <Form.Item label="Status">
-                           
                                     <Select 
                                         defaultValue={campaign.status}
                                         onChange={(value) => changeCampaignStatus(value, index, modalRecord.id)}

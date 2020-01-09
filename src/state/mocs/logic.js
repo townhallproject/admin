@@ -32,6 +32,19 @@ import {
 import StateLeg from "./state-leg-model";
 import moment from "moment";
 
+const getCongressUpdates = (firestore, data, id, chamber) => {
+      let updates = firestore.batch();
+
+      const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
+      const ref2 = firestore.collection(chamberCollection).doc(id);
+      updates.update(ref2, data)
+
+      const congressCollection = '116th_congress'
+      const congressCollectionRef = firestore.collection(congressCollection).doc(id);
+      updates.update(congressCollectionRef, data);
+      return updates;
+}
+
 const fetchMocs = createLogic({
   type: GET_MOCS,
   processOptions: {
@@ -180,12 +193,12 @@ const updateInOfficeLogic = createLogic({
       firestore,
     } = deps;
 
-    let updates = firestore.batch();
-
     const { id, inOffice, chamber } = action.payload;
     const data = {
       in_office: inOffice
     };
+
+    const updates = getCongressUpdates(firestore, data, id, chamber)
     const ref1 = firestore.collection('office_people').doc(`${id}`);
     updates.update(ref1, {
       ...data,
@@ -195,16 +208,9 @@ const updateInOfficeLogic = createLogic({
         time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
       }
     })
-    const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
-    const ref2 = firestore.collection(chamberCollection).doc(id);
-    updates.update(ref2, data)
-
-    const congressCollection = '116th_congress'
-    const congressCollectionRef = firestore.collection(congressCollection).doc(id);
-    updates.update(congressCollectionRef, data);
  
     return updates.commit().then(function () {
-      console.log('successfully updated name', id);
+      console.log('successfully updated in office', id);
       done();
     }).catch(console.log)
   
@@ -219,15 +225,30 @@ const updateDisplayNameLogic = createLogic({
   process(deps, dispatch, done) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
     const id = action.payload.id;
     const displayName = action.payload.displayName;
-    firebasedb.ref(`mocData/${id}/displayName`).set(displayName)
-      .then(() => {
-        dispatch(updateDisplayNameSuccess(id, displayName));
-        done();
-      });
+    const chamber = action.payload.chamber;
+    const data = {
+      displayName,
+    }
+    const updates = getCongressUpdates(firestore, data, id, chamber)
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+
+    updates.update(ref1, {
+      ...data,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+
+    return updates.commit().then(function () {
+      console.log('successfully updated new name', id);
+      dispatch(updateDisplayNameSuccess(id, displayName))
+      done();
+    }).catch(console.log)
   }
 })
 
