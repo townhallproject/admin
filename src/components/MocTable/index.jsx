@@ -23,9 +23,12 @@ export default class MocTable extends React.Component {
   }
 
   updateMissingMember({target}, record) {
-    const { updateMissingMemberValue } = this.props;
-    console.log(record)
-    // updateMissingMemberValue(id, target.checked);
+    const { updateMissingMemberValue, currentKey } = this.props;
+    // not a congressional number
+    if (!Number(currentKey)) {
+      return;
+    }
+    updateMissingMemberValue(record, currentKey, target.checked);
   }
 
   updateInOffice({target}, id, chamber) {

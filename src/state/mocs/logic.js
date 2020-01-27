@@ -189,11 +189,21 @@ const updateMissingMemberLogic = createLogic({
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    // return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
-    //   116: action.payload.missingMember,
-    // }).then(() => action)
+    const personRef = firestore.collection('office_people').doc(action.payload.record.id);
+    const newRoles = action.payload.record.roles.map((role) => {
+      if (Number(role.congress) === Number(action.payload.congress)) {
+        return {
+          ...role,
+          missing_member: action.payload.missingMember
+        }
+      }
+      return role
+    })
+    return personRef.update({
+      roles: newRoles
+    }).then(() => action)
   }
 })
 

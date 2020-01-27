@@ -66,10 +66,11 @@ export const getStateLeg = (usState) => ({
   payload: usState
 })
 
-export const updateMissingMember = (id, missingMember) => ({
+export const updateMissingMember = (record, congress, missingMember) => ({
   type: UPDATE_MISSING_MEMBER,
   payload: {
-    id,
+    record,
+    congress,
     missingMember,
   }
 })
