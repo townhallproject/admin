@@ -10,11 +10,13 @@ import {
   UPDATE_DISPLAY_NAME_SUCCESS,
   UPDATE_DISPLAY_NAME_FAIL,
   CHANGE_SELECTED_STATE,
+  ADD_CANDIDATE_SUCCESS,
 } from "./constants";
 import { map } from 'lodash';
 
 const initialState = {
   allMocIds: [],
+  // 116th congress
   116: [],
   115: [],
   error: null,
@@ -40,6 +42,12 @@ const mocReducer = (state = initialState, action) => {
         ...state,
         error: action.payload
       };
+    case ADD_CANDIDATE_SUCCESS: 
+      console.log(action.payload.person.id)
+      return {
+        ...state,
+        [action.payload.key]: map(state[action.payload.key], (moc) => moc.id === action.payload.person.id ? action.payload.person: moc)
+      }
     case ADD_CANDIDATE_FAILURE:
       console.log(`ADD_CANDIDATE_FAILURE: ${action.payload}`);
       return {

@@ -52,7 +52,7 @@ class MoCLookUpDashboard extends React.Component {
     const {
       saveStateLeg,
       isModerator,
-      saveCandidate,
+      saveCampaignToPerson,
       radioValue,
       keySavePath,
       the116theCongress,
@@ -69,10 +69,12 @@ class MoCLookUpDashboard extends React.Component {
            <TabPane tab="Current Congress" key="congress">
             <MocTable 
               mocs={the116theCongress}
+              saveCampaignToPerson={saveCampaignToPerson}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
               updateCampaignStatus={updateCampaignStatus}
+              currentKey={116}
             />
           </TabPane>
           <TabPane tab="Current State Legs" key="stateLegs">
@@ -93,26 +95,17 @@ class MoCLookUpDashboard extends React.Component {
                     </RadioGroup>
                     <MocTable 
                       mocs={selectedStateLeg}
+                      currentUsState={radioValue}
+                      currentKey={radioValue}
                     />
-            <AddPersonForm 
+            {/* <AddPersonForm 
               usState={radioValue !== 'federal' ? radioValue : ''}
               savePerson={saveCandidate}
               keySavePath={keySavePath}
               roleLabel={"Running For (prefix)"}
               formTitle="Add a candidate"
               candidate={true}
-            />
-          </TabPane>
-          <TabPane tab="State Lawmakers" key="legislators">
-              <AddPersonForm 
-                usState={radioValue !== 'federal' ? radioValue : ''}
-                savePerson={saveStateLeg}
-                keySavePath={keySavePath}
-                level="state"
-                currentLawmaker={true}
-                roleLabel={"Current role"}
-                formTitle="Add a lawmaker currently in office"
-              />
+            /> */}
           </TabPane>
         </Tabs>
       </div>
@@ -134,7 +127,7 @@ const mapDispatchToProps = dispatch => ({
     requestStateLeg: (usState) => dispatch(mocStateBranch.actions.getStateLeg(usState)),
     requestMocIds: () => dispatch(mocStateBranch.actions.requestMocIds()),
     saveStateLeg: (person) => dispatch(mocStateBranch.actions.saveStateLeg(person)),
-    saveCandidate: (person, path) => dispatch(mocStateBranch.actions.saveCandidate(path, person)),
+    saveCampaignToPerson: (person, campaign, key) => dispatch(mocStateBranch.actions.saveCampaignToPerson(person, campaign, key)),
     changeMode: (value) => dispatch(selectionStateBranch.actions.changeMode(value)),
     changeSelectedState: (value) => dispatch(mocStateBranch.actions.changeSelectedState(value)),
     updateMissingMemberValue: (id, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, missingMember)),

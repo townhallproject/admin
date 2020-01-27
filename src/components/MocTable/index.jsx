@@ -6,7 +6,6 @@ import {
     Input,
     Button,
     Icon,
-    Modal,
 } from 'antd';
 import debounce from 'lodash/debounce';
 import ModalSwitcher from './ModalSwitcher';
@@ -132,12 +131,11 @@ export default class MocTable extends React.Component {
 
   changeCampaignStatus(value, index, record) {
     const { updateCampaignStatus } = this.props;
-    console.log(value, index, record)
     updateCampaignStatus(value, index, record)
   }
   
   render() {
-    const { mocs } = this.props;
+    const { mocs, saveCampaignToPerson } = this.props;
     const columns = [
       {
         title: 'Display Name',
@@ -208,7 +206,7 @@ export default class MocTable extends React.Component {
             >Details
             </Button>
             <Button
-              onClick={() => this.viewRecord(record)}
+              onClick={() => this.addCampaign(record)}
               size="small"
             >Add campaign
             </Button>
@@ -235,6 +233,9 @@ export default class MocTable extends React.Component {
           handleModalCancel={this.handleModalCancel}
           handleModalOk={this.handleModalOk}
           changeCampaignStatus={this.changeCampaignStatus}
+          saveCampaignToPerson={saveCampaignToPerson}
+          currentUsState={this.props.currentUsState}
+          currentKey={this.props.currentKey}
         />
       </div>
     )

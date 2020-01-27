@@ -35,11 +35,12 @@ export const getMocsFailed = err => ({
   payload: err
 });
 
-export const saveCandidate = (path, person) => ({
+export const saveCampaignToPerson = (person, campaign, key) => ({
   type: ADD_CANDIDATE,
   payload: { 
     person,
-    path,
+    campaign,
+    key,
   }
 })
 
