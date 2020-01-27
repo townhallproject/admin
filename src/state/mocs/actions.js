@@ -13,6 +13,7 @@ import {
   UPDATE_DISPLAY_NAME_SUCCESS,
   CHANGE_SELECTED_STATE,
   REQUEST_STATE_LEG,
+  UPDATE_CAMPAIGN_STATUS,
 } from './constants';
 
 export const requestMocIds = () => ({
@@ -102,5 +103,14 @@ export const updateDisplayNameSuccess = (id, displayName) => ({
   payload: {
     id,
     displayName,
+  }
+})
+
+export const updateCampaignStatus = (value, index, record) => ({
+  type: UPDATE_CAMPAIGN_STATUS, 
+  payload: {
+    record,
+    status: value, 
+    index,
   }
 })

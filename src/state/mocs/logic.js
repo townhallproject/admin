@@ -19,6 +19,7 @@ import {
   ADD_STATE_LEG,
   ADD_STATE_LEG_SUCCESS,
   REQUEST_STATE_LEG,
+  UPDATE_CAMPAIGN_STATUS,
 } from "./constants";
 import {
   updateInOfficeSuccess,
@@ -217,6 +218,44 @@ const updateInOfficeLogic = createLogic({
   }
 })
 
+const updateCampaignStatusLogic = createLogic({
+  type: UPDATE_CAMPAIGN_STATUS,
+  processOptions: {
+    failType: UPDATE_DISPLAY_NAME_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    const record = action.payload.record;
+    const status = action.payload.status;
+    const campaignIndex = action.payload.index;
+    const id = record.id;
+    let updates = firestore.batch();
+
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+    const newCampaigns = record.campaigns.map((campaign, index) => {
+      if (index === campaignIndex) {
+        campaign.status = status;
+      }
+      return campaign;
+    })
+    updates.update(ref1, {
+      campaigns: newCampaigns,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+
+    return updates.commit().then(function () {
+      console.log('successfully updated new name', id);
+      done();
+    }).catch(console.log)
+  }
+})
+
 const updateDisplayNameLogic = createLogic({
   type: UPDATE_DISPLAY_NAME,
   processOptions: {
@@ -261,4 +300,5 @@ export default [
   updateInOfficeLogic,
   updateDisplayNameLogic,
   requestStateLeg,
+  updateCampaignStatusLogic,
 ];

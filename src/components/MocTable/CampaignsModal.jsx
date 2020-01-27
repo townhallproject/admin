@@ -49,7 +49,7 @@ export default (props) => {
                                 <Form.Item label="Status">
                                     <Select 
                                         defaultValue={campaign.status}
-                                        onChange={(value) => changeCampaignStatus(value, index, modalRecord.id)}
+                                        onChange={(value) => changeCampaignStatus(value, index, modalRecord)}
                                     >
                                             {CAMPAIGN_STATUS_OPTIONS.map(option => {
                                                 return (

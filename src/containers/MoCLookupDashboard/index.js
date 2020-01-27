@@ -60,6 +60,7 @@ class MoCLookUpDashboard extends React.Component {
       updateInOfficeValue,
       updateDisplayNameValue,
       selectedStateLeg,
+      updateCampaignStatus,
     } = this.props;
     const { TabPane } = Tabs;
     return (
@@ -71,7 +72,7 @@ class MoCLookUpDashboard extends React.Component {
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
-
+              updateCampaignStatus={updateCampaignStatus}
             />
           </TabPane>
           <TabPane tab="Current State Legs" key="stateLegs">
@@ -139,6 +140,7 @@ const mapDispatchToProps = dispatch => ({
     updateMissingMemberValue: (id, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, missingMember)),
     updateInOfficeValue: (id, inOffice, chamber) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice, chamber)),
     updateDisplayNameValue: (id, displayName) => dispatch(mocStateBranch.actions.updateDisplayName(id, displayName)),
+    updateCampaignStatus: (status, index, record) => dispatch(mocStateBranch.actions.updateCampaignStatus(status, index, record))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MoCLookUpDashboard);

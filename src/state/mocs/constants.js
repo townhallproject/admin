@@ -2,6 +2,7 @@ import {
   makeConstant
 } from "../../utils";
 const STATE_BRANCH = 'MOCS';
+const makeMocConstant = (type) => makeConstant(STATE_BRANCH, type);
 
 export const GET_MOCS = makeConstant(STATE_BRANCH, 'GET_MOCS');
 export const GET_MOCS_SUCCESS = "GET_MOCS_SUCCESS";
@@ -26,4 +27,5 @@ export const ADD_STATE_LEG_SUCCESS = 'ADD_STATE_LEG_SUCCESS';
 export const ADD_STATE_LEG_FAILURE = 'ADD_STATE_LEG_FAILURE';
 export const REQUEST_STATE_LEG = makeConstant(STATE_BRANCH, 'REQUEST_STATE_LEG');
 export const REQUEST_STATE_LEG_SUCCESS = makeConstant(STATE_BRANCH, "REQUEST_STATE_LEG_SUCCESS");
-export const CHANGE_SELECTED_STATE = makeConstant(STATE_BRANCH, 'CHANGE_SELECTED_STATE');
+export const CHANGE_SELECTED_STATE = makeMocConstant('CHANGE_SELECTED_STATE');
+export const UPDATE_CAMPAIGN_STATUS = makeMocConstant('UPDATE_CAMPAIGN_STATUS');

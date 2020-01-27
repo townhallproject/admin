@@ -12,6 +12,10 @@ import debounce from 'lodash/debounce';
 import ModalSwitcher from './ModalSwitcher';
 
 export default class MocTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeCampaignStatus = this.changeCampaignStatus.bind(this);
+  }
 
   state = {
     searchText: '',
@@ -103,7 +107,6 @@ export default class MocTable extends React.Component {
   };
 
   viewCampaigns(record) {
-    console.log(record)
     this.setState({
       modalVisible: true,
       modalRecord: record,
@@ -127,8 +130,10 @@ export default class MocTable extends React.Component {
     this.handleModalCancel();
   }
 
-  changeCampaignStatus(value, index, memberId) {
-    console.log(value, index, memberId)
+  changeCampaignStatus(value, index, record) {
+    const { updateCampaignStatus } = this.props;
+    console.log(value, index, record)
+    updateCampaignStatus(value, index, record)
   }
   
   render() {
