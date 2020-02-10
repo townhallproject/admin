@@ -26,6 +26,19 @@ export const getAllMocNames = createSelector([getAllMocsIds], (mocIdObjs) => {
     return map(mocIdObjs, 'nameEntered');
 })
 
-export const getSelectedStateLeg = createSelector([getSelectedState, getAllMocState], (selectedUsState, mocData) => {
+export const getSelectedStateData = createSelector([getSelectedState, getAllMocState], (selectedUsState, mocData) => {
     return mocData[selectedUsState];
+})
+
+export const getSelectedStateLeg = createSelector([getSelectedStateData], (stateLegData) => {
+    return map(stateLegData, ele => {
+      if (!ele) {
+        return;
+      }
+      const role = ele.roles[ele.current_office_index];
+      return {
+        ...ele,
+        ...role,
+      }
+    })
 })
