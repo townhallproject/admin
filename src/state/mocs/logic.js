@@ -1,11 +1,13 @@
-import { createLogic } from "redux-logic"
-import { 
+import {
+  createLogic
+} from "redux-logic"
+import {
   GET_MOCS,
-  GET_MOCS_SUCCESS, 
-  GET_MOCS_FAILED, 
-  ADD_CANDIDATE, 
-  ADD_CANDIDATE_FAILURE, 
-  ADD_CANDIDATE_SUCCESS, 
+  GET_MOCS_SUCCESS,
+  GET_MOCS_FAILED,
+  ADD_CANDIDATE,
+  ADD_CANDIDATE_FAILURE,
+  ADD_CANDIDATE_SUCCESS,
   GET_CONGRESS_BY_SESSION,
   GET_CONGRESS_BY_SESSION_SUCCESS,
   GET_CONGRESS_BY_SESSION_FAILED,
@@ -18,14 +20,33 @@ import {
   UPDATE_DISPLAY_NAME_FAIL,
   ADD_STATE_LEG,
   ADD_STATE_LEG_SUCCESS,
+  REQUEST_STATE_LEG,
+  UPDATE_CAMPAIGN_STATUS,
 } from "./constants";
 import {
   updateInOfficeSuccess,
   updateDisplayNameSuccess,
 } from './actions';
 import Candidate from './candidate-model';
-import { map } from "lodash";
+import {
+  map,
+  filter
+} from "lodash";
 import StateLeg from "./state-leg-model";
+import moment from "moment";
+
+const getCongressUpdates = (firestore, data, id, chamber) => {
+  let updates = firestore.batch();
+
+  const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
+  const ref2 = firestore.collection(chamberCollection).doc(id);
+  updates.update(ref2, data)
+
+  const congressCollection = '116th_congress'
+  const congressCollectionRef = firestore.collection(congressCollection).doc(id);
+  updates.update(congressCollectionRef, data);
+  return updates;
+}
 
 const fetchMocs = createLogic({
   type: GET_MOCS,
@@ -40,26 +61,56 @@ const fetchMocs = createLogic({
 
 const requestCongressLogic = createLogic({
   type: GET_CONGRESS_BY_SESSION,
-    processOptions: {
-      successType: GET_CONGRESS_BY_SESSION_SUCCESS,
-      failType: GET_CONGRESS_BY_SESSION_FAILED,
-    },
+  processOptions: {
+    successType: GET_CONGRESS_BY_SESSION_SUCCESS,
+    failType: GET_CONGRESS_BY_SESSION_FAILED,
+  },
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    return firebasedb.ref(`moc_by_congress/${action.payload}`).once('value')
+    return firestore.collection(`${action.payload}th_congress`).get()
       .then((snapshot) => {
-          const allIds = snapshot.val();
-          const allDataRequests = map(allIds, (id) => firebasedb.ref(`mocData/${id}`).once('value'));
-          return Promise.all(allDataRequests).then(allData => {
-            const allReturnedData =  map(allData, (snapshot => (snapshot.val())))
-            return {
-              mocs: allReturnedData,
-              key: action.payload,
-            }
-          })
+
+        const allIds = snapshot.docs.map(doc => doc.data().id);
+        const allDataRequests = map(allIds, (id) => firestore.collection('office_people').doc(id).get());
+        return Promise.all(allDataRequests).then(allData => {
+          const allReturnedData = map(allData, (doc => (doc.data())))
+          const mocs = filter(allReturnedData)
+          return {
+            mocs,
+            key: action.payload,
+          }
+        })
+
+      })
+  }
+})
+
+const requestStateLeg = createLogic({
+  type: REQUEST_STATE_LEG,
+  processOptions: {
+    successType: GET_CONGRESS_BY_SESSION_SUCCESS,
+  },
+  process(deps) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    return firestore.collection(`${action.payload}_state_legislature`).get()
+      .then((snapshot) => {
+        console.log(action.payload)
+        const allIds = snapshot.docs.map(doc => doc.data().id);
+        const allDataRequests = map(allIds, (id) => firestore.collection('office_people').doc(id).get());
+        return Promise.all(allDataRequests).then(allData => {
+          const allReturnedData = map(allData, (doc => (doc.data())))
+          const mocs = filter(allReturnedData)
+          return {
+            mocs,
+            key: action.payload,
+          }
+        })
 
       })
   }
@@ -74,18 +125,30 @@ const addCandidateLogic = createLogic({
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
+    const personData = action.payload.person;
+    let personRef = firestore.collection('office_people').doc(personData.id);
+    let campaigns;
+    if (!personData.campaigns) {
 
-    const newId = firebasedb.ref().child('candidate_data').push().key;
-    const newCandidate = new Candidate(action.payload.person);
-    const nameKey = newCandidate.createNameKey();
-    firebasedb.ref(`${action.payload.path}/${nameKey}`).update({
-      id: newId,
-      nameEntered: newCandidate.displayName,
-    });
-    newCandidate.thp_id = newId;
-    firebasedb.ref(`candidate_data/${newId}`).update(newCandidate);
+      campaigns = [action.payload.campaign]
+
+    } else {
+      campaigns = [action.payload.campaign, ...personData.campaigns];
+    }
+    return personRef.update({
+      current_campaign_index: 0,
+      campaigns,
+    }).then(() => {
+      return {
+        key: action.payload.key,
+        person: {
+          ...personData,
+          campaigns
+        }
+      }
+    })
   }
 });
 
@@ -126,10 +189,20 @@ const updateMissingMemberLogic = createLogic({
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    return firebasedb.ref(`mocData/${action.payload.id}/missing_member`).update({
-      116: action.payload.missingMember,
+    const personRef = firestore.collection('office_people').doc(action.payload.record.id);
+    const newRoles = action.payload.record.roles.map((role) => {
+      if (Number(role.congress) === Number(action.payload.congress)) {
+        return {
+          ...role,
+          missing_member: action.payload.missingMember
+        }
+      }
+      return role
+    })
+    return personRef.update({
+      roles: newRoles
     }).then(() => action)
   }
 })
@@ -142,19 +215,72 @@ const updateInOfficeLogic = createLogic({
   process(deps, dispatch, done) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    const id = action.payload.id;
-    const inOffice = action.payload.inOffice;
-    const p1 = firebasedb.ref(`mocData/${id}/in_office`).set(inOffice);
-    const p2 = firebasedb.ref(`mocData/${id}/last_updated`).update({
-      by: 'admin',
-      time: Date.now(),
-    });
-    Promise.all([p1, p2]).then(() => {
-      dispatch(updateInOfficeSuccess(id, inOffice));
+
+    const {
+      id,
+      inOffice,
+      chamber
+    } = action.payload;
+    const data = {
+      in_office: inOffice
+    };
+
+    const updates = getCongressUpdates(firestore, data, id, chamber)
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+    updates.update(ref1, {
+      ...data,
+      current_office_index: null,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+
+    return updates.commit().then(function () {
+      console.log('successfully updated in office', id);
       done();
-    });
+    }).catch(console.log)
+
+  }
+})
+
+const updateCampaignStatusLogic = createLogic({
+  type: UPDATE_CAMPAIGN_STATUS,
+  processOptions: {
+    failType: UPDATE_DISPLAY_NAME_FAIL,
+  },
+  process(deps, dispatch, done) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    const record = action.payload.record;
+    const status = action.payload.status;
+    const campaignIndex = action.payload.index;
+    const id = record.id;
+    let updates = firestore.batch();
+
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+    const newCampaigns = record.campaigns.map((campaign, index) => {
+      if (index === campaignIndex) {
+        campaign.status = status;
+      }
+      return campaign;
+    })
+    updates.update(ref1, {
+      campaigns: newCampaigns,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+
+    return updates.commit().then(function () {
+      console.log('successfully updated new name', id);
+      done();
+    }).catch(console.log)
   }
 })
 
@@ -166,15 +292,30 @@ const updateDisplayNameLogic = createLogic({
   process(deps, dispatch, done) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
     const id = action.payload.id;
     const displayName = action.payload.displayName;
-    firebasedb.ref(`mocData/${id}/displayName`).set(displayName)
-      .then(() => {
-        dispatch(updateDisplayNameSuccess(id, displayName));
-        done();
-      });
+    const chamber = action.payload.chamber;
+    const data = {
+      displayName,
+    }
+    const updates = getCongressUpdates(firestore, data, id, chamber)
+    const ref1 = firestore.collection('office_people').doc(`${id}`);
+
+    updates.update(ref1, {
+      ...data,
+      last_updated: {
+        by: 'admin',
+        time: moment().format('YYYY-MM-DD HH:mm:ss Z'),
+      }
+    })
+
+    return updates.commit().then(function () {
+      console.log('successfully updated new name', id);
+      dispatch(updateDisplayNameSuccess(id, displayName))
+      done();
+    }).catch(console.log)
   }
 })
 
@@ -186,4 +327,6 @@ export default [
   updateMissingMemberLogic,
   updateInOfficeLogic,
   updateDisplayNameLogic,
+  requestStateLeg,
+  updateCampaignStatusLogic,
 ];

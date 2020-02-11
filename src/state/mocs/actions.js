@@ -11,10 +11,18 @@ import {
   UPDATE_IN_OFFICE_SUCCESS,
   UPDATE_DISPLAY_NAME,
   UPDATE_DISPLAY_NAME_SUCCESS,
+  CHANGE_SELECTED_STATE,
+  REQUEST_STATE_LEG,
+  UPDATE_CAMPAIGN_STATUS,
 } from './constants';
 
 export const requestMocIds = () => ({
   type: GET_MOCS
+});
+
+export const changeSelectedState = value => ({
+  type: CHANGE_SELECTED_STATE,
+  payload: value
 });
 
 export const getMocsSuccess = mocs => ({
@@ -27,11 +35,12 @@ export const getMocsFailed = err => ({
   payload: err
 });
 
-export const saveCandidate = (path, person) => ({
+export const saveCampaignToPerson = (person, campaign, key) => ({
   type: ADD_CANDIDATE,
   payload: { 
     person,
-    path,
+    campaign,
+    key,
   }
 })
 
@@ -52,19 +61,26 @@ export const getCongressBySession = (congressId) => ({
   payload: congressId
 })
 
-export const updateMissingMember = (id, missingMember) => ({
+export const getStateLeg = (usState) => ({
+  type: REQUEST_STATE_LEG,
+  payload: usState
+})
+
+export const updateMissingMember = (record, congress, missingMember) => ({
   type: UPDATE_MISSING_MEMBER,
   payload: {
-    id,
+    record,
+    congress,
     missingMember,
   }
 })
 
-export const updateInOffice = (id, inOffice) => ({
+export const updateInOffice = (id, inOffice, chamber) => ({
   type: UPDATE_IN_OFFICE,
   payload: {
     id,
     inOffice,
+    chamber,
   }
 })
 
@@ -89,5 +105,14 @@ export const updateDisplayNameSuccess = (id, displayName) => ({
   payload: {
     id,
     displayName,
+  }
+})
+
+export const updateCampaignStatus = (value, index, record) => ({
+  type: UPDATE_CAMPAIGN_STATUS, 
+  payload: {
+    record,
+    status: value, 
+    index,
   }
 })

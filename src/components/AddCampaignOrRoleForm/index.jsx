@@ -6,7 +6,7 @@ import { map } from 'lodash';
 
 import { statesAb } from '../../assets/data/states';
 import './style.scss';
-import { LEVEL_FEDERAL, LEVEL_STATE } from '../../constants';
+import { LEVEL_FEDERAL, LEVEL_STATE, CAMPAIGN_STATUS_OPTIONS } from '../../constants';
 
 const { Option } = Select;
 
@@ -67,20 +67,21 @@ class AddPersonForm extends React.Component {
 
   handleSubmit(e) {
     const {
-      savePerson,
+      saveRole,
       form,
-      keySavePath,
+      person,
       usState,
+      currentKey,
     } = this.props;
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        const person = {
+        const role = {
           ...values,
           level: usState ? 'state' : values.level
         }
-        savePerson(person, keySavePath);
+        saveRole(person, role, currentKey);
         form.resetFields();
       }
     });
@@ -174,13 +175,38 @@ class AddPersonForm extends React.Component {
             <Input placeholder="District" />
           )}
         </Form.Item>}
-        {candidate &&<Form.Item label="Incumbent">
-          {getFieldDecorator('incumbent')(
+        {candidate && <Form.Item label="Status">
+          {getFieldDecorator('status')
+          (<Select >
+              {CAMPAIGN_STATUS_OPTIONS.map(option => {
+                  return (
+                      <Option 
+                          value={option}
+                      >
+                          {option}
+                      </Option>
+
+                  )
+              })}
+          </Select>)}
+          
+          </Form.Item>}
+        {candidate && <Form.Item label="Incumbent">
+          {
+            getFieldDecorator('incumbent', {
+                valuePropName: 'checked',
+                initialValue: false,
+
+              })(
             <Checkbox />
           )}
         </Form.Item>}
         {candidate && <Form.Item label="Pledger">
-          {getFieldDecorator('pledged')(
+          {
+            getFieldDecorator('pledged', {
+                valuePropName: 'checked',
+                initialValue: false,
+              })(
             <Checkbox />
           )}
         </Form.Item>}

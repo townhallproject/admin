@@ -5,7 +5,7 @@ export const FEDERAL_LEGISTLATURE = 'federal';
 export const LEVEL_STATE = 'state';
 export const LEVEL_FEDERAL = 'federal';
 export const FEDERAL_RADIO_BUTTON = 'federal';
-export const STATES_LEGS = ['CO', 'AZ', 'NC', 'OR', 'VA', 'NV', 'MI', 'ME', 'MD', 'PA', 'FL'];
+export const STATES_LEGS = ['AZ', 'CO', 'NC', 'OR', 'VA', 'NV', 'MI', 'ME', 'MD', 'PA', 'FL'];
 export const FEDERAL_STATE_RADIO_BUTTONS = [FEDERAL_LEGISTLATURE, ...STATES_LEGS];
 export const LEGISLATIVE_BODIES = [FEDERAL_LEGISTLATURE, ...STATES_LEGS];
 export const EVENT_MENU_ITEM = 'events';
@@ -23,6 +23,8 @@ export const ACCESS_KEYS = [RSVP_DOWNLOAD_ACCESS, EVENT_DOWNLOAD_ACCESS, MOC_DOW
 export const DATE_OBJ = "dateObj";
 export const DATE_CREATED = "dateCreated";
 export const DATE_TIMESTAMP = "timestamp";
+
+export const CAMPAIGN_STATUS_OPTIONS = ["Nominee", "Lost Primary", "Active Primary Candidate", "Winner", "Lost General"];
 
 export const ACCESS_LEVELS_MAP = {
     [RSVP_DOWNLOAD_ACCESS]: 'download RSVPs',

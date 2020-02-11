@@ -1,15 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+  Tabs,
+  Radio,
+} from 'antd';
+import {
+  map
+} from 'lodash';
 
-import { Tabs } from 'antd';
 
 import mocStateBranch from '../../state/mocs';
 import selectionStateBranch from '../../state/selections';
 import userStateBranch from '../../state/users';
 
-import AddPersonForm from '../../components/AddPersonForm';
-import FederalStateRadioSwitcher from '../../components/FederalStateRadioSwitcher';
 import MocTable from '../../components/MocTable';
+import { STATES_LEGS } from '../../constants';
+
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 class MoCLookUpDashboard extends React.Component {
   constructor(props) {
@@ -30,22 +38,24 @@ class MoCLookUpDashboard extends React.Component {
 
   onRadioChange({ target }) {
     const {
-      changeMocEndpoint
+      changeSelectedState,
+      requestStateLeg,
     } = this.props;
-    changeMocEndpoint(target.value)
+    console.log(target.value)
+    changeSelectedState(target.value)
+    requestStateLeg(target.value)
   }
 
   render() {
     const {
-      saveStateLeg,
-      isModerator,
-      saveCandidate,
+      saveCampaignToPerson,
       radioValue,
-      keySavePath,
       the116theCongress,
       updateMissingMemberValue,
       updateInOfficeValue,
       updateDisplayNameValue,
+      selectedStateLeg,
+      updateCampaignStatus,
     } = this.props;
     const { TabPane } = Tabs;
     return (
@@ -54,35 +64,35 @@ class MoCLookUpDashboard extends React.Component {
            <TabPane tab="Current Congress" key="congress">
             <MocTable 
               mocs={the116theCongress}
+              saveCampaignToPerson={saveCampaignToPerson}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
+              updateCampaignStatus={updateCampaignStatus}
+              currentKey={116}
             />
           </TabPane>
-          <TabPane tab="Candidates" key="candidates">
-            <FederalStateRadioSwitcher 
-              onRadioChange={this.onRadioChange}
-              defaultValue={radioValue}
-            />
-            <AddPersonForm 
-              usState={radioValue !== 'federal' ? radioValue : ''}
-              savePerson={saveCandidate}
-              keySavePath={keySavePath}
-              roleLabel={"Running For (prefix)"}
-              formTitle="Add a candidate"
-              candidate={true}
-            />
-          </TabPane>
-          <TabPane tab="State Lawmakers" key="legislators">
-              <AddPersonForm 
-                usState={radioValue !== 'federal' ? radioValue : ''}
-                savePerson={saveStateLeg}
-                keySavePath={keySavePath}
-                level="state"
-                currentLawmaker={true}
-                roleLabel={"Current role"}
-                formTitle="Add a lawmaker currently in office"
-              />
+          <TabPane tab="Current State Legs" key="stateLegs">
+                <RadioGroup
+                        defaultValue={radioValue}
+                        buttonStyle="solid"
+                        onChange={this.onRadioChange}
+                        className="federal-state-radio-group"
+                        >
+                        {map(STATES_LEGS, (value, key) => {
+                            return (
+                                <RadioButton key={value} value={value}>
+                                  {value}
+                                </RadioButton>
+                            )
+                        })
+                        }
+                    </RadioGroup>
+                    <MocTable 
+                      mocs={selectedStateLeg}
+                      currentUsState={radioValue}
+                      currentKey={radioValue}
+                    />
           </TabPane>
         </Tabs>
       </div>
@@ -92,22 +102,25 @@ class MoCLookUpDashboard extends React.Component {
 
 const mapStateToProps = state => ({
   allMocNamesIds: mocStateBranch.selectors.getAllMocsIds(state),
+  selectedStateLeg: mocStateBranch.selectors.getSelectedStateLeg(state),
   isModerator: userStateBranch.selectors.getModeratorStatus(state),
-  radioValue: selectionStateBranch.selectors.getActiveFederalOrState(state),
+  radioValue: mocStateBranch.selectors.getSelectedState(state),
   keySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
   the116theCongress: mocStateBranch.selectors.get116thCongress(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     getCongressBySession: (congressSession) => dispatch(mocStateBranch.actions.getCongressBySession(congressSession)),
+    requestStateLeg: (usState) => dispatch(mocStateBranch.actions.getStateLeg(usState)),
     requestMocIds: () => dispatch(mocStateBranch.actions.requestMocIds()),
     saveStateLeg: (person) => dispatch(mocStateBranch.actions.saveStateLeg(person)),
-    saveCandidate: (person, path) => dispatch(mocStateBranch.actions.saveCandidate(path, person)),
+    saveCampaignToPerson: (person, campaign, key) => dispatch(mocStateBranch.actions.saveCampaignToPerson(person, campaign, key)),
     changeMode: (value) => dispatch(selectionStateBranch.actions.changeMode(value)),
-    changeMocEndpoint: (value) => dispatch(selectionStateBranch.actions.changeFederalStateRadio(value)),
-    updateMissingMemberValue: (id, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, missingMember)),
-    updateInOfficeValue: (id, inOffice) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice)),
+    changeSelectedState: (value) => dispatch(mocStateBranch.actions.changeSelectedState(value)),
+    updateMissingMemberValue: (id, key, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, key, missingMember)),
+    updateInOfficeValue: (id, inOffice, chamber) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice, chamber)),
     updateDisplayNameValue: (id, displayName) => dispatch(mocStateBranch.actions.updateDisplayName(id, displayName)),
+    updateCampaignStatus: (status, index, record) => dispatch(mocStateBranch.actions.updateCampaignStatus(status, index, record))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MoCLookUpDashboard);

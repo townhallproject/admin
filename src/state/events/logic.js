@@ -52,8 +52,6 @@ import {
 } from "../researchers/actions";
 import { getDateLookupType, getActiveFederalOrState } from "../selections/selectors";
 
-require('dotenv').config();
-
 const fetchEvents = createLogic({
   type: REQUEST_EVENTS,
   process(deps, dispatch, done) {
