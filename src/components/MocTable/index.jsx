@@ -33,7 +33,6 @@ export default class MocTable extends React.Component {
 
   updateInOffice({target}, id, chamber) {
     const { updateInOfficeValue } = this.props;
-    console.log(chamber)
     updateInOfficeValue(id, target.checked, chamber);
   }
 
@@ -201,25 +200,28 @@ export default class MocTable extends React.Component {
         title: 'Actions',
         dataIndex: '',
         key: 'actions',
-        render: (mocs, record) => (
-          <span>
-            <Button 
-              onClick={() => this.viewRecord(record)}
-              size="small"
-            >Details
-            </Button>
+        render: (mocs, record) => {
+          const buttons = [<Button
+            onClick={() => this.viewRecord(record)}
+            size="small"
+          >Details
+            </Button>,
             <Button
               onClick={() => this.addCampaign(record)}
               size="small"
             >Add campaign
+            </Button>]
+            if (record.campaigns) {
+              buttons.push(
+                <Button
+                  onClick={() => this.viewCampaigns(record)}
+                  size="small"
+                >View campaign(s)
             </Button>
-            <Button
-              onClick={() => this.viewCampaigns(record)}
-              size="small"
-            >View campaign(s)
-            </Button>
-          </span>
-        ),
+              )
+            }
+            return buttons
+        }
       }
     ];
     return (
