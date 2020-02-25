@@ -73,7 +73,7 @@ This should throw an error: `Error: FIREBASE FATAL ERROR: Can't determine Fireba
   REACT_APP_TESTING_PROJECT_ID=[TESTING APP NAME]
   REACT_APP_TESTING_STORAGE_BUCKET=[TESTING APP NAME].appspot.com 
   REACT_APP_TESTING_MESSAGING_SENDER_ID=[TESTING APP ID]
-  NODE_ENV=dev
+  NODE_ENV=development
   ```
 
 - The mapping of environment variables is below (it's a 1:1 mapping):
