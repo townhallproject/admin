@@ -1,0 +1,1 @@
+export const contactMethods = ['Text', 'Email', 'Other']
