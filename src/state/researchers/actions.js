@@ -8,6 +8,7 @@ import {
   ADD_AND_ASSIGN_TO_RESEARCHER,
   REQUEST_RESEARCHER_BY_ID,
   REQUEST_RESEARCHER_BY_EMAIL,
+  SAVE_UNREGISTERD_VOL
 } from "./constants";
 
 export const requestAllResearchers = () => ({
@@ -68,4 +69,9 @@ export const addAndAssignToResearcher = (researcherId, mocId, name) => ({
     mocId,
     name
   }
+})
+
+export const saveUnregisteredVol = (payload) => ({
+  type: SAVE_UNREGISTERD_VOL,
+  payload
 })

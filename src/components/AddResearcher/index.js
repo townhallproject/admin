@@ -6,9 +6,12 @@ import {
   Form,
   Input,
   Row,
-  Select } from 'antd';
+  Select }
+from 'antd';
+import moment from 'moment'
 import { statesAb } from '../../assets/data/states'
 import { contactMethods } from './constants'
+
 
 class AddResearcherForm extends React.Component {
   handleSubmit = e => {
@@ -20,27 +23,27 @@ class AddResearcherForm extends React.Component {
       // Format date value before submit.
       const values = {
         ...fieldsValue,
-        firstContact: fieldsValue.firstContact.format('YYYY-MM-DD'),
-        volunteerConfirmation: fieldsValue.volunteerConfirmation.format('YYYY-MM-DD')
+        firstContact: fieldsValue.firstContact ? fieldsValue.firstContact.format('YYYY-MM-DD') : '',
+        volConfirmation: fieldsValue.volConfirmation ? fieldsValue.volConfirmation.format('YYYY-MM-DD') : ''
       }
-      console.log(values) // here is where the values should be added to state
+      this.props.saveUnregisteredVol(values)
       this.props.form.resetFields()
     })
   }
 
-  setValidationRules = (required=false, message='This field is required') => {
+  setValidationRules = (required=false, initialValue='', message='This field is required') => {
     return {
+      initialValue,
       rules: [{
-        required: required,
-        message: message,
-        whitespace: required
+        required,
+        message
       }]
     }
   }
 
   parseStates = () => {
-    return Object.values(statesAb).map(state => {
-      return <Select.Option key={state} value={state}>{state}</Select.Option>
+    return Object.entries(statesAb).map(state => {
+      return <Select.Option key={state[0]} value={state[0]}>{state[1]}</Select.Option>
     })
   }
 
@@ -74,14 +77,14 @@ class AddResearcherForm extends React.Component {
         <Row gutter={24}>
           <Col span={6}>
             <Form.Item label="Zip Code">
-              {getFieldDecorator('zipCode', this.setValidationRules())(
+              {getFieldDecorator('zipCode', this.setValidationRules(true))(
                 <Input placeholder="Enter zip code" />
               )}
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="State">
-              {getFieldDecorator('stateName', this.setValidationRules())(
+              {getFieldDecorator('state', this.setValidationRules(true))(
                 <Select
                   showSearch
                   placeholder="Select a state"
@@ -118,12 +121,12 @@ class AddResearcherForm extends React.Component {
         <Row gutter={24}>
           <Col span={10}>
             <Form.Item label="Volunteer Interest Confirmation" extra="Please enter the date this researcher confirmed their interest in volunteering.">
-              {getFieldDecorator('volunteerConfirmation', this.setValidationRules(true))(<DatePicker />)}
+              {getFieldDecorator('volConfirmation', this.setValidationRules(true, moment()))(<DatePicker />)}
             </Form.Item>
           </Col>
           <Col span={10}>
             <Form.Item label="First Contact" extra="Please enter the date this researcher was first contacted.">
-              {getFieldDecorator('firstContact', this.setValidationRules(true))(<DatePicker />)}
+              {getFieldDecorator('firstContact', this.setValidationRules(true, moment()))(<DatePicker />)}
             </Form.Item>
           </Col>
         </Row>

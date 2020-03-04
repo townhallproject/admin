@@ -11,6 +11,7 @@ import {
   ADD_AND_ASSIGN_TO_RESEARCHER_SUCCESS,
   REQUEST_FAILED,
   SET_RESEARCHER_EMAIL_DATA,
+  ADD_NEW_VOL_TO_RESEARCHERS
 } from "./constants";
 
 const initialState = {
@@ -102,7 +103,11 @@ const userReducer = (state = initialState, {type, payload}) => {
             return researcher;
           })
         }
-
+      case ADD_NEW_VOL_TO_RESEARCHERS:
+        return {
+          ...state,
+          allResearchers: [...state.allResearchers, payload]
+        }
     default:
       return state;
   }

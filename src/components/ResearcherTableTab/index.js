@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
 import {
   Button,
   Badge,
@@ -12,11 +11,7 @@ import {
   Tooltip,
 } from 'antd';
 
-import researcherStateBranch from '../../state/researchers';
-import mocStateBranch from '../../state/mocs';
-
-import MocLookUp from '../../components/MocLookup'
-
+import MocLookUp from '../MocLookup'
 import './style.scss';
 
 class ResearcherTableTab extends React.Component {
@@ -267,17 +262,6 @@ class ResearcherTableTab extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  researchers: researcherStateBranch.selectors.combineMocNamesWithResearchers(state),
-  allMocNamesIds: mocStateBranch.selectors.getAllMocsIds(state),
-});
 
-const mapDispatchToProps = dispatch => ({
-  getAllResearchers: () => dispatch(researcherStateBranch.actions.requestAllResearchers()),
-  removeAssignmentFromUser: (userId, mocId) => dispatch(researcherStateBranch.actions.removeAssignment(userId, mocId)),
-  addAndAssignToUser: (userId, mocId, name) => dispatch(researcherStateBranch.actions.addAndAssignToUser(userId, mocId, name)),
-  assignToUser: (userId, mocId) => dispatch(researcherStateBranch.actions.assignMocToUser(userId, mocId)),
-  requestMocIds: () => dispatch(mocStateBranch.actions.requestMocIds()),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResearcherTableTab);
+export default ResearcherTableTab
