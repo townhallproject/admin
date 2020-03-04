@@ -9,6 +9,7 @@ export const getAllMocsIds = state => state.mocs.allMocIds;
 export const get116thCongressData = state => state.mocs[116];
 export const get115thCongress = state => state.mocs[115];
 export const getSelectedState = state => state.mocs.selectedStateLeg;
+export const getCurrentlyEditingPerson = state => state.mocs.currentlyEditingPerson;
 
 export const get116thCongress = createSelector([get116thCongressData], (congress) => {
     return map(congress, ele => {

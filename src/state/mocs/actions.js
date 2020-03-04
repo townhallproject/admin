@@ -14,6 +14,8 @@ import {
   CHANGE_SELECTED_STATE,
   REQUEST_STATE_LEG,
   UPDATE_CAMPAIGN_STATUS,
+  ADD_OFFICE_PERSON,
+  ADD_OFFICE_TO_PERSON,
 } from './constants';
 
 export const requestMocIds = () => ({
@@ -114,5 +116,19 @@ export const updateCampaignStatus = (value, index, record) => ({
     record,
     status: value, 
     index,
+  }
+})
+
+export const addNewPerson = (payload) => ({
+  type: ADD_OFFICE_PERSON,
+  payload,
+})
+
+export const addOfficeToPerson = (person, office, key) => ({
+  type: ADD_OFFICE_TO_PERSON,
+  payload: {
+    person,
+    office,
+    key
   }
 })

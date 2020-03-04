@@ -45,7 +45,7 @@ const federalChambers = [{
   },
 ];
 
-class AddPersonForm extends React.Component {
+class AddCampaignOrRoleForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -74,6 +74,7 @@ class AddPersonForm extends React.Component {
       currentKey,
     } = this.props;
     e.preventDefault();
+    console.log(person)
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
@@ -131,8 +132,8 @@ class AddPersonForm extends React.Component {
             rules: [{ required: true}],
           })(
             <Select>
-                <Option value={LEVEL_FEDERAL}>{LEVEL_FEDERAL}</Option>
-                <Option value={LEVEL_STATE}>{LEVEL_STATE}</Option>
+              <Option key={LEVEL_FEDERAL} value={LEVEL_FEDERAL}>{LEVEL_FEDERAL}</Option>
+              <Option key={LEVEL_STATE} value={LEVEL_STATE}>{LEVEL_STATE}</Option>
             </Select>
           )}
         </Form.Item>        
@@ -143,22 +144,22 @@ class AddPersonForm extends React.Component {
             <Select
               onChange={this.handleRoleSelectChange}
             >
-                <Option value="Rep">Rep</Option>
-                <Option value="Sen">Senator</Option>
-                {getFieldValue('level') === LEVEL_STATE && <Option value="Gov">Gov</Option>}
-                {getFieldValue('level') === LEVEL_STATE &&<Option value="Mayor">Mayor</Option>}
-                {getFieldValue('level') === LEVEL_FEDERAL && <Option value="Pres">Pres</Option>}
+              <Option key={'Rep'} value="Rep">Rep</Option>
+              <Option key={'Sen'} value="Sen">Senator</Option>
+              {getFieldValue('level') === LEVEL_STATE && <Option key={'Gov'} value="Gov">Gov</Option>}
+              {getFieldValue('level') === LEVEL_STATE && <Option key={'Mayor'} value="Mayor">Mayor</Option>}
+              {getFieldValue('level') === LEVEL_FEDERAL && <Option key={'Pres'} value="Pres">Pres</Option>}
             </Select>
           )}
         </Form.Item>
         <Form.Item label="Chamber">
           {getFieldDecorator('chamber', {
-            rules: [{ required: true, message: 'Party' }],
+            rules: [{ required: true }],
           })(
             <Select>
               {getFieldValue('level') === LEVEL_FEDERAL ?
-                  map(federalChambers, (item) => <Option value={item.value}>{item.label}</Option>) :
-                  map(stateChambers, (item) => <Option value={item.value}>{item.label}</Option>)
+                  map(federalChambers, (item) => <Option key={item.value} value={item.value}>{item.label}</Option>) :
+                  map(stateChambers, (item) => <Option key={item.value} value={item.value}>{item.label}</Option>)
               }
             </Select>
           )}
@@ -181,6 +182,7 @@ class AddPersonForm extends React.Component {
               {CAMPAIGN_STATUS_OPTIONS.map(option => {
                   return (
                       <Option 
+                          key={option}
                           value={option}
                       >
                           {option}
@@ -234,4 +236,4 @@ class AddPersonForm extends React.Component {
 
 export default Form.create({
   name: 'add_person_form'
-})(AddPersonForm);
+})(AddCampaignOrRoleForm);
