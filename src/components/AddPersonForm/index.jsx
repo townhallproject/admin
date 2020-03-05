@@ -1,74 +1,40 @@
 import React from 'react';
 import {
-  Form, Icon, Input, Button, Checkbox, Select,
+  Form, Icon, Input, Button, Card, Checkbox, Select,
 } from 'antd';
 import { map } from 'lodash';
 
-import { statesAb } from '../../assets/data/states';
 import './style.scss';
-import { LEVEL_FEDERAL, LEVEL_STATE } from '../../constants';
 import AddCampaignOrRoleForm from '../AddCampaignOrRoleForm';
 
 const { Option } = Select;
-
-const children = map(statesAb, (value, key) => (<Option key={key}>{value}</Option>));
-
-const stateChambers = [
-  {
-    value: 'upper',
-    label: 'upper',
-  },
-  {
-    value: 'lower',
-    label: 'lower',
-  },
-  {
-    value: 'statewide',
-    label: 'Gov',
-  },
-  {
-    value: 'citywide',
-    label: 'Mayor',
-  },
-];
-
-const federalChambers = [{
-  value: 'upper',
-  label: 'Senate',
-},
-{
-  value: 'lower',
-  label: 'House',
-},
-{
-  value: 'nationwide',
-  label: 'Pres',
-},
-];
 
 class AddPersonForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
-      canSubmit: false
+      canSubmit: false,
+      in_office: false,
+      is_candidate: false,
+      personInfoSubmitted: false,
+      displayName: '',
+      party: ''
     }
   }
 
-  handleChange = (e) => {
-    const {
-      form,
-    } = this.props;
-    form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({ canSubmit: true })
-        // form.resetFields();
+  handleChange = (e, field) => {
+    this.setState(
+      {[field]: e.target.checked},
+      () => {
+        if (this.state.in_office || this.state.is_candidate) {
+          this.setState({ canSubmit: true })
+        } else {
+          this.setState({ canSubmit: false })
+        }
       }
-    });
+    )
   }
-
-
 
   handleSubmit(e) {
     const {
@@ -79,17 +45,20 @@ class AddPersonForm extends React.Component {
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-
-        addNewPerson(values);
-        // form.resetFields();
+        this.setState({
+          personInfoSubmitted: true,
+          displayName: values.displayName,
+          party: values.party
+        })
+        // addNewPerson(values);
+        form.resetFields();
       }
     });
   }
 
   render() {
     const {
-      getFieldDecorator,
-      getFieldValue,
+      getFieldDecorator
     } = this.props.form;
     const {
       formTitle,
@@ -122,73 +91,80 @@ class AddPersonForm extends React.Component {
     console.log('currentlyEditingPerson', currentlyEditingPerson)
     return (
       <React.Fragment>
-        <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >
-          <h1>{formTitle}</h1>
-          <h4>Person info</h4>
+        {this.state.personInfoSubmitted ?
+          <Card title={this.state.displayName} className="add-person-form">
+            <h4>{this.state.party}</h4>
+            {this.state.in_office && <p><Icon type="check-circle" /> Currently in office</p>}
+            {this.state.is_candidate && <p><Icon type="check-circle" /> Currently running for office</p>}
+          </Card>
+        :
+          <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >
+            <h1>{formTitle}</h1>
+            <h4>Person info</h4>
 
-          <Form.Item
-            {...noLabelFormItemLayout}
-          >
-            {getFieldDecorator('displayName', {
-              rules: [{ required: true }],
-            })(
-              <Input placeholder="Full Name" />
-            )}
-          </Form.Item>
-          <Form.Item
-            {...noLabelFormItemLayout}
-          >
-            {getFieldDecorator('party', {
-              rules: [{ required: true, }],
-            })(
-              <Select onChange={this.handleChange}>
-                <Option value="Democratic">Democratic</Option>
-                <Option value="Republican">Republican</Option>
-                <Option value="Independent">Independent</Option>
+            <Form.Item
+              {...noLabelFormItemLayout}
+            >
+              {getFieldDecorator('displayName', {
+                rules: [{ required: true, message: 'Name is required' }],
+              })(
+                <Input placeholder="Full Name" />
+              )}
+            </Form.Item>
+            <Form.Item
+              {...noLabelFormItemLayout}
+            >
+              {getFieldDecorator('party', {
+                rules: [{ required: true, message: 'Party selection is required'}],
+              })(
+                <Select>
+                  <Option value="Democratic">Democratic</Option>
+                  <Option value="Republican">Republican</Option>
+                  <Option value="Independent">Independent</Option>
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item
+              {...noLabelFormItemLayout}
+            >
+              {getFieldDecorator('in_office', {
+                  valuePropName: 'checked',
+                  initialValue: false
+              })(
+                <Checkbox onChange={(e) => this.handleChange(e, 'in_office')}>
+                  Currently in office
+                </Checkbox>
+              )}
+            </Form.Item>
+            <Form.Item
+              {...noLabelFormItemLayout}
+            >
+              {getFieldDecorator('is_candidate', {
+                  valuePropName: 'checked',
+                  initialValue: false
+              })(
+                <Checkbox onChange={(e) => this.handleChange(e, 'is_candidate')}>
+                  Is running for an office
+                </Checkbox>
+              )}
+            </Form.Item>
 
-              </Select>
-            )}
-          </Form.Item>
-          <Form.Item
-            {...noLabelFormItemLayout}
-          >
-            {getFieldDecorator('in_office', {
-              valuePropName: 'checked',
-              initialValue: false,
-            })(
-              <Checkbox onChange={this.handleChange}>
-                Currently in office
-              </Checkbox>
-            )}
-          </Form.Item>
-          <Form.Item
-            {...noLabelFormItemLayout}
-          >
-            {getFieldDecorator('is_candidate', {
-              valuePropName: 'checked',
-              initialValue: false,
-            })(
-              <Checkbox onChange={this.handleChange}>
-                Is running for an office
-              </Checkbox>
-            )}
-          </Form.Item>
-
-          <Form.Item  {...noLabelFormItemLayout}>
-            <Button disabled={!this.state.canSubmit} type="primary" htmlType="submit" className="login-form-button">
-              Save to database
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item  {...noLabelFormItemLayout}>
+              <Button disabled={!this.state.canSubmit} type="primary" htmlType="submit" className="login-form-button">
+                Save to database
+              </Button>
+            </Form.Item>
+          </Form>
+        }
         <h4>Role info</h4>
-        {getFieldValue('in_office') && currentlyEditingPerson &&
+        {this.state.in_office && currentlyEditingPerson &&
           <AddCampaignOrRoleForm
             candidate={false}
             formTitle="Current office"
             person={currentlyEditingPerson}
             saveRole={addOfficeToPerson}
           />}
-        {getFieldValue('is_candidate') && currentlyEditingPerson && 
+        {this.state.is_candidate && currentlyEditingPerson && 
           <AddCampaignOrRoleForm 
             candidate={true} 
             formTitle="Current campaign" 
