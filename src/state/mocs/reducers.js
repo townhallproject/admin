@@ -13,6 +13,7 @@ import {
   ADD_CANDIDATE_SUCCESS,
   SET_CURRENTLY_EDITING_PERSON,
   UPDATE_CURRENTLY_EDITING_PERSON,
+  CLEAR_CURRENTLY_EDITING_PERSON,
 } from "./constants";
 import { map } from 'lodash';
 
@@ -120,6 +121,12 @@ const mocReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload,
+      }
+    case CLEAR_CURRENTLY_EDITING_PERSON:
+      console.log('cleared current person')
+      return {
+        ...state,
+        currentlyEditingPerson: null
       }
     default:
       return state;

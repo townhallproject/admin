@@ -45,6 +45,11 @@ const federalChambers = [{
   },
 ];
 
+const formType = {
+  "Current office": "in_office",
+  "Current campaign": "is_candidate"
+}
+
 class AddCampaignOrRoleForm extends React.Component {
   constructor(props) {
     super(props);
@@ -72,6 +77,7 @@ class AddCampaignOrRoleForm extends React.Component {
       person,
       usState,
       currentKey,
+      formTitle,
     } = this.props;
     e.preventDefault();
     console.log(person)
@@ -83,6 +89,7 @@ class AddCampaignOrRoleForm extends React.Component {
           level: usState ? 'state' : values.level
         }
         saveRole(person, role, currentKey);
+        this.props.multiFormSubmit && this.props.multiFormSubmit(formType[formTitle])
         form.resetFields();
       }
     });

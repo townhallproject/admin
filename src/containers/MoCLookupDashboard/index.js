@@ -103,6 +103,7 @@ class MoCLookUpDashboard extends React.Component {
                 saveCampaignToPerson={saveCampaignToPerson}
                 addOfficeToPerson={addOfficeToPerson}
                 currentlyEditingPerson={currentlyEditingPerson}
+                clearCurrentlyEditingPerson={() => console.log('clearCurrentlyEditingPerson')} // TODO: need to correctly link this into state
               />
           </TabPane>
         </Tabs>
@@ -134,7 +135,8 @@ const mapDispatchToProps = dispatch => ({
     updateMissingMemberValue: (id, key, missingMember) => dispatch(mocStateBranch.actions.updateMissingMember(id, key, missingMember)),
     updateInOfficeValue: (id, inOffice, chamber) => dispatch(mocStateBranch.actions.updateInOffice(id, inOffice, chamber)),
     updateDisplayNameValue: (id, displayName) => dispatch(mocStateBranch.actions.updateDisplayName(id, displayName)),
-    updateCampaignStatus: (status, index, record) => dispatch(mocStateBranch.actions.updateCampaignStatus(status, index, record))
+    updateCampaignStatus: (status, index, record) => dispatch(mocStateBranch.actions.updateCampaignStatus(status, index, record)),
+    // clearCurrentlyEditingPerson: () => dispatch(mocStateBranch.actions.clearCurrentlyEditingPerson())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MoCLookUpDashboard);

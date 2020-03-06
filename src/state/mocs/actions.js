@@ -16,6 +16,7 @@ import {
   UPDATE_CAMPAIGN_STATUS,
   ADD_OFFICE_PERSON,
   ADD_OFFICE_TO_PERSON,
+  CLEAR_CURRENTLY_EDITING_PERSON,
 } from './constants';
 
 export const requestMocIds = () => ({
@@ -131,4 +132,8 @@ export const addOfficeToPerson = (person, office, key) => ({
     office,
     key
   }
+})
+
+export const clearCurrentlyEditingPerson = () => ({
+  type: CLEAR_CURRENTLY_EDITING_PERSON
 })

@@ -9,23 +9,23 @@ import AddCampaignOrRoleForm from '../AddCampaignOrRoleForm';
 
 const { Option } = Select;
 
+const initialState = {
+  canSubmit: false,
+  in_office: false,
+  is_candidate: false,
+  allFormsComplete: false
+}
+
 class AddPersonForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {
-      canSubmit: false,
-      in_office: false,
-      is_candidate: false,
-      personInfoSubmitted: false,
-      displayName: '',
-      party: ''
-    }
+    this.state = initialState
   }
 
-  handleChange = (e, field) => {
+  handleChange = (e) => {
     this.setState(
-      {[field]: e.target.checked},
+      {[e.target.value]: e.target.checked},
       () => {
         if (this.state.in_office || this.state.is_candidate) {
           this.setState({ canSubmit: true })
@@ -45,15 +45,26 @@ class AddPersonForm extends React.Component {
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        this.setState({
-          personInfoSubmitted: true,
-          displayName: values.displayName,
-          party: values.party
-        })
-        // addNewPerson(values);
+        addNewPerson(values);
         form.resetFields();
       }
     });
+  }
+
+  handleAllFormsComplete = (form) => {
+    const {
+      clearCurrentlyEditingPerson
+    } = this.props
+    this.setState({
+      [form]: false
+    }, () => {
+      if (this.state.in_office || this.state.is_candidate) return
+      clearCurrentlyEditingPerson()
+      this.setState({
+        ...initialState,
+        allFormsComplete: true
+      })
+    })
   }
 
   render() {
@@ -61,7 +72,6 @@ class AddPersonForm extends React.Component {
       getFieldDecorator
     } = this.props.form;
     const {
-      formTitle,
       saveCampaignToPerson,
       currentlyEditingPerson,
       addOfficeToPerson,
@@ -91,15 +101,15 @@ class AddPersonForm extends React.Component {
     console.log('currentlyEditingPerson', currentlyEditingPerson)
     return (
       <React.Fragment>
-        {this.state.personInfoSubmitted ?
-          <Card title={this.state.displayName} className="add-person-form">
-            <h4>{this.state.party}</h4>
-            {this.state.in_office && <p><Icon type="check-circle" /> Currently in office</p>}
-            {this.state.is_candidate && <p><Icon type="check-circle" /> Currently running for office</p>}
+        {this.state.allFormsComplete && <h2>New member successfully added to the database</h2>}
+        {currentlyEditingPerson ?
+          <Card title={currentlyEditingPerson.displayName} className="add-person-form">
+            <h4>{currentlyEditingPerson.party}</h4>
+            {currentlyEditingPerson.in_office && <p><Icon type="check-circle" /> Currently in office</p>}
+            {currentlyEditingPerson.is_candidate && <p><Icon type="check-circle" /> Currently running for office</p>}
           </Card>
         :
           <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >
-            <h1>{formTitle}</h1>
             <h4>Person info</h4>
 
             <Form.Item
@@ -131,7 +141,7 @@ class AddPersonForm extends React.Component {
                   valuePropName: 'checked',
                   initialValue: false
               })(
-                <Checkbox onChange={(e) => this.handleChange(e, 'in_office')}>
+                <Checkbox value='in_office' onChange={this.handleChange}>
                   Currently in office
                 </Checkbox>
               )}
@@ -143,7 +153,7 @@ class AddPersonForm extends React.Component {
                   valuePropName: 'checked',
                   initialValue: false
               })(
-                <Checkbox onChange={(e) => this.handleChange(e, 'is_candidate')}>
+                <Checkbox value='is_candidate' onChange={this.handleChange}>
                   Is running for an office
                 </Checkbox>
               )}
@@ -156,13 +166,13 @@ class AddPersonForm extends React.Component {
             </Form.Item>
           </Form>
         }
-        <h4>Role info</h4>
         {this.state.in_office && currentlyEditingPerson &&
           <AddCampaignOrRoleForm
             candidate={false}
             formTitle="Current office"
             person={currentlyEditingPerson}
             saveRole={addOfficeToPerson}
+            multiFormSubmit={this.handleAllFormsComplete}
           />}
         {this.state.is_candidate && currentlyEditingPerson && 
           <AddCampaignOrRoleForm 
@@ -170,6 +180,7 @@ class AddPersonForm extends React.Component {
             formTitle="Current campaign" 
             person={currentlyEditingPerson} 
             saveRole={saveCampaignToPerson}
+            multiFormSubmit={this.handleAllFormsComplete}
           />}
 
       </React.Fragment>
