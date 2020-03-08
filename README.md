@@ -108,9 +108,17 @@ This should throw an error: `Error: FIREBASE FATAL ERROR: Can't determine Fireba
 ---
 ## 3. Setting up your Firebase user
 
-Try starting the app ```npm start``` in the terminal (from the project root directory). 
+Try starting the app ```npm start``` in the terminal (from the project root directory). This should open a web browser pointed at: `http://localhost:3000` prompting you to log in the view the admin site. 
 
-This should open a web browser pointed at: `http://localhost:3000` prompting you to log in the view the admin site. If not, something is wrong. If everything has gone according to plan so far you should get the following error:
+You should expect to get an error at this point. Read it carefully. 
+
+- If the error says:
+  - `Cannot destructure property `compile` of 'undefined' or 'null'.`
+  - `npm ERR! code ELIFECYCLE`
+
+- You may need to change the `webpack-dev-server` version to "3.0.0" in the `package.json` file. Next, run `npm i` and then `npm start` .
+
+If everything has gone according to plan so far you should get the following error:
 
 `USER_REQUEST_FAILED: Error: permission_denied at /users/<some long string>: Client doesn't have permission to access the desired data.`
 

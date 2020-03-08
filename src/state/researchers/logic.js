@@ -17,6 +17,8 @@ import {
   REQUEST_RESEARCHER_BY_EMAIL,
   SET_RESEARCHER_EMAIL_DATA,
   REQUEST_FAILED,
+  SAVE_UNREGISTERD_VOL,
+  ADD_NEW_VOL_TO_RESEARCHERS
 } from "./constants";
 import { updateResearcherMocs, getResearchersSuccess } from "./actions";
 
@@ -189,6 +191,22 @@ const removeAssignmentLogic = createLogic({
   type: REMOVE_ASSIGNMENT,
 });
 
+const saveUnregisteredVolLogic = createLogic({
+  process(deps) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    return firestore.collection('unregisteredVols').add(action.payload)
+    .then(() => action.payload);
+  },
+  processOptions: {
+    failType: REQUEST_FAILED,
+    successType: ADD_NEW_VOL_TO_RESEARCHERS,
+  },
+  type: SAVE_UNREGISTERD_VOL,
+})
+
 const addAssignmentLogic = createLogic({
   process(deps) {
     const {
@@ -258,5 +276,6 @@ export default [
   getResearcherByEmailLogic,
   removeAssignmentLogic,
   addAssignmentLogic,
-  addAndAssignmentLogic
+  addAndAssignmentLogic,
+  saveUnregisteredVolLogic
 ];
