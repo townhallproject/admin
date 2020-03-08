@@ -52,19 +52,23 @@ class AddPersonForm extends React.Component {
   }
 
   handleAllFormsComplete = (form) => {
-    const {
-      clearCurrentlyEditingPerson
-    } = this.props
     this.setState({
       [form]: false
     }, () => {
       if (this.state.in_office || this.state.is_candidate) return
-      clearCurrentlyEditingPerson()
       this.setState({
         ...initialState,
         allFormsComplete: true
       })
     })
+  }
+
+  handleReset = () => {
+    const {
+      clearCurrentlyEditingPerson
+    } = this.props;
+    clearCurrentlyEditingPerson();
+    this.setState(initialState);
   }
 
   render() {
@@ -107,6 +111,8 @@ class AddPersonForm extends React.Component {
             <h4>{currentlyEditingPerson.party}</h4>
             {currentlyEditingPerson.in_office && <p><Icon type="check-circle" /> Currently in office</p>}
             {currentlyEditingPerson.is_candidate && <p><Icon type="check-circle" /> Currently running for office</p>}
+            {currentlyEditingPerson.roles && <p>Current office: {currentlyEditingPerson.roles[0].role}</p>}
+            {currentlyEditingPerson.campaigns && <p>Campaign {currentlyEditingPerson.campaigns[0].role}</p>}
           </Card>
         :
           <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >
@@ -182,6 +188,9 @@ class AddPersonForm extends React.Component {
             saveRole={saveCampaignToPerson}
             multiFormSubmit={this.handleAllFormsComplete}
           />}
+        {this.state.allFormsComplete && <Button onClick={this.handleReset}>
+            Add another person
+          </Button>}
 
       </React.Fragment>
     );

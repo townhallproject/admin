@@ -202,11 +202,13 @@ export default class MocTable extends React.Component {
         key: 'actions',
         render: (mocs, record) => {
           const buttons = [<Button
+            key={`${record.id}-details`}
             onClick={() => this.viewRecord(record)}
             size="small"
           >Details
             </Button>,
             <Button
+              key={`${record.id}-add-campaign`}
               onClick={() => this.addCampaign(record)}
               size="small"
             >Add campaign
@@ -214,6 +216,7 @@ export default class MocTable extends React.Component {
             if (record.campaigns) {
               buttons.push(
                 <Button
+                  key={`${record.id}-view-campaign`}
                   onClick={() => this.viewCampaigns(record)}
                   size="small"
                 >View campaign(s)

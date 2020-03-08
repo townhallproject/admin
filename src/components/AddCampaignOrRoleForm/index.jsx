@@ -76,19 +76,16 @@ class AddCampaignOrRoleForm extends React.Component {
       form,
       person,
       usState,
-      currentKey,
       formTitle,
     } = this.props;
     e.preventDefault();
-    console.log(person)
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         const role = {
           ...values,
           level: usState ? 'state' : values.level
         }
-        saveRole(person, role, currentKey);
+        saveRole(person, role, !!this.props.multiFormSubmit);
         this.props.multiFormSubmit && this.props.multiFormSubmit(formType[formTitle])
         form.resetFields();
       }
