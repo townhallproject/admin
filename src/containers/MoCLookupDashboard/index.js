@@ -104,7 +104,7 @@ class MoCLookUpDashboard extends React.Component {
                 saveCampaignToPerson={saveCampaignToPerson}
                 addOfficeToPerson={addOfficeToPerson}
                 currentlyEditingPerson={currentlyEditingPerson}
-                clearCurrentlyEditingPerson={clearCurrentlyEditingPerson} // TODO: need to correctly link this into state
+                clearCurrentlyEditingPerson={clearCurrentlyEditingPerson}
               />
           </TabPane>
         </Tabs>

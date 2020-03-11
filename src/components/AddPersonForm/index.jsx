@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Form, Icon, Input, Button, Card, Checkbox, Select,
 } from 'antd';
-import { map } from 'lodash';
 
 import './style.scss';
 import AddCampaignOrRoleForm from '../AddCampaignOrRoleForm';
@@ -44,7 +43,6 @@ class AddPersonForm extends React.Component {
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         addNewPerson(values);
         form.resetFields();
       }
@@ -102,17 +100,16 @@ class AddPersonForm extends React.Component {
         },
       },
     };
-    console.log('currentlyEditingPerson', currentlyEditingPerson)
     return (
       <React.Fragment>
-        {this.state.allFormsComplete && <h2>New member successfully added to the database</h2>}
+        {this.state.allFormsComplete && <h2>New person successfully added to the database</h2>}
         {currentlyEditingPerson ?
           <Card title={currentlyEditingPerson.displayName} className="add-person-form">
             <h4>{currentlyEditingPerson.party}</h4>
-            {currentlyEditingPerson.in_office && <p><Icon type="check-circle" /> Currently in office</p>}
-            {currentlyEditingPerson.is_candidate && <p><Icon type="check-circle" /> Currently running for office</p>}
+            {currentlyEditingPerson.in_office && <p><Icon type="check-circle" theme="twoTone" twoToneColor="#3facef" /> Currently in office</p>}
+            {currentlyEditingPerson.is_candidate && <p><Icon type="check-circle" theme="twoTone" twoToneColor="#3facef" /> Currently running for office</p>}
             {currentlyEditingPerson.roles && <p>Current office: {currentlyEditingPerson.roles[0].role}</p>}
-            {currentlyEditingPerson.campaigns && <p>Campaign {currentlyEditingPerson.campaigns[0].role}</p>}
+            {currentlyEditingPerson.campaigns && <p>Campaign: {currentlyEditingPerson.campaigns[0].role}</p>}
           </Card>
         :
           <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-person-form" >

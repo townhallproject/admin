@@ -222,6 +222,10 @@ class AddCampaignOrRoleForm extends React.Component {
           })(
             <Select
               placeholder="Select a State"
+              filterOption={(input, option) =>
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              showSearch
             >
                 {children}
             </Select>
