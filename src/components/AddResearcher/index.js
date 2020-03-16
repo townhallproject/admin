@@ -1,16 +1,15 @@
 import React from 'react'
 import {
   Button,
-  Col,
   DatePicker,
   Form,
   Input,
-  Row,
   Select }
 from 'antd';
 import moment from 'moment'
 import { statesAb } from '../../assets/data/states'
 import { contactMethods } from './constants'
+import './style.scss';
 
 
 class AddResearcherForm extends React.Component {
@@ -55,82 +54,80 @@ class AddResearcherForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 8 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+      },
+    };
+    const noLabelFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0,
+        },
+        sm: {
+          span: 16,
+          offset: 8,
+        },
+      },
+    };
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Row gutter={24}>
-          <Col span={8}>
-            <Form.Item label="Name">
-              {getFieldDecorator('name', this.setValidationRules(true))(
-                <Input placeholder="Enter name" />
-              )}
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="Email">
-              {getFieldDecorator('email', this.setValidationRules(true))(
-                <Input placeholder="Enter email" />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={24}>
-          <Col span={6}>
-            <Form.Item label="Zip Code">
-              {getFieldDecorator('zipCode', this.setValidationRules(true))(
-                <Input placeholder="Enter zip code" />
-              )}
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="State">
-              {getFieldDecorator('state', this.setValidationRules(true))(
-                <Select
-                  showSearch
-                  placeholder="Select a state"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {this.parseStates()}
-                </Select>
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={24}>
-          <Col span={6}>
-            <Form.Item label="Phone Number">
-              {getFieldDecorator('phoneNumber', this.setValidationRules(true))(
-                <Input placeholder="Enter phone number" />
-              )}
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label="Method of Initial Contact">
-              {getFieldDecorator('contactMethod', this.setValidationRules())(
-                <Select
-                placeholder="Select contact method">
-                  {this.parseContactMethods()}
-                </Select>
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={24}>
-          <Col span={10}>
-            <Form.Item label="Volunteer Interest Confirmation" extra="Please enter the date this researcher confirmed their interest in volunteering.">
-              {getFieldDecorator('volConfirmation', this.setValidationRules(true, moment()))(<DatePicker />)}
-            </Form.Item>
-          </Col>
-          <Col span={10}>
-            <Form.Item label="First Contact" extra="Please enter the date this researcher was first contacted.">
-              {getFieldDecorator('firstContact', this.setValidationRules(true, moment()))(<DatePicker />)}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item>
+      <Form onSubmit={this.handleSubmit} {...formItemLayout} className="add-researcher-form">
+        <h1>Add New Researcher</h1>
+        <Form.Item label="Name">
+          {getFieldDecorator('name', this.setValidationRules(true))(
+            <Input placeholder="Enter name" />
+          )}
+        </Form.Item>
+        <Form.Item label="Email">
+          {getFieldDecorator('email', this.setValidationRules(true))(
+            <Input placeholder="Enter email" />
+          )}
+        </Form.Item>
+        <Form.Item label="Zip Code">
+          {getFieldDecorator('zipCode', this.setValidationRules(true))(
+            <Input placeholder="Enter zip code" />
+          )}
+        </Form.Item>
+        <Form.Item label="State">
+          {getFieldDecorator('state', this.setValidationRules(true))(
+            <Select
+              showSearch
+              placeholder="Select a state"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {this.parseStates()}
+            </Select>
+          )}
+        </Form.Item>
+        <Form.Item label="Phone Number">
+          {getFieldDecorator('phoneNumber', this.setValidationRules(true))(
+            <Input placeholder="Enter phone number" />
+          )}
+        </Form.Item>
+        <Form.Item label="Method of Initial Contact">
+          {getFieldDecorator('contactMethod', this.setValidationRules())(
+            <Select
+            placeholder="Select contact method">
+              {this.parseContactMethods()}
+            </Select>
+          )}
+        </Form.Item>
+        <Form.Item label="Interest Confirmation" extra="Please enter the date this researcher confirmed their interest in volunteering.">
+          {getFieldDecorator('volConfirmation', this.setValidationRules(true, moment()))(<DatePicker />)}
+        </Form.Item>
+        <Form.Item label="First Contact" extra="Please enter the date this researcher was first contacted.">
+          {getFieldDecorator('firstContact', this.setValidationRules(true, moment()))(<DatePicker />)}
+        </Form.Item>
+        <Form.Item {...noLabelFormItemLayout}>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
