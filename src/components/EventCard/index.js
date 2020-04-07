@@ -269,6 +269,12 @@ export default class EventCard extends React.Component {
             updateEvent={updateEvent}
             fieldKey='Location'
           />
+          <EditableText 
+            label="phone number"
+            content={townHall.phoneNumber}
+            updateEvent={updateEvent}
+            fieldKey='phoneNumber'
+          />
           <div>{townHall.address} {displayAddressOrDateEdit}</div>
 
           <label>Date: </label>
