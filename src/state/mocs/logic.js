@@ -6,7 +6,6 @@ import {
   GET_MOCS_SUCCESS,
   GET_MOCS_FAILED,
   ADD_CANDIDATE,
-  ADD_CANDIDATE_FAILURE,
   ADD_CANDIDATE_SUCCESS,
   GET_CONGRESS_BY_SESSION,
   GET_CONGRESS_BY_SESSION_SUCCESS,
@@ -144,11 +143,7 @@ const requestStateLeg = createLogic({
 
 const addCampaignLogic = createLogic({
   type: ADD_CANDIDATE,
-  processOptions: {
-    successType: ADD_CANDIDATE_SUCCESS,
-    failType: ADD_CANDIDATE_FAILURE,
-  },
-  process(deps) {
+  process(deps, dispatch, done) {
     const {
       action,
       firestore,
@@ -181,13 +176,24 @@ const addCampaignLogic = createLogic({
     })
     
     return updates.commit().then(() => {
-      return {
+      let newPayload = {
         key: action.payload.key,
         person: {
           ...personData,
           campaigns
         }
       }
+      if (action.payload.isNew) {
+        dispatch({
+                type: UPDATE_CURRENTLY_EDITING_PERSON,
+                payload: newPayload
+              })
+      }
+      dispatch({
+        type: ADD_CANDIDATE_SUCCESS,
+        payload: newPayload
+      })
+      done();
     })
   }
 });

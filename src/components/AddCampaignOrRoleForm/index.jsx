@@ -45,6 +45,11 @@ const federalChambers = [{
   },
 ];
 
+const formType = {
+  "Current office": "in_office",
+  "Current campaign": "is_candidate"
+}
+
 class AddCampaignOrRoleForm extends React.Component {
   constructor(props) {
     super(props);
@@ -71,18 +76,17 @@ class AddCampaignOrRoleForm extends React.Component {
       form,
       person,
       usState,
-      currentKey,
+      formTitle,
     } = this.props;
     e.preventDefault();
-    console.log(person)
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         const role = {
           ...values,
           level: usState ? 'state' : values.level
         }
-        saveRole(person, role, currentKey);
+        saveRole(person, role, !!this.props.multiFormSubmit);
+        this.props.multiFormSubmit && this.props.multiFormSubmit(formType[formTitle])
         form.resetFields();
       }
     });
@@ -218,6 +222,10 @@ class AddCampaignOrRoleForm extends React.Component {
           })(
             <Select
               placeholder="Select a State"
+              filterOption={(input, option) =>
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              showSearch
             >
                 {children}
             </Select>
