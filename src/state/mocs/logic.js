@@ -6,7 +6,6 @@ import {
   GET_MOCS_SUCCESS,
   GET_MOCS_FAILED,
   ADD_CANDIDATE,
-  ADD_CANDIDATE_FAILURE,
   ADD_CANDIDATE_SUCCESS,
   GET_CONGRESS_BY_SESSION,
   GET_CONGRESS_BY_SESSION_SUCCESS,
@@ -18,10 +17,12 @@ import {
   UPDATE_IN_OFFICE_FAIL,
   UPDATE_DISPLAY_NAME,
   UPDATE_DISPLAY_NAME_FAIL,
-  ADD_STATE_LEG,
-  ADD_STATE_LEG_SUCCESS,
+  ADD_OFFICE_PERSON,
+  SET_CURRENTLY_EDITING_PERSON,
   REQUEST_STATE_LEG,
   UPDATE_CAMPAIGN_STATUS,
+  ADD_OFFICE_TO_PERSON,
+  UPDATE_CURRENTLY_EDITING_PERSON,
 } from "./constants";
 import {
   updateInOfficeSuccess,
@@ -36,15 +37,40 @@ import StateLeg from "./state-leg-model";
 import moment from "moment";
 
 const getCongressUpdates = (firestore, data, id, chamber) => {
+
   let updates = firestore.batch();
 
   const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
   const ref2 = firestore.collection(chamberCollection).doc(id);
   updates.update(ref2, data)
 
-  const congressCollection = '116th_congress'
+  const congressCollection = '116th_congress';
+  console.log(chamberCollection)
   const congressCollectionRef = firestore.collection(congressCollection).doc(id);
   updates.update(congressCollectionRef, data);
+  return updates;
+}
+
+const getCongressAdds = (firestore, data, id, chamber) => {
+
+  let updates = firestore.batch();
+
+  const chamberCollection = chamber === 'upper' ? 'senators' : 'house_reps';
+  const ref2 = firestore.collection(chamberCollection).doc(id);
+  updates.set(ref2, data)
+
+  const congressCollection = '116th_congress';
+  const congressCollectionRef = firestore.collection(congressCollection).doc(id);
+  updates.set(congressCollectionRef, data);
+  return updates;
+}
+
+const setFederalCandidate = (firestore, data, id) => {
+
+  let updates = firestore.batch();
+  const dataTableRef = firestore.collection('federal_candidates').doc(id);
+
+  updates.set(dataTableRef, data);
   return updates;
 }
 
@@ -100,7 +126,6 @@ const requestStateLeg = createLogic({
     } = deps;
     return firestore.collection(`${action.payload}_state_legislature`).get()
       .then((snapshot) => {
-        console.log(action.payload)
         const allIds = snapshot.docs.map(doc => doc.data().id);
         const allDataRequests = map(allIds, (id) => firestore.collection('office_people').doc(id).get());
         return Promise.all(allDataRequests).then(allData => {
@@ -114,20 +139,27 @@ const requestStateLeg = createLogic({
 
       })
   }
-})
+});
 
-const addCandidateLogic = createLogic({
+const addCampaignLogic = createLogic({
   type: ADD_CANDIDATE,
-  processOptions: {
-    successType: ADD_CANDIDATE_SUCCESS,
-    failType: ADD_CANDIDATE_FAILURE,
-  },
-  process(deps) {
+  process(deps, dispatch, done) {
     const {
       action,
       firestore,
     } = deps;
     const personData = action.payload.person;
+    let updates;
+    if (personData.in_office === false) {
+      const data = {
+        id: personData.id,
+        displayName: personData.displayName,
+        in_office: false,
+      };
+      updates = setFederalCandidate(firestore, data, personData.id)
+    } else {
+      updates = firestore.batch();
+    }
     let personRef = firestore.collection('office_people').doc(personData.id);
     let campaigns;
     if (!personData.campaigns) {
@@ -137,46 +169,103 @@ const addCandidateLogic = createLogic({
     } else {
       campaigns = [action.payload.campaign, ...personData.campaigns];
     }
-    return personRef.update({
+
+    updates.update(personRef, {
       current_campaign_index: 0,
       campaigns,
-    }).then(() => {
-      return {
+    })
+    
+    return updates.commit().then(() => {
+      let newPayload = {
         key: action.payload.key,
         person: {
           ...personData,
           campaigns
         }
       }
+      if (action.payload.isNew) {
+        dispatch({
+                type: UPDATE_CURRENTLY_EDITING_PERSON,
+                payload: newPayload
+              })
+      }
+      dispatch({
+        type: ADD_CANDIDATE_SUCCESS,
+        payload: newPayload
+      })
+      done();
     })
   }
 });
 
-const addStateLegLogic = createLogic({
-  type: ADD_STATE_LEG,
+const addOfficeLogic = createLogic({
+  type: ADD_OFFICE_TO_PERSON,
   processOptions: {
-    successType: ADD_STATE_LEG_SUCCESS,
-    failType: ADD_CANDIDATE_FAILURE,
+    successType: UPDATE_CURRENTLY_EDITING_PERSON,
   },
   process(deps) {
     const {
       action,
-      firebasedb,
+      firestore,
     } = deps;
-    const state = action.payload.person.state;
-    if (!state) {
-      Promise.reject('no state on state leg');
+    const personData = action.payload.person;
+    const { office } = action.payload;
+    let updates;
+    const data = {
+      id: personData.id,
+      in_office: true,
+      displayName: personData.displayName
     }
-    const newId = firebasedb.ref().child(`state_legislators_data/${state}`).push().key;
-    const newOfficePerson = new StateLeg(action.payload.person);
-    const nameKey = newOfficePerson.createNameKey();
-    console.log(newId)
-    firebasedb.ref(`state_legislators_id/${state}/${nameKey}`).update({
-      id: newId,
-      nameEntered: newOfficePerson.displayName,
+    if (office.level === 'federal') {
+         updates = getCongressAdds(firestore, data, personData.id, office.chamber)
+    } else {
+      // todo: update state legs
+        updates = firestore.batch();
+
+    }
+    let personRef = firestore.collection('office_people').doc(personData.id);
+    let roles;
+    if (!personData.roles) {
+
+      roles = [action.payload.office]
+
+    } else {
+      roles = [action.payload.office, ...personData.roles];
+    }
+    updates.update(personRef, {
+      current_office_index: 0,
+      roles,
     });
-    newOfficePerson.thp_id = newId;
-    firebasedb.ref(`state_legislators_data/${state}/${newId}`).update(newOfficePerson);
+
+    return updates.commit().then(() => {
+      return {
+        key: action.payload.key,
+        person: {
+          ...personData,
+          roles
+        }
+      }
+    })
+  }
+});
+
+const addNewOfficePersonLogic = createLogic({
+type: ADD_OFFICE_PERSON,
+  processOptions: {
+    successType: SET_CURRENTLY_EDITING_PERSON,
+  },
+  process(deps) {
+    const {
+      action,
+      firestore,
+    } = deps;
+    return firestore.collection('office_people').add(action.payload)
+      .then(function (docRef) {
+        return {
+          ...action.payload,
+          id: docRef.id
+        }
+      })
   }
 });
 
@@ -320,9 +409,10 @@ const updateDisplayNameLogic = createLogic({
 })
 
 export default [
-  addStateLegLogic,
   fetchMocs,
-  addCandidateLogic,
+  addNewOfficePersonLogic,
+  addOfficeLogic,
+  addCampaignLogic,
   requestCongressLogic,
   updateMissingMemberLogic,
   updateInOfficeLogic,

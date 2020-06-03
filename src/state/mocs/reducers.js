@@ -11,6 +11,9 @@ import {
   UPDATE_DISPLAY_NAME_FAIL,
   CHANGE_SELECTED_STATE,
   ADD_CANDIDATE_SUCCESS,
+  SET_CURRENTLY_EDITING_PERSON,
+  UPDATE_CURRENTLY_EDITING_PERSON,
+  CLEAR_CURRENTLY_EDITING_PERSON,
 } from "./constants";
 import { map } from 'lodash';
 
@@ -20,7 +23,8 @@ const initialState = {
   116: [],
   115: [],
   error: null,
-  selectedStateLeg: ''
+  selectedStateLeg: '',
+  currentlyEditingPerson: null,
 };
 
 const mocReducer = (state = initialState, action) => {
@@ -48,6 +52,20 @@ const mocReducer = (state = initialState, action) => {
         ...state,
         [action.payload.key]: map(state[action.payload.key], (moc) => moc.id === action.payload.person.id ? action.payload.person: moc)
       }
+    case SET_CURRENTLY_EDITING_PERSON:
+      console.log('saved person', action.payload)
+      return {
+        ...state,
+        currentlyEditingPerson: action.payload,
+      }
+    case UPDATE_CURRENTLY_EDITING_PERSON:
+        return {
+          ...state,
+          currentlyEditingPerson: {
+            ...state.currentlyEditingPerson,
+            ...action.payload.person,
+          }
+        }
     case ADD_CANDIDATE_FAILURE:
       console.log(`ADD_CANDIDATE_FAILURE: ${action.payload}`);
       return {
@@ -103,6 +121,12 @@ const mocReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload,
+      }
+    case CLEAR_CURRENTLY_EDITING_PERSON:
+      console.log('cleared current person')
+      return {
+        ...state,
+        currentlyEditingPerson: null
       }
     default:
       return state;

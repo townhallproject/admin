@@ -14,6 +14,9 @@ import {
   CHANGE_SELECTED_STATE,
   REQUEST_STATE_LEG,
   UPDATE_CAMPAIGN_STATUS,
+  ADD_OFFICE_PERSON,
+  ADD_OFFICE_TO_PERSON,
+  CLEAR_CURRENTLY_EDITING_PERSON,
 } from './constants';
 
 export const requestMocIds = () => ({
@@ -35,12 +38,12 @@ export const getMocsFailed = err => ({
   payload: err
 });
 
-export const saveCampaignToPerson = (person, campaign, key) => ({
+export const saveCampaignToPerson = (person, campaign, isNew) => ({
   type: ADD_CANDIDATE,
   payload: { 
     person,
     campaign,
-    key,
+    isNew,
   }
 })
 
@@ -115,4 +118,22 @@ export const updateCampaignStatus = (value, index, record) => ({
     status: value, 
     index,
   }
+})
+
+export const addNewPerson = (payload) => ({
+  type: ADD_OFFICE_PERSON,
+  payload,
+})
+
+export const addOfficeToPerson = (person, office, key) => ({
+  type: ADD_OFFICE_TO_PERSON,
+  payload: {
+    person,
+    office,
+    key
+  }
+})
+
+export const clearCurrentlyEditingPerson = () => ({
+  type: CLEAR_CURRENTLY_EDITING_PERSON
 })
