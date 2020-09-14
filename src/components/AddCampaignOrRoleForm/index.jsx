@@ -175,7 +175,7 @@ class AddCampaignOrRoleForm extends React.Component {
           help={getFieldValue('level') === LEVEL_STATE ? "full district, ie HD-9" : "zero padded number, '09'"}
         >
           {getFieldDecorator('district', {
-            rules: [{ required: false, message: 'need a name' }],
+            rules: [{ required: false }],
           })(
             <Input placeholder="District" />
           )}

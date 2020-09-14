@@ -45,6 +45,10 @@ class AddPersonForm extends React.Component {
     form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        if (!values.party) {
+          // for community events
+          values.party = null;
+        }
         addNewPerson(values);
         form.resetFields();
       }
@@ -131,7 +135,7 @@ class AddPersonForm extends React.Component {
               {...noLabelFormItemLayout}
             >
               {getFieldDecorator('party', {
-                rules: [{ required: true, message: 'Party selection is required'}],
+                rules: [{ required: false, message: 'Party selection is required', initialValue: ''}],
               })(
                 <Select>
                   <Option value="Democratic">Democratic</Option>
