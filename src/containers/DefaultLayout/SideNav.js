@@ -87,6 +87,9 @@ class SideNav extends Component {
             <Menu.Item key="download-events">
               <Link to="/download-events">Download Events</Link>
             </Menu.Item>
+            <Menu.Item key="zipcodes">
+              <Link to="/zip-database">Add Zipcodes</Link>
+            </Menu.Item>
             <Menu.Item key="resources">
               <Link to="/resources">Resources</Link>
             </Menu.Item>

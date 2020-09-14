@@ -57,6 +57,11 @@ const SmsUsers = Loadable({
   loading: Loading,
 });
 
+const ZipDatabase = Loadable({
+  loader: () => import('./routes/ZipDatabase'),
+  loading: Loading,
+});
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Home', component: DefaultLayout },
@@ -70,6 +75,11 @@ const routes = [
   { path: '/download-events', name: 'DownloadEvents', component: DownloadEvents },
   { path: '/subscribers', name: 'Subscribers', component: Subscribers },
   { path: '/sms-users', name: 'SMS Users', component: SmsUsers },
+  {
+    path: '/zip-database',
+    name: 'Zip Database',
+    component: ZipDatabase
+  },
 
   // { path: '/users/:id', exact: true, name: 'User Details', component: User },
 ];
