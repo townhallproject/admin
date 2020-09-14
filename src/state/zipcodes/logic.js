@@ -37,14 +37,13 @@ const saveZipcode = createLogic({
     const { payload } = action;
     const { zipcode, lat, lng } = payload;
     console.log(payload)
-    return 'init';
-    // return firebasedb.ref(`zips/${payload.zipcode}`).update({
-    //   ZIP: zipcode,
-    //   LAT: lat,
-    //   LNG: lng
-    // }).then(() => {
-    //   return true
-    // })
+    return firebasedb.ref(`zips/${payload.zipcode}`).update({
+      ZIP: zipcode,
+      LAT: lat,
+      LNG: lng
+    }).then(() => {
+      return 'init'
+    })
  
   },
   processOptions: {
