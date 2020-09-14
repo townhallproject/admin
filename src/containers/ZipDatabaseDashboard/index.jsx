@@ -1,5 +1,8 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Form, Input, Button } from "antd";
+
+import zipcodeStateBranch from "../../state/zipcodes";
 
 const ZipLookupForm = Form.create({
   name: "global_state",
@@ -63,7 +66,7 @@ const ZipLookupForm = Form.create({
       </Form.Item>
       {!isInDatabase && (
         <Form.Item
-          hasFeedback
+          hasFeedback={props.lat.touched}
           label="Latitude"
           validateStatus={
             props.lat.errors && props.lat.touched ? "error" : "success"
@@ -85,7 +88,7 @@ const ZipLookupForm = Form.create({
       )}
       {!isInDatabase && (
         <Form.Item
-          hasFeedback
+          hasFeedback={props.lng.touched}
           label="Longitude"
           validateStatus={props.lng.errors && props.lng.touched? "error" : "success"}
           help={props.lng.errors ? props.lng.errors[0].message : ""}
@@ -131,11 +134,13 @@ class ZipLookup extends React.Component {
 
   handleLookupZipcode = (zipcode) => {
     console.log("zip", zipcode);
-    this.setState({ isInDatabase: false });
+    this.props.lookupZipcode(zipcode);
+    // this.setState({ isInDatabase: false });
   };
 
   handleSubmitZipcode = (values) => {
     console.log("all values", values);
+    this.props.saveZipcode(values)
   };
 
   handleFormChange = (changedFields) => {
@@ -146,7 +151,8 @@ class ZipLookup extends React.Component {
   };
 
   render() {
-    const { fields, isInDatabase } = this.state;
+    const { fields } = this.state;
+    const { isInDatabase } = this.props;
     return (
       <div>
         <ZipLookupForm
@@ -162,4 +168,14 @@ class ZipLookup extends React.Component {
   }
 }
 
-export default ZipLookup;
+const mapStateToProps = (state) => ({
+  isInDatabase: zipcodeStateBranch.selectors.getIsInDatabase(state),
+});
+
+const mapDispatchToProps = {
+  lookupZipcode: zipcodeStateBranch.actions.lookUpZipcode,
+    saveZipcode: zipcodeStateBranch.actions.submitZipcode,
+ 
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ZipLookup);

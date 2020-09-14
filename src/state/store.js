@@ -10,6 +10,8 @@ import rsvps from './rsvps';
 import researchers from './researchers';
 import smsUsers from './sms-users';
 import subscribers from './subscribers';
+import zipcodes from './zipcodes';
+
 
 import { firebaseUrl } from '../state/constants';
 import {
@@ -26,6 +28,7 @@ const reducers = {
   selections: selections.reducers,
   smsUsers: smsUsers.reducers,
   subscribers: subscribers.reducers,
+  zipcodes: zipcodes.reducers
 };
 
 const logics = [
@@ -37,6 +40,7 @@ const logics = [
   ...researchers.logics,
   ...smsUsers.logics,
   ...subscribers.logics,
+  ...zipcodes.logics
 ];
 
 const reduxLogicDependencies = {
