@@ -7,7 +7,6 @@ import zipcodeStateBranch from "../../state/zipcodes";
 const ZipLookupForm = Form.create({
   name: "global_state",
   onFieldsChange(props, changedFields) {
-      // call dispatch
     props.onChange(changedFields);
   },
   mapPropsToFields(props) {
@@ -26,18 +25,16 @@ const ZipLookupForm = Form.create({
       }),
     };
   },
-  onValuesChange(_, values) {
-    console.log(values);
-  },
+//   onValuesChange(_, values) {
+//     console.log(values);
+//   },
 })((props) => {
     const { lookupZipcode, submitZipcode, isInDatabase} = props;
-  const { getFieldDecorator, getFieldError } = props.form;
+    const { getFieldDecorator, getFieldError, getFieldValue } = props.form;
     const handleSubmit = (e) => {
       e.preventDefault();
-      console.log(getFieldError("lat"))
       props.form.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values);
           if (!values.lat && !values.lng) {
               return lookupZipcode(values.zipcode)
           }
@@ -50,6 +47,12 @@ const ZipLookupForm = Form.create({
         }
       });
     };
+    let feedback;
+    if (isInDatabase === true) {
+        feedback = `${getFieldValue("zipcode")} is in the database`
+    } else if (isInDatabase === false) {
+        feedback = `${getFieldValue("zipcode")} is missing from the database, add lat and lng values`
+    }
   return (
     <Form layout="inline" onSubmit={handleSubmit}>
       <Form.Item label="Zipcode">
@@ -64,6 +67,7 @@ const ZipLookupForm = Form.create({
           ],
         })(<Input />)}
       </Form.Item>
+    {feedback && (<div>{feedback}</div>)}
       {!isInDatabase && (
         <Form.Item
           hasFeedback={props.lat.touched}
@@ -108,8 +112,8 @@ const ZipLookupForm = Form.create({
           })(<Input />)}
         </Form.Item>
       )}
-      <Button type="primary" htmlType="submit">
-        Submit
+      <Button type="primary" htmlType="submit" >
+        {!isInDatabase ? "Save" : "Lookup"}
       </Button>
     </Form>
   );
@@ -118,7 +122,6 @@ const ZipLookupForm = Form.create({
 
 class ZipLookup extends React.Component {
   state = {
-    isInDatabase: true,
     fields: {
       zipcode: {
         value: "",
@@ -133,18 +136,17 @@ class ZipLookup extends React.Component {
   };
 
   handleLookupZipcode = (zipcode) => {
-    console.log("zip", zipcode);
     this.props.lookupZipcode(zipcode);
-    // this.setState({ isInDatabase: false });
   };
 
   handleSubmitZipcode = (values) => {
-    console.log("all values", values);
     this.props.saveZipcode(values)
   };
 
   handleFormChange = (changedFields) => {
-    console.log(changedFields);
+    if (changedFields.zipcode) {
+        this.props.setFoundZipcode("init");
+    }
     this.setState(({ fields }) => ({
       fields: { ...fields, ...changedFields },
     }));
@@ -162,7 +164,7 @@ class ZipLookup extends React.Component {
           lookupZipcode={this.handleLookupZipcode}
           submitZipcode={this.handleSubmitZipcode}
         />
-        <pre className="language-bash">{JSON.stringify(fields, null, 2)}</pre>
+        {/* <pre className="language-bash">{JSON.stringify(fields, null, 2)}</pre> */}
       </div>
     );
   }
@@ -174,8 +176,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   lookupZipcode: zipcodeStateBranch.actions.lookUpZipcode,
-    saveZipcode: zipcodeStateBranch.actions.submitZipcode,
- 
+  saveZipcode: zipcodeStateBranch.actions.submitZipcode,
+  setFoundZipcode: zipcodeStateBranch.actions.setFoundZipcode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ZipLookup);
