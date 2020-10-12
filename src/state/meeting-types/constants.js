@@ -1,6 +1,10 @@
 import { makeConstant } from "../../utils";
 const STATE_BRANCH = "MEETING_TYPES";
 
+export const GET_MEETING_TYPES = makeConstant(
+  STATE_BRANCH,
+  "GET_MEETING_TYPES"
+);
 export const GET_MEETING_TYPES_SUCCESS = makeConstant(
   STATE_BRANCH,
   "GET_MEETING_TYPES_SUCCESS"

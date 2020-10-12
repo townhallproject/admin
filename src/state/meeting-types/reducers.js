@@ -1,9 +1,9 @@
 import {
+  GET_MEETING_TYPES,
   GET_MEETING_TYPES_SUCCESS,
   GET_MEETING_TYPES_FAILED,
-  SET_LOADING,
-  UPDATE_MEETING_TYPE_SUCCESS,
-  UPDATE_MEETING_TYPE_FAILED,
+  // UPDATE_MEETING_TYPE_SUCCESS,
+  // UPDATE_MEETING_TYPE_FAILED,
 } from "./constants";
 
 const initialState = {
@@ -14,13 +14,14 @@ const initialState = {
 
 const meetingTypesReducer = (state = initialState, { type, payload }) => {
   switch (type) {
-    case SET_LOADING:
+    case GET_MEETING_TYPES:
       return {
         ...state,
-        loading: payload,
+        loading: true,
       };
 
     case GET_MEETING_TYPES_SUCCESS:
+      console.log({ payload });
       return {
         ...state,
         allMeetingTypes: payload,
