@@ -1,32 +1,44 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 
 import { Card, Button, Tag, Typography } from "antd";
 import "./style.scss";
 
+import EditMeetingTypeForm from "./EditMeetingTypeForm";
 import { connect } from "react-redux";
-// import meetingTypesBranch from "../../state/meeting-types";
 
 class MeetingTypeCard extends Component {
   state = {
     editing: false,
+    loading: false,
+  };
+
+  handleFormOpen = () => {
+    this.setState({ editing: !this.state.editing });
+  };
+
+  handleFormSubmit = (formValues) => {
+    this.setState({ loading: true });
+
+    this.setState({ editing: false, loading: false });
+  };
+
+  getNameFromIconFlags = (iconData) => {
+    if (!iconData) return;
+
+    const iconText = this.props.iconFlags.find(
+      (icon) => icon.data == iconData.toString()
+    );
+
+    return iconText ? iconText.text : "";
   };
 
   render() {
     const { Text } = Typography;
 
-    const {
-      name,
-      id,
-      description,
-      icon,
-      color,
-      email,
-      text,
-      display,
-    } = this.props.meetingType;
+    const { name, description, icon, color, display } = this.props.meetingType;
 
-    return (
+    const markup = !this.state.editing ? (
       <Card className="card">
         <div className="container">
           <div>
@@ -40,7 +52,7 @@ class MeetingTypeCard extends Component {
               <Text strong>Description: </Text> {description}
             </p>
             <p>
-              <Text strong>Map Icon: </Text> {icon}
+              <Text strong>Map Icon: </Text> {this.getNameFromIconFlags(icon)}
             </p>
 
             <div className="tag">
@@ -49,26 +61,30 @@ class MeetingTypeCard extends Component {
           </div>
 
           <div>
-            <Button type="primary">Edit</Button>
+            <Button onClick={this.handleFormOpen} type="primary">
+              Edit
+            </Button>
           </div>
         </div>
       </Card>
+    ) : (
+      <EditMeetingTypeForm
+        meetingType={this.props.meetingType}
+        handleFormSubmit={this.handleFormSubmit}
+        handleFormOpen={this.handleFormOpen}
+      />
     );
+
+    return markup;
   }
 }
-
-const mapStateToProps = () => ({
-  // allMeetingTypes: meetingTypesBranch.selectors.allMeetingTypes,
-  // loading: meetingTypesBranch.selectors.loading,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  // getMeetingTypes: () =>
-  //   dispatch(meetingTypesBranch.actions.getMeetingTypesSuccess()),
-});
 
 MeetingTypeCard.propTypes = {
   meetingType: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeetingTypeCard);
+const mapStateToProps = (state) => ({
+  iconFlags: state.meetingTypes.iconFlags,
+});
+
+export default connect(mapStateToProps)(MeetingTypeCard);

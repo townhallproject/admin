@@ -10,6 +10,40 @@ const initialState = {
   allMeetingTypes: [],
   error: null,
   loading: false,
+  iconFlags: [
+    {
+      text: "In Person",
+      data: "in-person",
+    },
+    {
+      text: "Activist Event",
+      data: "activism",
+    },
+    {
+      text: "Tele Town Hall",
+      data: "tele",
+    },
+    {
+      text: "Campaign Town Hall",
+      data: "campaign",
+    },
+    {
+      text: "Staff",
+      data: "staff",
+    },
+    {
+      text: "HR 1 Event",
+      data: "hr-one",
+    },
+    {
+      text: "Youth Vote Town Hall",
+      data: "next-gen",
+    },
+    {
+      text: "March For Our Lives",
+      data: "mfol",
+    },
+  ],
 };
 
 const meetingTypesReducer = (state = initialState, { type, payload }) => {

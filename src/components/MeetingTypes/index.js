@@ -18,10 +18,12 @@ class MeetingTypesMarkup extends Component {
     const { Title } = Typography;
 
     const cardMarkup = this.props.loading ? (
-      <Spin size="large" className="loader" />
+      <div className="loader">
+        <Spin size="large" />
+      </div>
     ) : this.props.allMeetingTypes.length > 0 ? (
       this.props.allMeetingTypes.map((meetingType) => (
-        <Col xs={24} md={8} key={meetingType.id}>
+        <Col xs={24} md={12} key={meetingType.id}>
           <MeetingTypeCard meetingType={meetingType} />
         </Col>
       ))

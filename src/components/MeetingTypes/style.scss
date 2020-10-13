@@ -25,3 +25,23 @@
     }
   }
 }
+
+.form-card {
+  width: 100%;
+
+  .input {
+    margin-bottom: 0;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+}
+
+.loader {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
