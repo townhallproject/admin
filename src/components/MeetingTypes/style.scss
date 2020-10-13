@@ -1,0 +1,27 @@
+.card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .tag {
+      text-align: start;
+      margin-bottom: 1.2em;
+    }
+
+    .name {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .color {
+      height: 20px;
+      width: 20px;
+    }
+  }
+}

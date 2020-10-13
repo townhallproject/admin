@@ -1,19 +1,59 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+
+import { Card, Button, Tag, Typography } from "antd";
+import "./style.scss";
+
 import { connect } from "react-redux";
-import meetingTypesBranch from "../../state/meeting-types";
+// import meetingTypesBranch from "../../state/meeting-types";
 
 class MeetingTypeCard extends Component {
   state = {
     editing: false,
   };
 
-  componentDidMount() {
-    this.props.getMeetingTypes();
-  }
-
   render() {
-    return <div>hello</div>;
+    const { Text } = Typography;
+
+    const {
+      name,
+      id,
+      description,
+      icon,
+      color,
+      email,
+      text,
+      display,
+    } = this.props.meetingType;
+
+    return (
+      <Card className="card">
+        <div className="container">
+          <div>
+            <div className="name">
+              <p>
+                <Text strong>Name: </Text> {name}
+              </p>
+              <div className="color" style={{ backgroundColor: color }}></div>
+            </div>
+            <p>
+              <Text strong>Description: </Text> {description}
+            </p>
+            <p>
+              <Text strong>Map Icon: </Text> {icon}
+            </p>
+
+            <div className="tag">
+              {display ? <Tag color="red">Include in table</Tag> : ""}
+            </div>
+          </div>
+
+          <div>
+            <Button type="primary">Edit</Button>
+          </div>
+        </div>
+      </Card>
+    );
   }
 }
 
@@ -23,14 +63,12 @@ const mapStateToProps = () => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getMeetingTypes: () =>
-    dispatch(meetingTypesBranch.actions.getMeetingTypesSuccess()),
+  // getMeetingTypes: () =>
+  //   dispatch(meetingTypesBranch.actions.getMeetingTypesSuccess()),
 });
 
 MeetingTypeCard.propTypes = {
-  meetingTypes: PropTypes.object.isRequired,
-  // loading: PropTypes.bool.isRequired,
-  // getMeetingType: PropTypes.func.isRequired,
+  meetingType: PropTypes.object.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MeetingTypeCard);

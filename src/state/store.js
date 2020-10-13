@@ -15,7 +15,6 @@ import meetingTypes from "./meeting-types";
 
 import { firebaseUrl } from "../state/constants";
 import { firebasedb, firestore } from "../utils/firebaseinit";
-import MeetingTypes from "../components/MeetingTypes";
 
 const reducers = {
   events: events.reducers,
