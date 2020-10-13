@@ -17,11 +17,11 @@ class MeetingTypeCard extends Component {
     this.setState({ editing: !this.state.editing });
   };
 
-  handleFormSubmit = (formValues) => {
-    this.setState({ loading: true });
+  // handleFormSubmit = (formValues) => {
+  //   this.setState({ loading: true });
 
-    this.setState({ editing: false, loading: false });
-  };
+  //   this.setState({ editing: false, loading: false });
+  // };
 
   getNameFromIconFlags = (iconData) => {
     if (!iconData) return;
@@ -79,7 +79,7 @@ class MeetingTypeCard extends Component {
     ) : (
       <EditMeetingTypeForm
         meetingType={this.props.meetingType}
-        handleFormSubmit={this.handleFormSubmit}
+        // handleFormSubmit={this.handleFormSubmit}
         handleFormOpen={this.handleFormOpen}
         openNotification={this.openNotification}
       />

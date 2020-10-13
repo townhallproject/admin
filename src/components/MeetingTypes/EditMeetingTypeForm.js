@@ -5,29 +5,47 @@ import { Card, Form, Input, Button, Checkbox, Select, Spin } from "antd";
 import "./style.scss";
 
 import { connect } from "react-redux";
+import meetingTypesBranch from "../../state/meeting-types";
 
 class EditMeetingTypeForm extends Component {
-  state = {
-    loading: false,
+  state = {};
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const {
+      updateMeetingType,
+      form,
+      meetingType: { id },
+    } = this.props;
+
+    form.validateFields(async (err, values) => {
+      if (err) {
+        return console.log(err);
+      }
+
+      const formValues = { ...values, id };
+      updateMeetingType(formValues);
+    });
   };
 
-  handleSubmit = (e) => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false });
-    }, 2000);
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (err) {
-        console.log(err);
-      }
+  componentDidUpdate(previousProps) {
+    if (this.props.success !== previousProps.success && this.props.success) {
       const title = "Success";
       const description = "You successfully edited this meeting type";
       this.props.openNotification(title, description);
+      this.props.handleFormOpen();
+    }
+  }
 
-      console.log(values);
-    });
-  };
+  // static getDerivedStateFromProps = (nextProps, previousState) => {
+  //   if (nextProps.success != previousState.success && nextProps.success) {
+  //     const title = "Success";
+  //     const description = "You successfully edited this meeting type";
+  //     nextProps.openNotification(title, description);
+  //     nextProps.handleFormOpen();
+  //     return { ...nextProps };
+  //   } else return null;
+  // };
 
   render() {
     const {
@@ -67,7 +85,7 @@ class EditMeetingTypeForm extends Component {
           )}
         </Form.Item>
 
-        <Form.Item label="Description" className="input" labelAlign="left">
+        <Form.Item label="Description" className="input">
           {getFieldDecorator("description", {
             initialValue: description,
             rules: [{ required: true, message: "Please input description!" }],
@@ -111,7 +129,7 @@ class EditMeetingTypeForm extends Component {
       </Form>
     );
 
-    const displayedMarkup = this.state.loading ? (
+    const displayedMarkup = this.props.loading ? (
       <div className="loader">
         <Spin size="large" />
       </div>
@@ -125,9 +143,9 @@ class EditMeetingTypeForm extends Component {
 
 EditMeetingTypeForm.propTypes = {
   meetingType: PropTypes.object.isRequired,
-  handleFormSubmit: PropTypes.func.isRequired,
   handleFormOpen: PropTypes.func.isRequired,
   openNotification: PropTypes.func.isRequired,
+  updateMeetingType: PropTypes.func.isRequired,
 };
 
 const wrappedForm = Form.create({ name: "EditMeetingTypeForm" })(
@@ -136,6 +154,13 @@ const wrappedForm = Form.create({ name: "EditMeetingTypeForm" })(
 
 const mapStateToProps = (state) => ({
   iconFlags: state.meetingTypes.iconFlags,
+  loading: state.meetingTypes.updateLoading,
+  success: state.meetingTypes.success,
 });
 
-export default connect(mapStateToProps)(wrappedForm);
+const mapDispatchToProps = (dispatch) => ({
+  updateMeetingType: (formValues) =>
+    dispatch(meetingTypesBranch.actions.updateMeetingType(formValues)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(wrappedForm);

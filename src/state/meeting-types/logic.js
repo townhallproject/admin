@@ -1,20 +1,15 @@
 import { createLogic } from "redux-logic";
 
 import {
-  GET_MEETING_TYPES_FAILED,
   GET_MEETING_TYPES,
+  GET_MEETING_TYPES_FAILED,
   GET_MEETING_TYPES_SUCCESS,
-  // UPDATE_MEETING_TYPE_SUCCESS,
-  // UPDATE_MEETING_TYPE_FAILED,
+  UPDATE_MEETING_TYPE,
+  UPDATE_MEETING_TYPE_SUCCESS,
+  UPDATE_MEETING_TYPE_FAILED,
 } from "./constants";
 
 import { MEETING_TYPES_PATH } from "../constants";
-
-// import {
-// getMeetingTypesFailed,
-//   getMeetingTypesSuccess,
-//   setLoading,
-// } from "./actions";
 
 const fetchMeetingTypesLogic = createLogic({
   type: GET_MEETING_TYPES,
@@ -50,4 +45,30 @@ const fetchMeetingTypesLogic = createLogic({
   },
 });
 
-export default [fetchMeetingTypesLogic];
+const updateMeetingTypeLogic = createLogic({
+  type: UPDATE_MEETING_TYPE,
+
+  processOptions: {
+    successType: UPDATE_MEETING_TYPE_SUCCESS,
+    failType: UPDATE_MEETING_TYPE_FAILED,
+  },
+
+  process(deps) {
+    const {
+      firebasedb,
+      action: { payload },
+    } = deps;
+
+    let query = firebasedb.ref(`${MEETING_TYPES_PATH}/${payload.id}`);
+    return query
+      .update(payload)
+      .then(() => {
+        return payload;
+      })
+      .catch((err) => {
+        console.log(`Error fetching Meeting types: ${err}`);
+      });
+  },
+});
+
+export default [fetchMeetingTypesLogic, updateMeetingTypeLogic];

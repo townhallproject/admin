@@ -2,14 +2,17 @@ import {
   GET_MEETING_TYPES,
   GET_MEETING_TYPES_SUCCESS,
   GET_MEETING_TYPES_FAILED,
-  // UPDATE_MEETING_TYPE_SUCCESS,
-  // UPDATE_MEETING_TYPE_FAILED,
+  UPDATE_MEETING_TYPE,
+  UPDATE_MEETING_TYPE_SUCCESS,
+  UPDATE_MEETING_TYPE_FAILED,
 } from "./constants";
 
 const initialState = {
   allMeetingTypes: [],
   error: null,
   loading: false,
+  updateLoading: false,
+  success: false,
   iconFlags: [
     {
       text: "In Person",
@@ -48,6 +51,13 @@ const initialState = {
 
 const meetingTypesReducer = (state = initialState, { type, payload }) => {
   switch (type) {
+    case UPDATE_MEETING_TYPE:
+      return {
+        ...state,
+        updateLoading: true,
+        success: false,
+      };
+
     case GET_MEETING_TYPES:
       return {
         ...state,
@@ -55,7 +65,6 @@ const meetingTypesReducer = (state = initialState, { type, payload }) => {
       };
 
     case GET_MEETING_TYPES_SUCCESS:
-      console.log({ payload });
       return {
         ...state,
         allMeetingTypes: payload,
@@ -63,20 +72,27 @@ const meetingTypesReducer = (state = initialState, { type, payload }) => {
         error: null,
       };
 
-    // case GET_USER_EMAIL_FOR_EVENT_SUCCESS:
-    //   return {
-    //     ...state,
-    //     allEvents: state.allEvents.map((event) => event.eventId === payload.eventId ? {
-    //       ...event,
-    //       userEmail: payload.email
-    //     } : event)
-    // };
+    case UPDATE_MEETING_TYPE_SUCCESS:
+      return {
+        ...state,
+        allMeetingTypes: state.allMeetingTypes.map((meetingType) => {
+          if (meetingType.id == payload.id) {
+            meetingType = { ...meetingType, ...payload };
+          }
+          return meetingType;
+        }),
+        updateLoading: false,
+        success: true,
+        error: null,
+      };
 
     case GET_MEETING_TYPES_FAILED:
+    case UPDATE_MEETING_TYPE_FAILED:
       console.log(`GET_EVENTS_FAILED: ${payload}`);
       return {
         ...state,
         loading: false,
+        updateLoading: false,
         error: payload,
       };
 
