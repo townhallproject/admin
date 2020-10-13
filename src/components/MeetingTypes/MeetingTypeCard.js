@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 
-import { Card, Button, Tag, Typography } from "antd";
+import { Card, Button, Tag, Typography, notification, Icon } from "antd";
 import "./style.scss";
 
 import EditMeetingTypeForm from "./EditMeetingTypeForm";
@@ -31,6 +31,15 @@ class MeetingTypeCard extends Component {
     );
 
     return iconText ? iconText.text : "";
+  };
+
+  openNotification = (title, description) => {
+    notification.open({
+      message: title,
+      description,
+      icon: <Icon type="smile" style={{ color: "#108ee9" }} />,
+      duration: 3.0,
+    });
   };
 
   render() {
@@ -72,6 +81,7 @@ class MeetingTypeCard extends Component {
         meetingType={this.props.meetingType}
         handleFormSubmit={this.handleFormSubmit}
         handleFormOpen={this.handleFormOpen}
+        openNotification={this.openNotification}
       />
     );
 

@@ -21,6 +21,9 @@ class EditMeetingTypeForm extends Component {
       if (err) {
         console.log(err);
       }
+      const title = "Success";
+      const description = "You successfully edited this meeting type";
+      this.props.openNotification(title, description);
 
       console.log(values);
     });
@@ -35,10 +38,10 @@ class EditMeetingTypeForm extends Component {
       email,
       display,
     } = this.props.meetingType;
+    const { getFieldDecorator } = this.props.form;
+
     const { Option } = Select;
     const { TextArea } = Input;
-
-    const { getFieldDecorator } = this.props.form;
 
     const formMarkup = (
       <Form onSubmit={this.handleSubmit} className="meeting-type-form">
@@ -124,6 +127,7 @@ EditMeetingTypeForm.propTypes = {
   meetingType: PropTypes.object.isRequired,
   handleFormSubmit: PropTypes.func.isRequired,
   handleFormOpen: PropTypes.func.isRequired,
+  openNotification: PropTypes.func.isRequired,
 };
 
 const wrappedForm = Form.create({ name: "EditMeetingTypeForm" })(
