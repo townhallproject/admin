@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import { Card, Button, Tag, Typography, notification, Icon } from "antd";
@@ -16,12 +16,6 @@ class MeetingTypeCard extends Component {
   handleFormOpen = () => {
     this.setState({ editing: !this.state.editing });
   };
-
-  // handleFormSubmit = (formValues) => {
-  //   this.setState({ loading: true });
-
-  //   this.setState({ editing: false, loading: false });
-  // };
 
   getNameFromIconFlags = (iconData) => {
     if (!iconData) return;
@@ -79,7 +73,6 @@ class MeetingTypeCard extends Component {
     ) : (
       <EditMeetingTypeForm
         meetingType={this.props.meetingType}
-        // handleFormSubmit={this.handleFormSubmit}
         handleFormOpen={this.handleFormOpen}
         openNotification={this.openNotification}
       />
