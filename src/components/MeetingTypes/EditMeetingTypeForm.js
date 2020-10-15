@@ -37,16 +37,6 @@ class EditMeetingTypeForm extends Component {
     }
   }
 
-  // static getDerivedStateFromProps = (nextProps, previousState) => {
-  //   if (nextProps.success != previousState.success && nextProps.success) {
-  //     const title = "Success";
-  //     const description = "You successfully edited this meeting type";
-  //     nextProps.openNotification(title, description);
-  //     nextProps.handleFormOpen();
-  //     return { ...nextProps };
-  //   } else return null;
-  // };
-
   render() {
     const {
       name,
@@ -88,7 +78,6 @@ class EditMeetingTypeForm extends Component {
         <Form.Item label="Description" className="input">
           {getFieldDecorator("description", {
             initialValue: description,
-            rules: [{ required: true, message: "Please input description!" }],
           })(<TextArea rows={3} placeholder="Description" />)}
         </Form.Item>
 

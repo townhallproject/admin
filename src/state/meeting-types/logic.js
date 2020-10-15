@@ -35,6 +35,7 @@ const fetchMeetingTypesLogic = createLogic({
 
         snapshot.forEach((meetingType) => {
           const meetingTypeData = meetingType.val();
+          meetingTypeData.id = meetingType.key;
           allMeetingTypes.push(meetingTypeData);
         });
         return allMeetingTypes;

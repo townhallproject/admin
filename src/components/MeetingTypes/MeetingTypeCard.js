@@ -39,7 +39,15 @@ class MeetingTypeCard extends Component {
   render() {
     const { Text } = Typography;
 
-    const { name, description, icon, color, display } = this.props.meetingType;
+    const {
+      name,
+      description,
+      icon,
+      color,
+      display,
+      text,
+      email,
+    } = this.props.meetingType;
 
     const markup = !this.state.editing ? (
       <Card className="card">
@@ -60,6 +68,14 @@ class MeetingTypeCard extends Component {
 
             <div className="tag">
               {display ? <Tag color="red">Include in table</Tag> : ""}
+            </div>
+
+            <div className="tag">
+              {email ? <Tag color="red">Include in email alerts</Tag> : ""}
+            </div>
+
+            <div className="tag">
+              {text ? <Tag color="red">Include in text alerts</Tag> : ""}
             </div>
           </div>
 
