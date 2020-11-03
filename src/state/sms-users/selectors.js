@@ -23,9 +23,9 @@ export const getConversationsToShow = createSelector([getFilterSMSToLastWeek, ge
     if (shouldFilterByDate) {
 
       return filter(filtered, (user) => {
-        const date = moment(user.messages[0].time_stamp);
+        const date = moment(user.messages[user.messages.length - 1].time_stamp);
         const aWeekAgo = moment().subtract(1, 'week');
-        return date.isAfter(aWeekAgo);
+        return date.isAfter(aWeekAgo) && user.messages[user.messages.length - 1].from_user;
       })
     }
     return filtered;
