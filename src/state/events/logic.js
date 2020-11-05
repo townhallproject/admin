@@ -69,8 +69,10 @@ const fetchEvents = createLogic({
       .then((snapshot) => {
         const allData = [];
         const allUids = [];
+        const allEvents = [];
         snapshot.forEach((ele) => {
           const event = ele.val();
+          allEvents.push(event);
           const researcher = event.enteredBy;
           if (researcher && !includes(researcher, "@")) {
             if (!includes(allUids, researcher)) {
@@ -80,6 +82,7 @@ const fetchEvents = createLogic({
           }
           allData.push(ele.val());
         });
+        console.log({ allEvents });
         dispatch(storeEventsInState(allData));
       })
       .then(done);
