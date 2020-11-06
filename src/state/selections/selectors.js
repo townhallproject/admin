@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { includes, filter, map, orderBy, reduce, uniq } from "lodash";
+import { getAllResearchers } from "../researchers/selectors";
 import moment from "moment-timezone";
 import {
   LIVE_EVENTS_TAB,
@@ -246,7 +247,6 @@ export const getAllEventsForAnalysis = createSelector(
       });
       return [...oldEvents, ...liveEvents];
     }
-    console.log({ oldEvents });
     return oldEvents;
   }
 );
@@ -348,11 +348,29 @@ export const getFilteredOldEventsLength = createSelector(
 );
 
 export const getEventsAsDownloadObjects = createSelector(
-  [getFilteredEvents],
-  (allEvents) => {
+  [getFilteredEvents, getAllResearchers],
+  (allEvents, researchers) => {
     return map(allEvents, (eventData) => {
       // Future: Customize normalizedEvent > CSV field mappings if desired
-      return eventData;
+      const newEventData = { ...eventData };
+      researchers.forEach((researcher) => {
+        if (researcher.id === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (researcher.uid === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (researcher.email === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (!Boolean(eventData.enteredBy)) {
+          newEventData.enteredBy = "Not available";
+        }
+      });
+      return newEventData;
     });
   }
 );
