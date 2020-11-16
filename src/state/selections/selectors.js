@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { includes, filter, map, orderBy, reduce, uniq } from "lodash";
+import { getAllResearchers } from "../researchers/selectors";
 import moment from "moment-timezone";
 import {
   LIVE_EVENTS_TAB,
@@ -150,12 +151,21 @@ export const normalizeEventSchema = (eventData) => {
   normalizedEvent.district = eventData.district;
 
   normalizedEvent.timestamp = eventData.timestamp || eventData.dateObj;
-  normalizedEvent.timeStart = eventData.timeZone
-    ? moment(`${eventData.dateString} ${eventData.Time}`).format(
-        "MMMM Do YYYY, h:mm a z"
-      ) + `${eventData.timeZone}`
-    : `${eventData.dateString} ${eventData.Time}` ||
-      moment(eventData.dateObj).toISOString();
+
+  if (eventData.timeZone) {
+    normalizedEvent.timeStart = eventData.dateString
+      ? moment(`${eventData.dateString} ${eventData.Time}`).format(
+          "MMMM Do YYYY, h:mm a z"
+        ) + `${eventData.timeZone}`
+      : moment
+          .tz(eventData.timeStart, eventData.timeZone)
+          .format("MMMM Do YYYY, h:mm a z");
+  } else {
+    normalizedEvent.timeStart = eventData.dateString
+      ? `${eventData.dateString} ${eventData.Time}`
+      : moment.tz(eventData.timeStart).format("MMMM Do YYYY, h:mm a z");
+  }
+
   // Live events in Firebase currently store timeEnd as human-readable strings, e.g. "12:00 PM", instead of ISO-8601
   normalizedEvent.timeEnd = eventData.timeEnd || " ";
   normalizedEvent.timeZone = eventData.timeZone || " ";
@@ -205,16 +215,10 @@ export const getAllEventsForAnalysis = createSelector(
     if (dateLookupType === DATE_CREATED) {
       oldEvents = filter(oldEvents, (event) => {
         if (event[DATE_CREATED]) {
-          console.log("date created", event[DATE_CREATED]);
           let date = moment(event[DATE_CREATED]).valueOf();
-          console.log(date, date >= dateRange[0] && date <= dateRange[1]);
           return date >= dateRange[0] && date <= dateRange[1];
         }
         let date = moment(event.lastUpdated).valueOf();
-        console.log(
-          "using last updated",
-          date >= dateRange[0] && date <= dateRange[1]
-        );
         return date >= dateRange[0] && date <= dateRange[1];
       });
     }
@@ -344,11 +348,29 @@ export const getFilteredOldEventsLength = createSelector(
 );
 
 export const getEventsAsDownloadObjects = createSelector(
-  [getFilteredEvents],
-  (allEvents) => {
+  [getFilteredEvents, getAllResearchers],
+  (allEvents, researchers) => {
     return map(allEvents, (eventData) => {
       // Future: Customize normalizedEvent > CSV field mappings if desired
-      return eventData;
+      const newEventData = { ...eventData };
+      researchers.forEach((researcher) => {
+        if (researcher.id === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (researcher.uid === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (researcher.email === eventData.enteredBy) {
+          newEventData.enteredBy = researcher.email;
+        }
+
+        if (!Boolean(eventData.enteredBy)) {
+          newEventData.enteredBy = "Not available";
+        }
+      });
+      return newEventData;
     });
   }
 );
