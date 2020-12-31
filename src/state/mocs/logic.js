@@ -25,15 +25,12 @@ import {
   UPDATE_CURRENTLY_EDITING_PERSON,
 } from "./constants";
 import {
-  updateInOfficeSuccess,
   updateDisplayNameSuccess,
 } from './actions';
-import Candidate from './candidate-model';
 import {
   map,
   filter
 } from "lodash";
-import StateLeg from "./state-leg-model";
 import moment from "moment";
 
 const getCongressUpdates = (firestore, data, id, chamber) => {
@@ -219,9 +216,8 @@ const addOfficeLogic = createLogic({
     if (office.level === 'federal') {
          updates = getCongressAdds(firestore, data, personData.id, office.chamber)
     } else {
-      // todo: update state legs
         updates = firestore.batch();
-
+        updates.set(firestore.collection(`${action.payload.office.state}_state_legislature`).doc(data.id), data)
     }
     let personRef = firestore.collection('office_people').doc(personData.id);
     let roles;
