@@ -21,7 +21,7 @@
     "@coreui/react": "^2.0.5",
     "antd": "^3.19.7",
     "autoprefixer": "7.1.6",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
     "babel-jest": "^23.4.2",
