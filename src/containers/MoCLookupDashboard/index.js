@@ -33,7 +33,7 @@ class MoCLookUpDashboard extends React.Component {
       getCongressBySession,
     } = this.props;
     requestMocIds();
-    getCongressBySession('116');
+    getCongressBySession('117');
     changeMode('candidate')
   }
 
@@ -53,7 +53,7 @@ class MoCLookUpDashboard extends React.Component {
       saveCampaignToPerson,
       currentlyEditingPerson,
       radioValue,
-      the116theCongress,
+      currentCongress,
       updateMissingMemberValue,
       updateInOfficeValue,
       updateDisplayNameValue,
@@ -67,13 +67,13 @@ class MoCLookUpDashboard extends React.Component {
         <Tabs defaultActiveKey="congress">
            <TabPane tab="Current Congress" key="congress">
             <MocTable 
-              mocs={the116theCongress}
+              mocs={currentCongress}
               saveCampaignToPerson={saveCampaignToPerson}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
               updateCampaignStatus={updateCampaignStatus}
-              currentKey={116}
+              currentKey={117}
             />
           </TabPane>
           <TabPane tab="Current State Legs" key="stateLegs">
@@ -119,7 +119,7 @@ const mapStateToProps = state => ({
   isModerator: userStateBranch.selectors.getModeratorStatus(state),
   radioValue: mocStateBranch.selectors.getSelectedState(state),
   keySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
-  the116theCongress: mocStateBranch.selectors.get116thCongress(state),
+  currentCongress: mocStateBranch.selectors.get116thCongress(state),
   currentlyEditingPerson: mocStateBranch.selectors.getCurrentlyEditingPerson(state),
 });
 
