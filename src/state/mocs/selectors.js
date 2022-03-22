@@ -30,20 +30,7 @@ export const getNthCongress = n_congress => createSelector(
     }
 )
 
-export const get116thCongress = createSelector([get116thCongressData], (congress) => {
-    return map(congress, ele => {
-        if (!ele) {
-            return;
-        }
-        const role = find(ele.roles, (ele) => ele.congress === '116');
-        const mergedPerson = {
-          ...ele,
-          ...role,
-        }
-        mergedPerson.id = ele.id; // make sure id is the moc id and not the role id
-        return mergedPerson;
-    })
-})
+export const get116thCongress = getNthCongress(116);
 
 export const getAllMocNames = createSelector([getAllMocsIds], (mocIdObjs) => {
     return map(mocIdObjs, 'nameEntered');
