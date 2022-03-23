@@ -259,12 +259,14 @@ type: ADD_OFFICE_PERSON,
       action,
       firestore,
     } = deps;
+    console.log('Processing add office person request', action, firestore);
     return firestore.collection('office_people').add(action.payload)
       .then(function (docRef) {
+        console.log('Successfully updated office_people (I think)', docRef);
         return {
           ...action.payload,
           id: docRef.id
-        }
+        };
       })
   }
 });
@@ -315,6 +317,7 @@ const updateInOfficeLogic = createLogic({
     const data = {
       in_office: inOffice
     };
+    console.log("Requesting in office update.", id, inOffice, chamber);
 
     const updates = getCongressUpdates(firestore, data, id, chamber)
     const ref1 = firestore.collection('office_people').doc(`${id}`);
