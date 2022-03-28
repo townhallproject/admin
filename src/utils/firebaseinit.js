@@ -1,6 +1,6 @@
 // FIREBASE METHODS
 // Initialize Firebase
-import firebase from 'firebase';
+import { getFirestore } from 'firebase/firestore/lite';
 import { initializeApp, credential } from 'firebase-admin/app';
 
 const PREFIX = process.env.NODE_ENV === "production" ? "REACT_APP_PROD" : "REACT_APP_TESTING";
@@ -19,16 +19,19 @@ const config = {
 };
 
 // New Firebase init
-initializeApp({
+const firebaseApp = initializeApp({
     credential: credential.cert(config.fbServiceAcctCreds),
     databaseURL: config.databaseURL
 });
+const firestore = getFirestore(firebaseApp);
+
+export default firestore;
 
 // OLD Firebase init
-firebase.initializeApp(config);
-export const firebasedb = firebase.database();
-export const provider = new firebase.auth.GoogleAuthProvider();
-export const auth = firebase.auth();
-export const firestore = firebase.firestore();
+// firebase.initializeApp(config);
+// export const firebasedb = firebase.database();
+// export const provider = new firebase.auth.GoogleAuthProvider();
+// export const auth = firebase.auth();
+// export const firestore = firebase.firestore();
 
-export default firebase;
+// export default firebase;
