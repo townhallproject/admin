@@ -99,8 +99,8 @@
     "jest": "^27.5.1"
   },
   "scripts": {
-    "build-css": "node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss",
-    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./node_modules ./src/scss -o ./src/scss --watch --recursive",
+    "build-css": "sass -I ./src -I ./node_modules src/:src/",
+    "watch-css": "npm run build-css && sass -I ./src -I ./node_modules src/:src/ --watch",    
     "start-js": "node scripts/start.js",
     "start": "node scripts/start.js",
     "watch": "npm-run-all -p watch-css start-js",
