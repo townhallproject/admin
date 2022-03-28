@@ -33,6 +33,10 @@ import {
 } from "lodash";
 import moment from "moment";
 
+// Note: I don't think it's worth making this more modular now. We could at least
+// consolidate the two places this is stored as a constant.
+const CURRENT_CONGRESS = 117;
+
 const getCongressUpdates = (firestore, data, id, chamber) => {
 
   let updates = firestore.batch();
@@ -41,7 +45,7 @@ const getCongressUpdates = (firestore, data, id, chamber) => {
   const ref2 = firestore.collection(chamberCollection).doc(id);
   updates.update(ref2, data)
 
-  const congressCollection = '116th_congress';
+  const congressCollection = `{CURRENT_CONGRESS}th_congress`;
   console.log(chamberCollection)
   const congressCollectionRef = firestore.collection(congressCollection).doc(id);
   updates.update(congressCollectionRef, data);
@@ -56,7 +60,7 @@ const getCongressAdds = (firestore, data, id, chamber) => {
   const ref2 = firestore.collection(chamberCollection).doc(id);
   updates.set(ref2, data)
 
-  const congressCollection = '116th_congress';
+  const congressCollection = `{CURRENT_CONGRESS}th_congress`;
   const congressCollectionRef = firestore.collection(congressCollection).doc(id);
   updates.set(congressCollectionRef, data);
   return updates;

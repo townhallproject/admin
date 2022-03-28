@@ -8,7 +8,6 @@ import {
   map
 } from 'lodash';
 
-
 import mocStateBranch from '../../state/mocs';
 import selectionStateBranch from '../../state/selections';
 import userStateBranch from '../../state/users';
@@ -17,6 +16,7 @@ import MocTable from '../../components/MocTable';
 import { STATES_LEGS } from '../../constants';
 import AddPersonForm from '../../components/AddPersonForm';
 
+const CurrentCongress = 117;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
@@ -33,7 +33,7 @@ class MoCLookUpDashboard extends React.Component {
       getCongressBySession,
     } = this.props;
     requestMocIds();
-    getCongressBySession('116');
+    getCongressBySession(CurrentCongress.toString());
     changeMode('candidate')
   }
 
@@ -53,7 +53,7 @@ class MoCLookUpDashboard extends React.Component {
       saveCampaignToPerson,
       currentlyEditingPerson,
       radioValue,
-      the116theCongress,
+      currentCongress,
       updateMissingMemberValue,
       updateInOfficeValue,
       updateDisplayNameValue,
@@ -67,13 +67,13 @@ class MoCLookUpDashboard extends React.Component {
         <Tabs defaultActiveKey="congress">
            <TabPane tab="Current Congress" key="congress">
             <MocTable 
-              mocs={the116theCongress}
+              mocs={currentCongress}
               saveCampaignToPerson={saveCampaignToPerson}
               updateMissingMemberValue={updateMissingMemberValue}
               updateInOfficeValue={updateInOfficeValue}
               updateDisplayNameValue={updateDisplayNameValue}
               updateCampaignStatus={updateCampaignStatus}
-              currentKey={116}
+              currentKey={CurrentCongress}
             />
           </TabPane>
           <TabPane tab="Current State Legs" key="stateLegs">
@@ -119,7 +119,7 @@ const mapStateToProps = state => ({
   isModerator: userStateBranch.selectors.getModeratorStatus(state),
   radioValue: mocStateBranch.selectors.getSelectedState(state),
   keySavePath: selectionStateBranch.selectors.getPeopleNameUrl(state),
-  the116theCongress: mocStateBranch.selectors.get116thCongress(state),
+  currentCongress: mocStateBranch.selectors.getNthCongress(CurrentCongress)(state),
   currentlyEditingPerson: mocStateBranch.selectors.getCurrentlyEditingPerson(state),
 });
 

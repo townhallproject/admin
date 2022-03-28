@@ -86,6 +86,22 @@
         }
       }
     },
+    "archive_117th_congress": {
+      ".read": "true",
+      ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+      "$month": {
+        ".indexOn": "dateObj",
+        "$townHallID": {
+          ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+          "dateObj": {
+            ".indexOn": ".value"
+          },
+          "meetingType": {
+            ".indexOn": ".value"
+          }
+        }
+      }
+    },
     "archived_town_halls": {
       ".read": "true",
       ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
