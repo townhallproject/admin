@@ -6,7 +6,8 @@
   "homepage": "http://thp-admin.herokuapp.com",
   "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
   "engines": {
-    "node": "10.3.0"
+    "node": ">=10",
+    "npm": ">=6"
   },
   "license": "MIT",
   "private": true,
