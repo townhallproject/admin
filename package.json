@@ -71,7 +71,6 @@
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-csv": "^2.2.2",
-    "react-dev-utils": "^12.0.0",
     "react-dom": "^17.0.2",
     "react-loadable": "^5.5.0",
     "react-redux": "^7.2.6",
@@ -97,17 +96,17 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "jest": "^27.5.1"
+    "jest": "^27.5.1",
+    "react-scripts": "^5.0.0"
   },
   "scripts": {
-    "build-css": "sass -I ./src -I ./node_modules src/:src/",
-    "watch-css": "npm run build-css && sass -I ./src -I ./node_modules src/:src/ --watch",    
-    "start-js": "node scripts/start.js",
-    "start": "node scripts/start.js",
-    "watch": "npm-run-all -p watch-css start-js",
-    "build-js": "node scripts/build.js",
-    "build": "npm-run-all build-css build-js",
-    "test": "node scripts/test.js --env=jsdom"
+    "build": "react-scripts build",
+    "changelog": "auto-changelog --starting-version 4.1.0 --commit-limit false --hide-credit",
+    "eject": "react-scripts eject",
+    "start": "react-scripts start",
+    "test": "react-scripts test",
+    "test:cov": "npm test -- --coverage --watchAll=false",
+    "test:debug": "react-scripts --inspect-brk test --runInBand"
   },
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
